@@ -4,14 +4,14 @@ Pre-alpha.
 
 ## :beetle: Bugs & Issues:
 - [ ] Using vanilla Morrowind animations looks weird. Seems like the position of the parent node is all over the place. Not a problem with my own animations.
-- [ ] Lip sync animation is currently not robust. Timing is hardcoded based on vanilla heads, so this might cause compatibility issues with head replacers.
+- [ ] Lip sync and blinking animation is currently not very robust. Timing is hardcoded based on vanilla heads, so this might cause compatibility issues with head replacers.
 
 ## :white_check_mark: Features:
 - [ ] Animation
     - [x] Load animations from .nif files and store key frame information
     - [x] Play animations during dialogue mode
     - [x] Play lip sync animations during dialogue mode
-    - [ ] Play blinking animations during dialogue mode
+    - [x] Play blinking animations during dialogue mode
     - [ ] Make NPC face player when dialogue starts
     - [ ] Allow for offsetting transforms on specific nodes (e.g. to make head face the player)
     - [ ] Add smooth transitions between animations

@@ -34,6 +34,26 @@ this.headNode = nil
 ---@type tes3animationData
 this.npcAnimationData = nil
 
+---@private
+---@type number
+this.blinkPhase = 0
+
+---@private
+---@type mwseTimer
+this.blinkIntervalTimer = nil
+
+---@private
+---@type mwseTimer
+this.blinkPhaseTimer = nil
+
+---@private
+---@type number
+this.blinkInterval = 3
+
+---@private
+---@type number
+this.blinkSpeed = 0.5
+
 ---@public
 ---@param npc tes3npcInstance
 ---@param animation Animation
@@ -45,18 +65,22 @@ function this.Start(npc, animation)
     this.nodesToUpdate = BipNodeService.GetAllBipNodes(npc.sceneNode, { IncludeParent = false })
 
     this.restartCurrentAnimation()
+    this.setupBlinkTimers()
     this.setupHeadMeshNode()
     this.registerEvents()
 end
 
 ---@public
 function this.Stop()
+    this.stopBlinkTimers()
     this.unregisterEvents()
 
     this.nodesToUpdate = nil
     this.currentPhase = 0
     this.currentAnimation = nil
     this.currentNpc = nil
+
+    this.blinkInterval = 10
 end
 
 ---@public
@@ -240,6 +264,35 @@ function this.triggerAnimationFinishedEvent()
     event.trigger(customEvents.animationFinished, eventData)
 end
 
+function this.setupBlinkTimers()
+    local iterations = 10
+    local transition = 1 / iterations
+    this.blinkPhaseTimer = timer.start({
+        duration = this.blinkSpeed / iterations,
+        iterations = iterations,
+        type = timer.real,
+        callback = function()
+            this.blinkPhase = this.blinkPhase + transition
+        end
+    })
+    this.blinkPhaseTimer:pause()
+
+    this.blinkIntervalTimer = timer.start({
+        duration = this.blinkInterval,
+        type = timer.real,
+        iterations = -1,
+        callback = function()
+            this.blinkPhase = 0
+            this.blinkPhaseTimer:reset()
+        end
+    })
+end
+
+function this.stopBlinkTimers()
+    this.blinkPhaseTimer:cancel()
+    this.blinkIntervalTimer:cancel()
+end
+
 ---@private
 function this.setupHeadMeshNode()
     this.headNode = MeshNodeService.GetHeadMeshNode(this.currentNpc)
@@ -255,19 +308,45 @@ end
 
 ---@private
 function this.updateHeadMeshNode()
-    local lipSyncAnimStart = 0
-    local lipSyncAnimEnd = 1.333
+    local phase = 0
+    if this.isSpeaking() then
+        phase = this.getLipsyncPhase()
+    else
+        phase = this.getBlinkingPhase()
+    end
 
-    local time = math.clamp(math.remap(this.npcAnimationData.lipsyncLevel, 0, 1, lipSyncAnimStart, lipSyncAnimEnd), 0, 1)
-
-    -- For some reason the morph controller only updates when the phase changes by a considerable amount,
-    -- so we set it to the negative value of the desired phase first and then update immediately after.
-    this.headNode:update({controllers = true, time = -time})
-    this.headNode:update({controllers = true, time = time})
+    -- For some reason the morph controller only updates when the phase changes by a considerable amount.
+    -- Hacking this by calling update once without phase first and then again immediately after.
+    this.headNode:update({controllers = true})
+    this.headNode:update({controllers = true, time = phase})
 end
 
 function this.isSpeaking()
     return this.npcAnimationData.lipsyncLevel ~= -1
+end
+
+---@private
+---@return number
+function this.getLipsyncPhase()
+    -- TODO: Get these values dynamically from the mesh node instead of hardcoding
+    local lipSyncAnimStart = 0
+    local lipSyncAnimEnd = 1.333
+
+    local phase = math.remap(this.npcAnimationData.lipsyncLevel, 0, 1, lipSyncAnimStart, lipSyncAnimEnd)
+
+    return math.clamp(phase, lipSyncAnimStart, lipSyncAnimEnd)
+end
+
+---@private
+---@return number
+function this.getBlinkingPhase()
+    -- TODO: Get these values dynamically from the mesh node instead of hardcoding
+    local blinkAnimationStart = 1.4
+    local blinkAnimationEnd = 2
+
+    local phase = math.remap(this.blinkPhase, 0, 1, blinkAnimationStart, blinkAnimationEnd)
+
+    return math.clamp(phase, blinkAnimationStart, blinkAnimationEnd)
 end
 
 ---@private
