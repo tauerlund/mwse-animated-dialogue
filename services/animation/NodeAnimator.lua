@@ -258,6 +258,9 @@ function this.updateHeadMeshNode()
     local lipSyncAnimEnd = 1.333
 
     local time = math.clamp(math.remap(this.npcAnimationData.lipsyncLevel, -1, 1, lipSyncAnimStart, lipSyncAnimEnd), -1, 1)
+
+    -- For some reason the morph controller only updates when the phase changes by a considerable amount,
+    -- so we set it to the negative value of the desired phase first and then update immediately after.
     this.headNode:update({controllers = true, time = -time})
     this.headNode:update({controllers = true, time = time})
 end
