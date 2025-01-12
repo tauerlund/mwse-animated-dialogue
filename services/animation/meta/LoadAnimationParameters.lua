@@ -1,0 +1,6 @@
+---@meta
+---@class LoadAnimationParameters
+---@field AnimationPath string
+---@field SequenceName string
+---@field NonLooping? boolean
+---@field NextAnimation? LoadAnimationParameters

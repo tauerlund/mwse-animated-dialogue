@@ -1,0 +1,4 @@
+---@meta
+---@class GetALlBipNodesParameters
+---@field IncludeParent? boolean
+---@field Exclude? string[]

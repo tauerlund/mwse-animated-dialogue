@@ -1,0 +1,3 @@
+---@meta
+---@class AnimationData
+---@field public NodeKeyframeData [niKeyframeData[]]:string

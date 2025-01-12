@@ -1,0 +1,137 @@
+local Logger = require("tauer.animated-dialogue.shared.Logger").Create("DialogueService")
+local AnimationLoader = require("tauer.animated-dialogue.services.animation.AnimationLoader")
+local NodeAnimator = require("tauer.animated-dialogue.services.animation.NodeAnimator")
+local MeshNodeService = require("tauer.animated-dialogue.services.nodes.MeshNodeService")
+
+local customEvents = require("tauer.animated-dialogue.shared.Events")
+
+---@class DialogueService
+local this = {}
+
+---@private
+---@type tes3reference
+this.npc = nil
+
+local tempAnimations = {
+    "tauer\\anims\\talk_1.nif",
+    "tauer\\anims\\talk_2.nif",
+    "tauer\\anims\\talk_3.nif",
+    "tauer\\anims\\talk_4.nif",
+    "tauer\\anims\\talk_5.nif",
+    "tauer\\anims\\talk_6.nif",
+    "tauer\\anims\\talk_7.nif",
+    "tauer\\anims\\talk_8.nif",
+}
+
+---@public
+function this.Initialize()
+    Logger:debug("Initializing DialogueService")
+    event.register(tes3.event.uiActivated, this.onDialogueActivated, { filter = "MenuDialog" })
+end
+
+---@private
+---@param e uiActivatedEventData
+function this.onDialogueActivated(e)
+    local reference = tes3ui.getServiceActor().reference --[[@as tes3reference]]
+    if reference.object.objectType ~= tes3.objectType.npc then
+        return
+    end
+
+    e.element:registerAfter(
+		tes3.uiEvent.destroy,
+		this.onDialogueEnded
+	)
+
+    local randomAnimation = tempAnimations[math.random(#tempAnimations)]
+    local animation = AnimationLoader.Load({
+        AnimationPath =  randomAnimation,
+        SequenceName = "idle9",
+        NonLooping = true
+    })
+    if not animation then
+        Logger:error("Failed to load animation")
+        return
+    end
+
+
+    this.npc = reference
+    this.registerEvents()
+
+    NodeAnimator.Start(reference --[[@as tes3npcInstance]], animation)
+end
+
+---@private
+---@param e infoGetTextEventData
+function this.onInfoGetText(e)
+    local info = e.info
+	if not this.isMenuDialogInfo(info) then
+        return
+    end
+
+    local randomAnimation = tempAnimations[math.random(#tempAnimations)]
+    local animation = AnimationLoader.Load(
+    ---@type LoadAnimationParameters
+    {
+         AnimationPath =  randomAnimation,
+         SequenceName = "idle9",
+         NonLooping = true
+    })
+    if not animation then
+        Logger:error("Failed to load animation")
+        return
+    end
+
+    NodeAnimator.SetAnimation(animation)
+end
+
+---@private
+---@param dialogueInfo tes3dialogueInfo
+function this.isMenuDialogInfo(dialogueInfo)
+    local type = dialogueInfo.type
+    if type == tes3.dialogueType.voice or type == tes3.dialogueType.journal or type ==tes3.dialogueType.greeting then
+        return false
+    end
+    return true
+end
+
+---@private
+function this.onDialogueEnded()
+    NodeAnimator.Stop()
+    this.unregisterEvents()
+    this.npc = nil
+end
+
+---@private
+function this.registerEvents()
+    if not event.isRegistered(tes3.event.infoGetText, this.onInfoGetText) then
+        event.register(tes3.event.infoGetText, this.onInfoGetText)
+    end
+    if not event.isRegistered(customEvents.animationFinished, this.onAnimationFinished) then
+        event.register(customEvents.animationFinished, this.onAnimationFinished)
+    end
+end
+
+function this.unregisterEvents()
+    if event.isRegistered(tes3.event.infoGetText, this.onInfoGetText) then
+        event.unregister(tes3.event.infoGetText, this.onInfoGetText)
+    end
+    if event.isRegistered(customEvents.animationFinished, this.onAnimationFinished) then
+        event.unregister(customEvents.animationFinished, this.onAnimationFinished)
+    end
+end
+
+---@private
+---@param e AnimationFinishedEventData
+function this.onAnimationFinished(e)
+    local animation = AnimationLoader.Load({
+        AnimationPath =  "base_anim.nif",
+        SequenceName = "idle"
+    })
+    if not animation then
+        Logger:error("Failed to load animation")
+        return
+    end
+    NodeAnimator.SetAnimation(animation)
+end
+
+return this
