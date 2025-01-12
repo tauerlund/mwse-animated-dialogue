@@ -1,4 +1,3 @@
-local Logger = require("tauer.animated-dialogue.shared.Logger").Create("NodeAnimator")
 local BipNodeService = require("tauer.animated-dialogue.services.nodes.BipNodeService")
 local MeshNodeService = require("tauer.animated-dialogue.services.nodes.MeshNodeService")
 
@@ -44,6 +43,7 @@ function this.Start(npc, animation)
     this.currentPhase = animation.StartTime
     this.paused = false
     this.nodesToUpdate = BipNodeService.GetAllBipNodes(npc.sceneNode, { IncludeParent = false })
+
     this.restartCurrentAnimation()
     this.setupHeadMeshNode()
     this.registerEvents()
@@ -52,6 +52,7 @@ end
 ---@public
 function this.Stop()
     this.unregisterEvents()
+
     this.nodesToUpdate = nil
     this.currentPhase = 0
     this.currentAnimation = nil
@@ -284,4 +285,3 @@ function this.unregisterEvents()
 end
 
 return this
-
