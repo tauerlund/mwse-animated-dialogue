@@ -25,5 +25,6 @@ Pre-alpha.
     - [ ] Idle animations
     - [ ] Talk animations (Consider using the ones from [dynamic-conversations](https://github.com/tauerlund/dynamic-conversations))
 - [ ] MCM
+    - [ ] Blacklist NPCs
 - [ ] V2: Decouple NodeAnimator from menu mode animating and promote to a shared service that can be used in other mods
 - [ ] Interop support?
