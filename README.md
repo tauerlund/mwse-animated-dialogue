@@ -12,8 +12,15 @@ Pre-alpha.
     - [x] Play animations during dialogue mode
     - [x] Play lip sync animations during dialogue mode
     - [ ] Play blinking animations during dialogue mode
+    - [ ] Make NPC face player when dialogue starts
+    - [ ] Allow for offsetting transforms on specific nodes (e.g. to make head face the player)
+    - [ ] Add smooth transitions between animations
 - [ ] Camera
-    - [ ] Animate camera smoothly to zoom in on the NPC before dialogue starts
+    - [ ] Animate camera to smoothly zoom in on the NPC when dialogue starts
+- [ ] Configuration
+    - [ ] Add support for animation configurations
+        - [ ] Play specific animations for specific dialogue options
+        - [ ] More?
 - [ ] Assets
     - [ ] Idle animations
     - [ ] Talk animations (Consider using the ones from [dynamic-conversations](https://github.com/tauerlund/dynamic-conversations))
