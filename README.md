@@ -6,7 +6,7 @@ Pre-alpha.
 - [ ] Using vanilla Morrowind animations looks weird. Seems like the position of the parent node is all over the place. Not a problem with my own animations.
 - [ ] Lip sync and blinking animation is currently not very robust. Timing is hardcoded based on vanilla heads, so this might cause compatibility issues with head replacers.
 - [ ] Lip syncing sometimes not animating properly. Reproducable example: the dialogue when giving Fargoth his ring. ~~Might be related to the fact that the journal updates~~? It also seems to disable lip syncing animations entirely until a new dialogue is initiated.
-    - [ ] Does not seem to be because of journal update. Maybe due to item removal?
+    - Does not seem to be because of journal update. Maybe due to item removal?
 - [ ] Blinking animation seems unreliable. Sometimes the eyes stay shut for a while after the NPC is done speaking.
 
 ## :white_check_mark: Features:
