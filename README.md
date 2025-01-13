@@ -1,6 +1,6 @@
 # Animated Dialogue (MWSE Lua)
 
-Pre-alpha.
+MWSE Lua mod that enables animations during dialogue in The Elder Scrolls III: Morrowind.
 
 ## :link: Dependencies:
 - [mwse](https://github.com/MWSE/MWSE)
