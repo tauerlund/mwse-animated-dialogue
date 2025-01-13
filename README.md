@@ -13,6 +13,7 @@ Pre-alpha.
     - [x] Play animations during dialogue mode
     - [x] Play lip sync animations during dialogue mode
     - [x] Play blinking animations during dialogue mode
+    - [ ] Pause animations when options menu is opened
     - [ ] Make NPC face player when dialogue starts
     - [ ] Allow for offsetting transforms on specific nodes (e.g. to make head face the player)
     - [ ] Add smooth transitions between animations
