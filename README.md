@@ -8,7 +8,7 @@ Pre-alpha.
 - [ ] Lip syncing sometimes not animating properly. Reproducable example: the dialogue when giving Fargoth his ring. ~~Might be related to the fact that the journal updates~~? It also seems to disable lip syncing animations entirely until a new dialogue is initiated.
     - Does not seem to be because of journal update. ~~Maybe due to item removal~~?
     - Not related to item removal. Needs more investigation.
-    - Confirmed to be caused by adding an item to NPC. When removing `add additem "ring_keley" 1` from the dialogue the problem disappears.
+    - Confirmed to be caused by adding an item to NPC. When removing `additem "ring_keley" 1` from the dialogue the problem disappears.
 - [ ] Blinking animation seems unreliable. Sometimes the eyes stay shut for a while after the NPC is done speaking.
 
 ## :white_check_mark: Features:
