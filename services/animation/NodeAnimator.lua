@@ -121,9 +121,9 @@ function this.onEnterFrame(e)
     for _, node in pairs(this.nodesToUpdate) do
         if this.shouldUpdate(node) then
             this.updateNode(node)
-            this.updateHeadMeshNode()
         end
     end
+    this.updateHeadMeshNode()
 end
 
 ---@private
