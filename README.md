@@ -2,6 +2,9 @@
 
 Pre-alpha.
 
+## :fa-code-branch: Dependencies:
+- [ ]
+
 ## :beetle: Bugs & Issues:
 - [ ] Using vanilla Morrowind animations looks weird. Seems like the position of the parent node is all over the place. Not a problem with my own animations.
 - [ ] Lip sync and blinking animation is currently not very robust. Timing is hardcoded based on vanilla heads, so this might cause compatibility issues with head replacers.
