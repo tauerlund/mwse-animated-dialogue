@@ -2,8 +2,9 @@
 
 Pre-alpha.
 
-## :fa-code-branch: Dependencies:
-- [ ]
+## :link: Dependencies:
+- [mwse](https://github.com/MWSE/MWSE)
+- [mwse-shared-library](https://github.com/tauerlund/mwse-shared-library))
 
 ## :beetle: Bugs & Issues:
 - [ ] Using vanilla Morrowind animations looks weird. Seems like the position of the parent node is all over the place. Not a problem with my own animations.
