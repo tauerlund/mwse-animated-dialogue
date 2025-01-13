@@ -5,7 +5,7 @@ Pre-alpha.
 ## :beetle: Bugs & Issues:
 - [ ] Using vanilla Morrowind animations looks weird. Seems like the position of the parent node is all over the place. Not a problem with my own animations.
 - [ ] Lip sync and blinking animation is currently not very robust. Timing is hardcoded based on vanilla heads, so this might cause compatibility issues with head replacers.
-- [ ] Lip syncing sometimes not animating properly. Reproducable example: the dialogue when giving Fargoth his ring. Might be related to the fact that the journal updates?
+- [ ] Lip syncing sometimes not animating properly. Reproducable example: the dialogue when giving Fargoth his ring. Might be related to the fact that the journal updates? It also seems to disable lip syncing animations entirely until a new dialogue is initiated.
 
 ## :white_check_mark: Features:
 - [ ] Animation
