@@ -5,6 +5,7 @@ Pre-alpha.
 ## :beetle: Bugs & Issues:
 - [ ] Using vanilla Morrowind animations looks weird. Seems like the position of the parent node is all over the place. Not a problem with my own animations.
 - [ ] Lip sync and blinking animation is currently not very robust. Timing is hardcoded based on vanilla heads, so this might cause compatibility issues with head replacers.
+- [ ] Lip syncing sometimes not animating properly. Reproducable example: the dialogue when giving Fargoth his ring. Might be related to the fact that the journal updates?
 
 ## :white_check_mark: Features:
 - [ ] Animation
@@ -26,5 +27,6 @@ Pre-alpha.
     - [ ] Talk animations (Consider using the ones from [dynamic-conversations](https://github.com/tauerlund/dynamic-conversations))
 - [ ] MCM
     - [ ] Blacklist NPCs
-- [ ] V2: Decouple NodeAnimator from menu mode animating and promote to a shared service that can be used in other mods
+- [ ] V2: Add support for animating multiple NPCs using NodeAnimator
+- [ ] V3: Decouple NodeAnimator from menu mode animating and promote to a shared service that can be used in other mods
 - [ ] Interop support?
