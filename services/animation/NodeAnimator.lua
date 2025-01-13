@@ -359,6 +359,9 @@ function this.getBlinkingPhase()
     return math.clamp(phase, blinkAnimationStart, blinkAnimationEnd)
 end
 
+-- Have to force an update on the head mesh node when this event is triggered,
+-- as lip syncing and blinking is broken when any equipment is added to the NPC.
+--- @private 
 --- @param e bodyPartsUpdatedEventData
 function this.onBodyPartsUpdated(e)
     if e.reference ~= this.currentNpc then
