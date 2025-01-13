@@ -11,7 +11,7 @@ local this = {}
 this.currentNpc = nil
 
 ---@private
----@type [niNode]:string
+---@type { [string]: niNode }
 this.nodesToUpdate = nil
 
 ---@private
@@ -79,16 +79,24 @@ function this.Stop()
     this.currentPhase = 0
     this.currentAnimation = nil
     this.currentNpc = nil
-
-    this.blinkInterval = 10
 end
 
 ---@public
 ---@param animation Animation
 function this.SetAnimation(animation)
     this.paused = false
-    this.currentAnimation = animation
+    this.currentAnimation = animation -- TODO: Make this deep copy of the animation object so the original cannot be changed?
     this.restartCurrentAnimation()
+end
+
+---@public
+function this.Pause()
+    this.paused = true
+end
+
+---@public
+function this.Resume()
+    this.paused = false
 end
 
 ---@private
@@ -321,6 +329,8 @@ function this.updateHeadMeshNode()
     this.headNode:update({controllers = true, time = phase})
 end
 
+---@private
+---@return boolean
 function this.isSpeaking()
     return this.npcAnimationData.lipsyncLevel ~= -1
 end
@@ -349,10 +359,40 @@ function this.getBlinkingPhase()
     return math.clamp(phase, blinkAnimationStart, blinkAnimationEnd)
 end
 
+--- @param e bodyPartsUpdatedEventData
+function this.onBodyPartsUpdated(e)
+    if e.reference ~= this.currentNpc then
+        return
+    end
+    this.setupHeadMeshNode()
+end
+
+---@private
+---@param e uiActivatedEventData
+function this.onOptionsMenuOpened(e)
+    e.element:getContentElement():registerAfter(
+		tes3.uiEvent.destroy,
+		this.onOptionsMenuClosed
+	)
+    this.paused = true
+end
+
+---@private
+function this.onOptionsMenuClosed()
+    this.paused = false
+end
+
+
 ---@private
 function this.registerEvents()
     if not event.isRegistered(tes3.event.enterFrame, this.onEnterFrame) then
         event.register(tes3.event.enterFrame, this.onEnterFrame)
+    end
+    if not event.isRegistered(tes3.event.bodyPartsUpdated, this.onBodyPartsUpdated) then
+        event.register(tes3.event.bodyPartsUpdated, this.onBodyPartsUpdated)
+    end
+    if not event.isRegistered(tes3.event.uiActivated, this.onOptionsMenuOpened, { filter = "MenuOptions" }) then
+        event.register(tes3.event.uiActivated, this.onOptionsMenuOpened, { filter = "MenuOptions" })
     end
 end
 
@@ -360,6 +400,12 @@ end
 function this.unregisterEvents()
     if event.isRegistered(tes3.event.enterFrame, this.onEnterFrame) then
         event.unregister(tes3.event.enterFrame, this.onEnterFrame)
+    end
+    if event.isRegistered(tes3.event.bodyPartsUpdated, this.onBodyPartsUpdated) then
+        event.unregister(tes3.event.bodyPartsUpdated, this.onBodyPartsUpdated)
+    end
+    if event.isRegistered(tes3.event.uiActivated, this.onOptionsMenuOpened, { filter = "MenuOptions" }) then
+        event.unregister(tes3.event.uiActivated, this.onOptionsMenuOpened, { filter = "MenuOptions" })
     end
 end
 
