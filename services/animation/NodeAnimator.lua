@@ -165,10 +165,7 @@ end
 ---@param node niNode
 ---@return boolean
 function this.shouldUpdate(node)
-    if this.currentAnimation.NodeKeyFrames[node.name] then
-        return true
-    end
-    return false
+    return this.currentAnimation.NodeKeyFrames[node.name] ~= nil
 end
 
 ---@private
