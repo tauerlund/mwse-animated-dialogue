@@ -321,9 +321,6 @@ function this.updateHeadMeshNode()
         phase = this.getBlinkingPhase()
     end
 
-    -- For some reason the morph controller only updates when the phase changes by a considerable amount.
-    -- Hacking this by calling update once without phase first and then again immediately after.
-    this.headNode:update({controllers = true})
     this.headNode:update({controllers = true, time = phase})
 end
 
