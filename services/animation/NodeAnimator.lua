@@ -314,12 +314,9 @@ end
 
 ---@private
 function this.updateHeadMeshNode()
-    local phase = 0
-    if this.isSpeaking() then
-        phase = this.getLipsyncPhase()
-    else
-        phase = this.getBlinkingPhase()
-    end
+    local phase = this.isSpeaking()
+        and this.getLipsyncPhase()
+        or this.getBlinkingPhase()
 
     this.headNode:update({controllers = true, time = phase})
 end
