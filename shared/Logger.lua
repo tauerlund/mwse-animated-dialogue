@@ -1,14 +1,14 @@
-local SharedLoggerFactory = require("tauer.shared.Logger")
-local LOG_LEVEL = require("tauer.shared.enums.LOG_LEVEL")
+local LoggerFactory = require("tauer.shared.logging.LoggerFactory")
+local LOG_LEVEL = require("tauer.shared.logging.LogLevel")
 
----@class LoggerFactory
+---@class Logger
 local this = {}
 
 ---@public
 ---@param serviceName string
 ---@return mwseLogger
 function this.Create(serviceName)
-    return SharedLoggerFactory.Create("Animated Dialogue", serviceName, LOG_LEVEL.info)
+    return LoggerFactory.Create("Animated Dialogue", serviceName, LOG_LEVEL.info)
 end
 
 return this
