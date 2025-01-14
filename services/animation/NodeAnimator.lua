@@ -59,11 +59,9 @@ this.blinkSpeed = 0.5
 ---@param animation Animation
 function this.Start(npc, animation)
     this.currentNpc = npc
-    this.currentAnimation = animation
-    this.currentPhase = animation.StartTime
-    this.paused = false
     this.nodesToUpdate = BipNodeService.GetAllBipNodes(npc.sceneNode, { IncludeParent = false })
 
+    this.SetAnimation(animation)
     this.restartCurrentAnimation()
     this.setupBlinkTimers()
     this.setupHeadMeshNode()
@@ -85,7 +83,7 @@ end
 ---@param animation Animation
 function this.SetAnimation(animation)
     this.paused = false
-    this.currentAnimation = animation -- TODO: Make this deep copy of the animation object so the original cannot be changed?
+    this.currentAnimation = table.deepcopy(animation)
     this.restartCurrentAnimation()
 end
 
