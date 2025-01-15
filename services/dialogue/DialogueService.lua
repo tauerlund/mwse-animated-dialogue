@@ -2,6 +2,9 @@ local Logger = require("tauer.animated-dialogue.shared.Logger").Create("Dialogue
 local AnimationLoader = require("tauer.animated-dialogue.services.animation.AnimationLoader")
 local NodeAnimator = require("tauer.animated-dialogue.services.animation.NodeAnimator")
 local MeshNodeService = require("tauer.animated-dialogue.services.nodes.MeshNodeService")
+local CameraAnimator = require("tauer.animated-dialogue.services.animation.CameraAnimator")
+local NpcPackageManager = require("tauer.shared.npc-state.NpcPackageManager")
+local OrientationService = require("tauer.shared.transform.OrientationService")
 
 local customEvents = require("tauer.animated-dialogue.shared.Events")
 
@@ -57,7 +60,18 @@ function this.onDialogueActivated(e)
     this.npc = reference
     this.registerEvents()
 
+    local target = this.getRelativeHeadPosition(reference --[[@as tes3npcInstance]])
+    OrientationService.Face(reference, tes3.getCameraPosition())
+    CameraAnimator.Start(target)
     NodeAnimator.Start(reference --[[@as tes3npcInstance]], animation)
+end
+
+---@private
+---@param npc tes3npcInstance
+---@return tes3vector3
+function this.getRelativeHeadPosition(npc)
+    local head = npc.sceneNode:getObjectByName("Bip01 Head")
+    return head.worldTransform.translation
 end
 
 ---@private
@@ -97,6 +111,7 @@ end
 ---@private
 function this.onDialogueEnded()
     NodeAnimator.Stop()
+    CameraAnimator.Reset()
     this.unregisterEvents()
     this.npc = nil
 end
@@ -106,8 +121,8 @@ function this.registerEvents()
     if not event.isRegistered(tes3.event.infoGetText, this.onInfoGetText) then
         event.register(tes3.event.infoGetText, this.onInfoGetText)
     end
-    if not event.isRegistered(customEvents.animationFinished, this.onAnimationFinished) then
-        event.register(customEvents.animationFinished, this.onAnimationFinished)
+    if not event.isRegistered(customEvents.AnimationFinished, this.onAnimationFinished) then
+        event.register(customEvents.AnimationFinished, this.onAnimationFinished)
     end
 end
 
@@ -115,8 +130,8 @@ function this.unregisterEvents()
     if event.isRegistered(tes3.event.infoGetText, this.onInfoGetText) then
         event.unregister(tes3.event.infoGetText, this.onInfoGetText)
     end
-    if event.isRegistered(customEvents.animationFinished, this.onAnimationFinished) then
-        event.unregister(customEvents.animationFinished, this.onAnimationFinished)
+    if event.isRegistered(customEvents.AnimationFinished, this.onAnimationFinished) then
+        event.unregister(customEvents.AnimationFinished, this.onAnimationFinished)
     end
 end
 
