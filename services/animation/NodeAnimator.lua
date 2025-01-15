@@ -154,9 +154,9 @@ function this.updateKeyFrames()
     for _, node in pairs(this.nodesToUpdate) do
         local keyFrames = this.currentAnimation.NodeKeyFrames[node.name]
         if keyFrames then
-            this.nextKeyFrame(keyFrames.Position)
-            this.nextKeyFrame(keyFrames.Rotation)
-            this.nextKeyFrame(keyFrames.Scale)
+            this.incrementKeyFrames(keyFrames.Position)
+            this.incrementKeyFrames(keyFrames.Rotation)
+            this.incrementKeyFrames(keyFrames.Scale)
         end
     end
 end
@@ -185,11 +185,8 @@ end
 
 ---@private
 ---@param keyFrames KeyFrameData
-function this.nextKeyFrame(keyFrames)
-    if not keyFrames.Key then
-        return
-    end
-    local next = keyFrames.Key.Next
+function this.incrementKeyFrames(keyFrames)
+    local next = keyFrames.Key and keyFrames.Key.Next
     if next and this.currentPhase >= next.Value.timing then
         keyFrames.Key = next
     end
@@ -264,11 +261,11 @@ end
 function this.triggerAnimationFinishedEvent()
     ---@type AnimationFinishedEventData
     local eventData = { Animation = this.currentAnimation }
-    event.trigger(customEvents.animationFinished, eventData)
+    event.trigger(customEvents.AnimationFinished, eventData)
 end
 
 function this.setupBlinkTimers()
-    local iterations = 10
+    local iterations = 20
     local transition = 1 / iterations
     this.blinkPhaseTimer = timer.start({
         duration = this.blinkSpeed / iterations,
@@ -292,8 +289,12 @@ function this.setupBlinkTimers()
 end
 
 function this.stopBlinkTimers()
-    this.blinkPhaseTimer:cancel()
-    this.blinkIntervalTimer:cancel()
+    if this.blinkPhaseTimer then
+        this.blinkPhaseTimer:cancel()
+    end
+    if this.blinkIntervalTimer then
+        this.blinkIntervalTimer:cancel()
+    end
 end
 
 ---@private
