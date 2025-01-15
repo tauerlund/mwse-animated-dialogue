@@ -13,7 +13,7 @@ MWSE Lua mod that enables animations during dialogue in The Elder Scrolls III: M
     - [x] Play blinking animations during dialogue mode
     - [x] Pause animations when options menu is opened
     - [x] Make NPC face player when dialogue starts
-    - [ ] Allow for offsetting transforms on specific nodes (e.g. to make head face the player)
+    - [ ] Make NPC head look at player
     - [ ] Add smooth transitions between animations
 - [ ] Camera
     - [x] Animate camera to smoothly zoom in on the NPC when dialogue starts
