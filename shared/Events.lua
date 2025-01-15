@@ -1,7 +1,7 @@
----@enum
+---@enum CustomEvents
 local events = {
-    animationFinished = "tauer.animatedDialogue.animationFinished",
-    animationUpdated = "tauer.animatedDialogue.animationUpdated",
+    AnimationFinished = "tauer.animatedDialogue.animationFinished",
+    CameraReachedMinimumDistance = "tauer.animatedDialogue.cameraReachedMinimumDistance"
 }
 
 return events
