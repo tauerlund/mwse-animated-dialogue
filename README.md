@@ -14,6 +14,8 @@ MWSE Lua mod that enables animations during dialogue in The Elder Scrolls III: M
     - Not related to item removal. Needs more investigation.
     - Confirmed to be caused by adding an item to NPC. When removing `additem "ring_keley" 1` from the dialogue the problem disappears.
     - Fixed
+- [ ] Camera animation causes sky to become offset. Expected behavior, need to animate the sky along with the camera.
+- [ ] Interpolating camera back to its original position when ending dialogue causes unreliable behavior. For now it just snaps back, needs more work.
 
 ## :white_check_mark: Features:
 - [ ] Animation
