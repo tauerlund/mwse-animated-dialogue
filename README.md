@@ -25,7 +25,8 @@ MWSE Lua mod that enables animations during dialogue in The Elder Scrolls III: M
     - [ ] Allow for offsetting transforms on specific nodes (e.g. to make head face the player)
     - [ ] Add smooth transitions between animations
 - [ ] Camera
-    - [ ] Animate camera to smoothly zoom in on the NPC when dialogue starts
+    - [x] Animate camera to smoothly zoom in on the NPC when dialogue starts
+    - [ ] Add offset to camera so it does not center on NPC
 - [ ] Configuration
     - [ ] Add support for animation configurations
         - [ ] Play specific animations for specific dialogue options
@@ -35,6 +36,13 @@ MWSE Lua mod that enables animations during dialogue in The Elder Scrolls III: M
     - [ ] Talk animations (Consider using the ones from [dynamic-conversations](https://github.com/tauerlund/dynamic-conversations))
 - [ ] MCM
     - [ ] Blacklist NPCs
+    - [ ] Animation settings
+        - [ ] Enable/disable animations
+        - [ ] Enable/disable lip syncing
+    - [ ] Camera settings
+        - [ ] Enable/disable camera animations
+        - [ ] Set camera offset (centered, left, right etc)
+        - [ ] Set camera animation speed
 - [ ] V2: Add support for animating multiple NPCs using NodeAnimator
 - [ ] V3: Decouple NodeAnimator from menu mode animating and promote to a shared service that can be used in other mods
 - [ ] Interop support?
