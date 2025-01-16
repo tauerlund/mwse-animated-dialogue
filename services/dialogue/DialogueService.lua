@@ -1,4 +1,5 @@
 local Logger = require("tauer.animated-dialogue.shared.Logger").Create("DialogueService")
+local Settings = require("tauer.animated-dialogue.shared.Settings")
 local AnimationLoader = require("tauer.animated-dialogue.services.animation.AnimationLoader")
 local NodeAnimator = require("tauer.animated-dialogue.services.animation.NodeAnimator")
 local MeshNodeService = require("tauer.animated-dialogue.services.nodes.MeshNodeService")
@@ -40,6 +41,10 @@ function this.onDialogueActivated(e)
         return
     end
 
+    if Settings.Mcm.BlacklistedNpcs[reference.baseObject.id:lower()] then
+        return
+    end
+
     e.element:registerAfter(
 		tes3.uiEvent.destroy,
 		this.onDialogueEnded
@@ -62,7 +67,9 @@ function this.onDialogueActivated(e)
 
     local target = this.getRelativeHeadPosition(reference --[[@as tes3npcInstance]])
     OrientationService.Face(reference, tes3.getCameraPosition())
-    CameraAnimator.Start(target)
+    if Settings.Mcm.AnimateCamera then
+        CameraAnimator.Start(target)
+    end
     NodeAnimator.Start(reference --[[@as tes3npcInstance]], animation)
 end
 
