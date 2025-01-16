@@ -21,6 +21,8 @@ MWSE Lua mod that enables animations during dialogue in The Elder Scrolls III: M
 - [ ] Configuration
     - [ ] Add support for animation configurations
         - [ ] Play specific animations for specific dialogue options
+        - [ ] Play specific animations for specific NPCs
+        - [ ] Rule-based system for better control over animations
         - [ ] More?
 - [ ] Assets
     - [ ] Idle animations
@@ -35,8 +37,10 @@ MWSE Lua mod that enables animations during dialogue in The Elder Scrolls III: M
         - [x] Enable/disable camera animations
         - [x] Set camera offset (centered, left, right etc)
         - [ ] Set camera animation speed
-- [ ] V2: Add support for animating multiple NPCs using NodeAnimator
-- [ ] V3: Decouple NodeAnimator from menu mode animating and promote to a shared service that can be used in other mods
+- [ ] V2: Add creature support
+    - Works somewhat - tested with Vivec, animations work but lip syncing does not.
+- [ ] V3: Add support for animating multiple NPCs using NodeAnimator
+- [ ] V4: Decouple NodeAnimator from menu mode animating and promote to a shared service that can be used in other mods
 - [ ] Interop support?
 
 ## :beetle: Bugs & Issues:
