@@ -1,0 +1,7 @@
+---@meta
+---@class Mcm
+---@field AnimateCamera boolean
+---@field CameraDistance number
+---@field CameraVerticalOffset number
+---@field CameraHorizontalOffset number
+---@field BlacklistedNpcs string[]
