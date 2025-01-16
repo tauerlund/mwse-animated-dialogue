@@ -70,7 +70,9 @@ function this.onDialogueActivated(e)
     if Settings.Mcm.AnimateCamera then
         CameraAnimator.Start(target)
     end
-    NodeAnimator.Start(reference --[[@as tes3npcInstance]], animation)
+    if Settings.Mcm.EnableNpcAnimations then
+        NodeAnimator.Start(reference --[[@as tes3npcInstance]], animation)
+    end
 end
 
 ---@private
@@ -125,8 +127,10 @@ end
 
 ---@private
 function this.registerEvents()
-    if not event.isRegistered(tes3.event.infoGetText, this.onInfoGetText) then
-        event.register(tes3.event.infoGetText, this.onInfoGetText)
+    if Settings.Mcm.EnableNpcTalkAnimations then
+        if not event.isRegistered(tes3.event.infoGetText, this.onInfoGetText) then
+            event.register(tes3.event.infoGetText, this.onInfoGetText)
+        end
     end
     if not event.isRegistered(customEvents.AnimationFinished, this.onAnimationFinished) then
         event.register(customEvents.AnimationFinished, this.onAnimationFinished)

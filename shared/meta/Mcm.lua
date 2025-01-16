@@ -5,3 +5,6 @@
 ---@field CameraVerticalOffset number
 ---@field CameraHorizontalOffset number
 ---@field BlacklistedNpcs string[]
+---@field EnableNpcAnimations boolean
+---@field EnableNpcLipsyncing boolean
+---@field EnableNpcTalkAnimations boolean

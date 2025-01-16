@@ -12,7 +12,10 @@ this.defaults = {
     CameraDistance = 50,
     CameraVerticalOffset = 0,
     CameraHorizontalOffset = 0,
-    BlacklistedNpcs = {}
+    BlacklistedNpcs = {},
+    EnableNpcAnimations = true,
+    EnableNpcLipsyncing = true,
+    EnableNpcTalkAnimations = true,
 }
 
 ---@type Mcm
