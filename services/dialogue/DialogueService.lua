@@ -37,7 +37,7 @@ end
 ---@param e uiActivatedEventData
 function this.onDialogueActivated(e)
     local reference = tes3ui.getServiceActor().reference --[[@as tes3reference]]
-    if reference.object.objectType ~= tes3.objectType.npc then
+    if reference.object.objectType ~= tes3.objectType.npc and reference.object.objectType ~= tes3.objectType.creature then
         return
     end
 
