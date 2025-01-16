@@ -300,6 +300,9 @@ end
 ---@private
 function this.setupHeadMeshNode()
     this.headNode = MeshNodeService.GetHeadMeshNode(this.currentNpc)
+    if not this.headNode then
+        return
+    end
 
     local controller = MeshNodeService.GetMorphController(this.headNode)
     if controller then
@@ -312,6 +315,10 @@ end
 
 ---@private
 function this.updateHeadMeshNode()
+    if not this.headNode then
+        return
+    end
+
     local phase = this.isSpeaking()
         and this.getLipsyncPhase()
         or this.getBlinkingPhase()
