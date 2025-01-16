@@ -1,6 +1,8 @@
 local Logger = require("tauer.animated-dialogue.shared.Logger").Create("CameraAnimator")
 local EventManager = require("tauer.shared.events.EventManager")
-local CustomEvents = require("tauer.animated-dialogue.shared.Events")
+local Events = require("tauer.animated-dialogue.shared.Events")
+local Settings = require("tauer.animated-dialogue.shared.Settings")
+local Constants = require("tauer.animated-dialogue.shared.Constants")
 
 ---@class CameraAnimator
 local this = {}
@@ -40,10 +42,6 @@ this.originalAnimatorPosition = nil
 this.cameraSpeed = 800
 
 ---@private
----@type number
-this.minimumDistance = 50
-
----@private
 ---@type boolean
 this.paused = false
 
@@ -58,12 +56,12 @@ end
 
 ---@public
 function this.Stop()
-    if this.cameraAnimator then
+    if this.cameraAnimator and this.originalAnimatorPosition then
         this.cameraAnimator.translation = this.originalAnimatorPosition
         this.cameraAnimator:update()
     end
     EventManager.Unregister(tes3.event.enterFrame, this.onEnterFrame)
-    EventManager.Unregister(CustomEvents.CameraReachedMinimumDistance, this.Stop)
+    EventManager.Unregister(Events.CameraReachedTargetDistance, this.Stop)
 
     if tes3.mobilePlayer then
         tes3.mobilePlayer.controlsDisabled = false
@@ -79,21 +77,24 @@ function this.Start(target)
         tes3.mobilePlayer.mouseLookDisabled = true
     end
 
-    this.target = target
     local cameraPosition = tes3.getCameraPosition()
 
-    this.originalDistance = this.cameraDistanceTo(this.target)
     this.originalCameraPosition = cameraPosition:copy()
     this.originalAnimatorPosition = this.cameraAnimator.translation:copy()
 
+    local offsetTarget = this.calculateOffsetTarget(target)
+
+    this.target = offsetTarget
+    this.originalDistance = this.cameraDistanceTo(offsetTarget)
+
     EventManager.Register(tes3.event.enterFrame, this.onEnterFrame)
-    EventManager.Register(CustomEvents.CameraReachedMinimumDistance, this.pause)
+    EventManager.Register(Events.CameraReachedTargetDistance, this.pause)
 
     this.resume()
 end
 
 function this.Reset()
-    EventManager.Unregister(CustomEvents.CameraReachedMinimumDistance, this.pause)
+    EventManager.Unregister(Events.CameraReachedTargetDistance, this.pause)
     -- EventManager.Register(CustomEvents.CameraReachedMinimumDistance, this.Stop)
     -- this.target = this.originalCameraPosition
     -- this.resume()
@@ -114,10 +115,13 @@ function this.onEnterFrame(e)
     if this.paused then
         return
     end
+
+    local targetDistance = 1
+
     local distance = this.cameraDistanceTo(this.target)
-    if math.isclose(distance, this.minimumDistance, 1) then
+    if math.isclose(distance, targetDistance, 1) then
         Logger:info("Reached min distance")
-        event.trigger(CustomEvents.CameraReachedMinimumDistance)
+        event.trigger(Events.CameraReachedTargetDistance)
     end
 
     local cameraPosition = this.cameraAnimator.translation
@@ -125,13 +129,42 @@ function this.onEnterFrame(e)
 
     local direction = (relativeTarget - cameraPosition):normalized()
 
-    local transition = math.remap(distance, this.minimumDistance, this.originalDistance, 0, 1) * (this.cameraSpeed * e.delta)
+    local transition = math.remap(distance, targetDistance, this.originalDistance, 0, 1) * (this.cameraSpeed * e.delta)
 
     local newPosition = (cameraPosition):lerp(cameraPosition + direction, math.clamp(transition, 0, 1))
 
     this.cameraAnimator.translation = newPosition
     this.cameraAnimator:update()
 end
+
+---@private
+---@param target tes3vector3
+---@return tes3vector3
+function this.calculateOffsetTarget(target)
+    local cameraPosition = tes3.getCameraPosition()
+    local direction = (this.originalCameraPosition - target)
+
+    local length = direction:length()
+    if length == 0 then
+        return cameraPosition
+    end
+
+    local forward = direction / length
+
+    local right = forward:cross(Constants.WorldUp):normalized()
+    local up = right:cross(forward):normalized()
+
+    local forwardDisplacement = forward * Settings.Mcm.CameraDistance
+    local verticalDisplacement = up * Settings.Mcm.CameraVerticalOffset
+    local horizontalDisplacement = right * -Settings.Mcm.CameraHorizontalOffset
+
+    local offset = forwardDisplacement + verticalDisplacement + horizontalDisplacement
+
+    return target + offset
+end
+
+
+
 
 ---@private
 ---@param vector tes3vector3
