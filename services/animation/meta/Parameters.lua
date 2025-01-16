@@ -1,0 +1,11 @@
+---@meta
+---@class LoadAnimationParameters
+---@field AnimationPath string
+---@field SequenceName string
+---@field NonLooping? boolean
+---@field NextAnimation? LoadAnimationParameters
+
+---@@meta
+---@class GetALlBipNodesParameters
+---@field IncludeParent? boolean
+---@field Exclude? string[]
