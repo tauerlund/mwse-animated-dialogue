@@ -2,9 +2,7 @@ local Logger = require("tauer.animated-dialogue.shared.Logger").Create("Dialogue
 local Settings = require("tauer.animated-dialogue.shared.Settings")
 local AnimationLoader = require("tauer.animated-dialogue.services.animation.AnimationLoader")
 local BipNodeAnimator = require("tauer.animated-dialogue.services.animation.BipNodeAnimator")
-local MeshNodeService = require("tauer.animated-dialogue.services.nodes.MeshNodeService")
 local CameraAnimator = require("tauer.animated-dialogue.services.animation.CameraAnimator")
-local NpcPackageManager = require("tauer.shared.npc-state.NpcPackageManager")
 local OrientationService = require("tauer.shared.transform.OrientationService")
 local MeshNodeAnimator = require("tauer.animated-dialogue.services.animation.MeshNodeAnimator")
 
@@ -17,15 +15,19 @@ local this = {}
 ---@type tes3reference
 this.npc = nil
 
-local tempAnimations = {
-    "tauer\\anims\\talk_1.nif",
-    "tauer\\anims\\talk_2.nif",
-    "tauer\\anims\\talk_3.nif",
-    "tauer\\anims\\talk_4.nif",
-    "tauer\\anims\\talk_5.nif",
-    "tauer\\anims\\talk_6.nif",
-    "tauer\\anims\\talk_7.nif",
-    "tauer\\anims\\talk_8.nif",
+local tempTalkAnimations = {
+    ["tauer\\anims\\talk_1.nif"] = "idle9",
+    ["tauer\\anims\\talk_2.nif"] = "idle9",
+    ["tauer\\anims\\talk_3.nif"] = "idle9",
+    ["tauer\\anims\\talk_4.nif"] = "idle9",
+    ["tauer\\anims\\talk_5.nif"] = "idle9",
+    ["tauer\\anims\\talk_6.nif"] = "idle9",
+    ["tauer\\anims\\talk_7.nif"] = "idle9",
+    ["tauer\\anims\\talk_8.nif"] = "idle9",
+}
+
+local tempIdleAnimations = {
+    ["base_anim.nif"] = "idle"
 }
 
 ---@public
@@ -51,12 +53,7 @@ function this.onDialogueActivated(e)
 		this.onDialogueEnded
 	)
 
-    local randomAnimation = tempAnimations[math.random(#tempAnimations)]
-    local animation = AnimationLoader.Load({
-        AnimationPath =  randomAnimation,
-        SequenceName = "idle9",
-        NonLooping = true
-    })
+    local animation = this.getRandomAnimation(true)
     if not animation then
         Logger:error("Failed to load animation")
         return
@@ -74,7 +71,7 @@ function this.onDialogueActivated(e)
     if Settings.Mcm.EnableNpcAnimations then
         BipNodeAnimator.Start(reference --[[@as tes3npcInstance]], animation)
     end
-    if Settings.Mcm.EnableNpcLipsyncing then 
+    if Settings.Mcm.EnableNpcLipsyncing then
         MeshNodeAnimator.StartHeadAnimations(reference --[[@as tes3npcInstance]])
     end
 end
@@ -95,19 +92,27 @@ function this.onInfoGetText(e)
         return
     end
 
-    local randomAnimation = tempAnimations[math.random(#tempAnimations)]
-    local animation = AnimationLoader.Load(
-    ---@type LoadAnimationParameters
-    {
-         AnimationPath =  randomAnimation,
-         SequenceName = "idle9",
-         NonLooping = true
-    })
+    local randomAnimation = table.choice(tempTalkAnimations)
+    if not randomAnimation then
+        return
+    end
+    local animation = this.getRandomAnimation(true)
     if not animation then
         Logger:error("Failed to load animation")
         return
     end
 
+    BipNodeAnimator.SetAnimation(animation)
+end
+
+---@private
+---@param e AnimationFinishedEventData
+function this.onAnimationFinished(e)
+    local animation = this.getRandomAnimation(false)
+    if not animation then
+        Logger:error("Failed to load animation")
+        return
+    end
     BipNodeAnimator.SetAnimation(animation)
 end
 
@@ -131,6 +136,24 @@ function this.onDialogueEnded()
 end
 
 ---@private
+---@param isTalk boolean
+---@return Animation|nil
+function this.getRandomAnimation(isTalk)
+    local animationPaths = nil
+    if isTalk and Settings.Mcm.EnableNpcTalkAnimations then
+        animationPaths = tempTalkAnimations
+    else
+        animationPaths = tempIdleAnimations
+    end
+    local sequence, path = table.choice(animationPaths)
+    if not path or not sequence then
+        return nil
+    end
+    local animation = AnimationLoader.Load({ AnimationPath = path, SequenceName = sequence })
+    return animation
+end
+
+---@private
 function this.registerEvents()
     if Settings.Mcm.EnableNpcTalkAnimations then
         if not event.isRegistered(tes3.event.infoGetText, this.onInfoGetText) then
@@ -149,20 +172,6 @@ function this.unregisterEvents()
     if event.isRegistered(customEvents.AnimationFinished, this.onAnimationFinished) then
         event.unregister(customEvents.AnimationFinished, this.onAnimationFinished)
     end
-end
-
----@private
----@param e AnimationFinishedEventData
-function this.onAnimationFinished(e)
-    local animation = AnimationLoader.Load({
-        AnimationPath =  "base_anim.nif",
-        SequenceName = "idle"
-    })
-    if not animation then
-        Logger:error("Failed to load animation")
-        return
-    end
-    BipNodeAnimator.SetAnimation(animation)
 end
 
 return this

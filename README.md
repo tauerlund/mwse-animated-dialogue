@@ -31,8 +31,8 @@ MWSE Lua mod that enables animations during dialogue in The Elder Scrolls III: M
     - [x] Blacklist NPCs
     - [ ] Animation settings
         - [x] Enable/disable animations
-        - [ ] Enable/disable only talk animations
-        - [ ] Enable/disable lip syncing
+        - [x] Enable/disable only talk animations
+        - [x] Enable/disable lip syncing
     - [ ] Camera settings
         - [x] Enable/disable camera animations
         - [x] Set camera offset (centered, left, right etc)
