@@ -21,7 +21,7 @@ function this.GetHeadMeshNode(npc)
         return nil
     end
 
-    if table.size(meshNodes) > 1 then 
+    if table.size(meshNodes) > 1 then
         Logger:error("Found more than one candidate for head mesh node!")
         return nil
     end
