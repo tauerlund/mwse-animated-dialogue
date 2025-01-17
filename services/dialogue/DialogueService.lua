@@ -1,11 +1,12 @@
 local Logger = require("tauer.animated-dialogue.shared.Logger").Create("DialogueService")
 local Settings = require("tauer.animated-dialogue.shared.Settings")
 local AnimationLoader = require("tauer.animated-dialogue.services.animation.AnimationLoader")
-local NodeAnimator = require("tauer.animated-dialogue.services.animation.NodeAnimator")
+local BipNodeAnimator = require("tauer.animated-dialogue.services.animation.BipNodeAnimator")
 local MeshNodeService = require("tauer.animated-dialogue.services.nodes.MeshNodeService")
 local CameraAnimator = require("tauer.animated-dialogue.services.animation.CameraAnimator")
 local NpcPackageManager = require("tauer.shared.npc-state.NpcPackageManager")
 local OrientationService = require("tauer.shared.transform.OrientationService")
+local MeshNodeAnimator = require("tauer.animated-dialogue.services.animation.MeshNodeAnimator")
 
 local customEvents = require("tauer.animated-dialogue.shared.Events")
 
@@ -71,7 +72,10 @@ function this.onDialogueActivated(e)
         CameraAnimator.Start(target)
     end
     if Settings.Mcm.EnableNpcAnimations then
-        NodeAnimator.Start(reference --[[@as tes3npcInstance]], animation)
+        BipNodeAnimator.Start(reference --[[@as tes3npcInstance]], animation)
+    end
+    if Settings.Mcm.EnableNpcLipsyncing then 
+        MeshNodeAnimator.StartHeadAnimations(reference --[[@as tes3npcInstance]])
     end
 end
 
@@ -104,7 +108,7 @@ function this.onInfoGetText(e)
         return
     end
 
-    NodeAnimator.SetAnimation(animation)
+    BipNodeAnimator.SetAnimation(animation)
 end
 
 ---@private
@@ -119,7 +123,8 @@ end
 
 ---@private
 function this.onDialogueEnded()
-    NodeAnimator.Stop()
+    BipNodeAnimator.Stop()
+    MeshNodeAnimator.Stop()
     CameraAnimator.Reset()
     this.unregisterEvents()
     this.npc = nil
@@ -157,7 +162,7 @@ function this.onAnimationFinished(e)
         Logger:error("Failed to load animation")
         return
     end
-    NodeAnimator.SetAnimation(animation)
+    BipNodeAnimator.SetAnimation(animation)
 end
 
 return this
