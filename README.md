@@ -53,3 +53,4 @@ MWSE Lua mod that enables animations during dialogue in The Elder Scrolls III: M
     - Fixed
 - [ ] Camera animation causes sky to become offset. Expected behavior, need to animate the sky along with the camera.
 - [ ] Interpolating camera back to its original position when ending dialogue causes unreliable behavior. For now it just snaps back, needs more work.
+- [ ] Camera animation only animates position, not rotation, which causes it to look inconsistent depending on the where the camera is pointing when activating dialogue.
