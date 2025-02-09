@@ -120,7 +120,7 @@ end
 ---@param dialogueInfo tes3dialogueInfo
 function this.isMenuDialogInfo(dialogueInfo)
     local type = dialogueInfo.type
-    if type == tes3.dialogueType.voice or type == tes3.dialogueType.journal or type ==tes3.dialogueType.greeting then
+    if type == tes3.dialogueType.voice or type == tes3.dialogueType.journal or type == tes3.dialogueType.greeting then
         return false
     end
     return true
@@ -149,7 +149,7 @@ function this.getRandomAnimation(isTalk)
     if not path or not sequence then
         return nil
     end
-    local animation = AnimationLoader.Load({ AnimationPath = path, SequenceName = sequence })
+    local animation = AnimationLoader.Load({ AnimationPath = path, SequenceName = sequence, NonLooping = isTalk })
     return animation
 end
 
