@@ -13,6 +13,7 @@ function this.GetAllBipNodes(node, parameters)
     local bipNodes = {}
 
     local parentBip = node:getObjectByName("Bip01") --[[@as niNode]]
+    Logger:info("Parent of BIP: %s", parentBip.parent.name)
     if not parentBip then
         Logger:error("%s does not contain a Bip01 node!", node.name)
         return bipNodes

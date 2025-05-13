@@ -13,7 +13,7 @@ local customEvents = require("tauer.animated-dialogue.shared.Events")
 local this = {}
 
 ---@private
----@type tes3reference
+---@type tes3npcInstance
 this.npc = nil
 
 local tempTalkAnimations = {
@@ -31,6 +31,10 @@ local tempIdleAnimations = {
     ["base_anim.nif"] = "idle"
 }
 
+local beastAnimations = {
+    ["base_animKnA.nif"] = "idle"
+}
+
 ---@public
 function this.Initialize()
     Logger:debug("Initializing DialogueService")
@@ -41,9 +45,11 @@ end
 ---@param e uiActivatedEventData
 function this.onDialogueActivated(e)
     local reference = tes3ui.getServiceActor().reference --[[@as tes3reference]]
-    if reference.object.objectType ~= tes3.objectType.npc and reference.object.objectType ~= tes3.objectType.creature then
+    if reference.object.objectType ~= tes3.objectType.npc then
         return
     end
+
+    this.npc = reference --[[@as tes3npcInstance]]
 
     if Settings.Mcm.BlacklistedNpcs[reference.baseObject.id:lower()] then
         return
@@ -60,8 +66,6 @@ function this.onDialogueActivated(e)
         return
     end
 
-
-    this.npc = reference
     this.registerEvents()
 
     local target = this.getRelativeHeadPosition(reference --[[@as tes3npcInstance]])
@@ -145,7 +149,10 @@ end
 ---@return Animation|nil
 function this.getRandomAnimation(isTalk)
     local animationPaths = nil
-    if isTalk and Settings.Mcm.EnableNpcTalkAnimations then
+    local baseNpc = this.npc.baseObject --[[@as tes3npc]]
+    if baseNpc.race.isBeast then
+        animationPaths = beastAnimations
+    elseif isTalk and Settings.Mcm.EnableNpcTalkAnimations then
         animationPaths = tempTalkAnimations
     else
         animationPaths = tempIdleAnimations
