@@ -8,3 +8,4 @@
 ---@field EnableNpcAnimations boolean
 ---@field EnableNpcLipsyncing boolean
 ---@field EnableNpcTalkAnimations boolean
+---@field EnableLookAtCamera boolean

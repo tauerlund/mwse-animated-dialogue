@@ -2,6 +2,7 @@ local DialogueService = require("tauer.animated-dialogue.services.dialogue.Dialo
 local CameraAnimator = require("tauer.animated-dialogue.services.animation.CameraAnimator")
 local BipNodeAnimator = require("tauer.animated-dialogue.services.animation.BipNodeAnimator")
 local MeshNodeAnimator = require("tauer.animated-dialogue.services.animation.MeshNodeAnimator")
+local HeadNodeAnimator = require("tauer.animated-dialogue.services.animation.HeadNodeAnimator")
 
 local function initializeMcm()
     dofile("Data Files\\MWSE\\mods\\tauer\\animated-dialogue\\mcm.lua")
@@ -16,6 +17,7 @@ local function resetMod()
     CameraAnimator.Stop()
     BipNodeAnimator.Stop()
     MeshNodeAnimator.Stop()
+    HeadNodeAnimator.Stop()
 end
 
 event.register(tes3.event.modConfigReady, initializeMcm)

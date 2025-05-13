@@ -16,6 +16,7 @@ this.defaults = {
     EnableNpcAnimations = true,
     EnableNpcLipsyncing = true,
     EnableNpcTalkAnimations = true,
+    EnableLookAtCamera = true,
 }
 
 ---@type Mcm

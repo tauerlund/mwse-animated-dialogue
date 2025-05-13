@@ -30,7 +30,7 @@ this.paused = false
 ---@param animation Animation
 function this.Start(npc, animation)
     this.currentNpc = npc
-    this.nodesToUpdate = BipNodeService.GetAllBipNodes(npc.sceneNode, { IncludeParent = false })
+    this.nodesToUpdate = BipNodeService.GetAllBipNodes(npc.sceneNode, { IncludeParent = false, Exclude = { "Bip01 Head" } })
 
     this.SetAnimation(animation)
     this.restartCurrentAnimation()

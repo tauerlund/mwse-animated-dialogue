@@ -17,6 +17,11 @@ animationCategory:createOnOffButton({
     variable = mwse.mcm.createTableVariable{ id = "EnableNpcAnimations", table = Settings.Mcm }
 })
 
+animationCategory:createOnOffButton({
+    label = "NPC looks at camera",
+    description = "Enabling this setting will make NPCs look at the camera during dialogue.",
+    variable = mwse.mcm.createTableVariable{ id = "EnableLookAtCamera", table = Settings.Mcm }
+})
 
 animationCategory:createOnOffButton({
     label = "NPC lipsyncing",

@@ -5,6 +5,7 @@ local BipNodeAnimator = require("tauer.animated-dialogue.services.animation.BipN
 local CameraAnimator = require("tauer.animated-dialogue.services.animation.CameraAnimator")
 local OrientationService = require("tauer.shared.transform.OrientationService")
 local MeshNodeAnimator = require("tauer.animated-dialogue.services.animation.MeshNodeAnimator")
+local HeadNodeAnimator = require("tauer.animated-dialogue.services.animation.HeadNodeAnimator")
 
 local customEvents = require("tauer.animated-dialogue.shared.Events")
 
@@ -74,6 +75,9 @@ function this.onDialogueActivated(e)
     if Settings.Mcm.EnableNpcLipsyncing then
         MeshNodeAnimator.StartHeadAnimations(reference --[[@as tes3npcInstance]])
     end
+    if Settings.Mcm.EnableLookAtCamera then
+        HeadNodeAnimator.LookAt(reference --[[@as tes3npcInstance]], tes3.getCamera())
+    end
 end
 
 ---@private
@@ -131,6 +135,7 @@ function this.onDialogueEnded()
     BipNodeAnimator.Stop()
     MeshNodeAnimator.Stop()
     CameraAnimator.Reset()
+    HeadNodeAnimator.Stop()
     this.unregisterEvents()
     this.npc = nil
 end

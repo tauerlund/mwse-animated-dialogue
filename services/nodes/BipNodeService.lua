@@ -1,5 +1,5 @@
 local Logger = require("tauer.animated-dialogue.shared.Logger").Create("BipNodeService")
-local Arrays = require("tauer.shared.Arrays")
+local TableUtils = require("tauer.shared.Arrays")
 
 ---@class BipNodeService
 local this = {}
@@ -31,6 +31,13 @@ function this.GetAllBipNodes(node, parameters)
     return bipNodes
 end
 
+---@public
+---@param npc tes3npcInstance
+---@return niNode | nil
+function this.GetHeadNode(npc)
+    return npc.sceneNode:getObjectByName("Bip01 Head") --[[@as niNode]]
+end
+
 ---@private
 ---@param node niNode
 ---@return boolean
@@ -46,7 +53,7 @@ function this.isExcluded(node, parameters)
     if not parameters or not parameters.Exclude then
         return false
     end
-    return Arrays.Contains(parameters.Exclude, node.name)
+    return TableUtils.Contains(parameters.Exclude, node.name)
 end
 
 return this
