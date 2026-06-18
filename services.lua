@@ -5,6 +5,8 @@ local this = {
 
     dialogueActivator = require("tauer.animated-dialogue.services.dialogue.dialogueActivator"),
 
+    renderingController = require("tauer.animated-dialogue.services.rendering.renderingController"),
+
     ---@class enums
     enums = {
         events = require("tauer.animated-dialogue.services.events.enums.events")
