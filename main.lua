@@ -30,6 +30,8 @@ function this.initializeMod(_)
 
 	---@type initializedService[]
 	local initializedServices = {
+		services.eventLogger,
+		services.dialogueActivator,
 	}
 
 	this.initializer.initialize(services, initializedServices)
