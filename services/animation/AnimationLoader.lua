@@ -53,7 +53,7 @@ function this.load(parameters)
     ---@type Animation
     return {
         StartTime = startKey.time,
-        EndTime =  stopKey.time,
+        EndTime = stopKey.time,
         Path = parameters.AnimationPath,
         NodeKeyFrames = this.getKeyFrameData(mesh, startKey.time, stopKey.time),
         NonLooping = parameters.NonLooping

@@ -13,11 +13,11 @@ local customEvents = require("tauer.animated-dialogue.shared.Events")
 local this = {}
 
 ---@private
----@type tes3npcInstance
-this.npc = nil
+---@type tes3reference
+this.reference = nil
 
 local tempTalkAnimations = {
-    ["tauer\\anims\\talk_1.nif"] = "idle9",
+    ["tauer\\anims\\foo.nif"] = "idle9",
     ["tauer\\anims\\talk_2.nif"] = "idle9",
     ["tauer\\anims\\talk_3.nif"] = "idle9",
     ["tauer\\anims\\talk_4.nif"] = "idle9",
@@ -28,7 +28,7 @@ local tempTalkAnimations = {
 }
 
 local tempIdleAnimations = {
-    ["base_anim.nif"] = "idle"
+    ["tauer\\anims\\2hIdleExample.nif"] = "idle9"
 }
 
 local beastAnimations = {
@@ -45,11 +45,11 @@ end
 ---@param e uiActivatedEventData
 function this.onDialogueActivated(e)
     local reference = tes3ui.getServiceActor().reference --[[@as tes3reference]]
-    if reference.object.objectType ~= tes3.objectType.npc then
+    if not this.isNpc(reference) then
         return
     end
 
-    this.npc = reference --[[@as tes3npcInstance]]
+    this.reference = reference
 
     if Settings.Mcm.BlacklistedNpcs[reference.baseObject.id:lower()] then
         return
@@ -114,8 +114,7 @@ function this.onInfoGetText(e)
 end
 
 ---@private
----@param e AnimationFinishedEventData
-function this.onAnimationFinished(e)
+function this.onAnimationFinished()
     local animation = this.getRandomAnimation(false)
     if not animation then
         Logger:error("Failed to load animation")
@@ -141,7 +140,7 @@ function this.onDialogueEnded()
     CameraAnimator.Reset()
     HeadNodeAnimator.Stop()
     this.unregisterEvents()
-    this.npc = nil
+    this.reference = nil
 end
 
 ---@private
@@ -149,11 +148,12 @@ end
 ---@return Animation|nil
 function this.getRandomAnimation(isTalk)
     local animationPaths = nil
-    local baseNpc = this.npc.baseObject --[[@as tes3npc]]
+    local baseNpc = this.reference.baseObject --[[@as tes3npc]]
+
     if baseNpc.race.isBeast then
         animationPaths = beastAnimations
     elseif isTalk and Settings.Mcm.EnableNpcTalkAnimations then
-        animationPaths = tempTalkAnimations
+        animationPaths = tempIdleAnimations
     else
         animationPaths = tempIdleAnimations
     end
@@ -163,6 +163,20 @@ function this.getRandomAnimation(isTalk)
     end
     local animation = AnimationLoader.Load({ AnimationPath = path, SequenceName = sequence, NonLooping = isTalk })
     return animation
+end
+
+---@private
+---@param reference tes3reference
+---@return boolean
+function this.isNpc(reference)
+    return reference.object.objectType == tes3.objectType.npc
+end
+
+---@private
+---@param reference tes3reference
+---@return boolean
+function this.isCreature(reference)
+    return reference.object.objectType == tes3.objectType.creature
 end
 
 ---@private

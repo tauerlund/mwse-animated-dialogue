@@ -163,9 +163,6 @@ function this.calculateOffsetTarget(target)
     return target + offset
 end
 
-
-
-
 ---@private
 ---@param vector tes3vector3
 ---@return tes3vector3
