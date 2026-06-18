@@ -1,3 +1,0 @@
----@meta
----@class AnimationFinishedEventData
----@field Animation Animation
