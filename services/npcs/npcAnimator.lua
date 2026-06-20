@@ -6,14 +6,6 @@ local this = {}
 this.eventRegistrar = nil
 
 ---@private
----@type enums
-this.enums = nil
-
----@private
----@type npcConstants
-this.constants = nil
-
----@private
 ---@type eventHandlerGroups
 this.eventHandlers = {
     lifetime = {},
@@ -25,10 +17,6 @@ this.eventHandlers = {
 this.npc = nil
 
 ---@private
----@type niNode
-this.head = nil
-
----@private
 ---@type number
 this.phase = 0
 
@@ -37,10 +25,8 @@ this.phase = 0
 ---@return boolean,string|nil
 function this.initialize(services)
     this.eventRegistrar = services.eventRegistrar
-    this.enums = services.enums
-    this.constants = services.enums.constants.npcs
 
-    local events = this.enums.events
+    local events = services.enums.events
 
     this.eventHandlers = {
         lifetime = {
@@ -57,6 +43,7 @@ function this.initialize(services)
     return true, nil
 end
 
+---@public
 function this.uninitialize()
     this.eventRegistrar.unregister(this.eventHandlers.lifetime)
 end
@@ -65,7 +52,6 @@ end
 ---@param e dialogueStartedEventData
 function this.onDialogueStarted(e)
     this.npc = e.npc
-    this.head = e.npc.sceneNode:getObjectByName(this.constants.headNodeName) --[[@as niNode]]
     this.phase = 0
     this.eventRegistrar.register(this.eventHandlers.dialogue)
 end
@@ -74,22 +60,25 @@ end
 function this.onDialogueEnded()
     this.eventRegistrar.unregister(this.eventHandlers.dialogue)
     this.npc = nil
-    this.head = nil
 end
 
 ---@private
 ---@param e enterFrameEventData
 function this.onEnterFrame(e)
-    local delta = e.delta
+    local data = this.npc.animationData
+    if not data then
+        return
+    end
 
-    this.updateControllers()
-    this.updateHead()
-    this.incrementPhase(delta)
+    this.updateControllers(data)
+    this.updateHead(data)
+    this.incrementPhase(e.delta)
 end
 
 ---@private
-function this.updateControllers()
-    this.npc.sceneNode:update({
+---@param data tes3animationData
+function this.updateControllers(data)
+    data.actorNode:update({
         controllers = true,
         children = true,
         time = this.phase
@@ -97,12 +86,13 @@ function this.updateControllers()
 end
 
 ---@private
-function this.updateHead()
-    local phase = this.isSpeaking()
-        and this.getLipsyncPhase()
+---@param data tes3animationData
+function this.updateHead(data)
+    local phase = this.isTalking()
+        and this.getTalkPhase()
         or 0
 
-    this.head:update({
+    data.headNode:update({
         controllers = true,
         time = phase
     })
@@ -119,22 +109,25 @@ end
 
 ---@private
 ---@return boolean
-function this.isSpeaking()
-    return this.npc.attachments.animation.lipsyncLevel ~= -1
+function this.isTalking()
+    return this.npc.animationData.lipsyncLevel ~= -1
 end
 
 ---@private
 ---@return number
-function this.getLipsyncPhase()
-    local lipsyncLevel = this.npc.attachments.animation.lipsyncLevel
+function this.getTalkPhase()
+    local data = this.npc.animationData
+    if not data then
+        return 0
+    end
 
-    -- TODO: Get these values dynamically from the mesh node instead of hardcoding
-    local lipSyncStartTime = this.constants.lipsyncStartTime
-    local lipSyncEndTime = this.constants.lipsyncEndTime
+    local level = data.lipsyncLevel
+    local startTime = data.talkMorphStartTime
+    local endTime = data.talkMorphEndTime
 
-    local phase = math.remap(lipsyncLevel, 0, 1, lipSyncStartTime, lipSyncEndTime)
+    local phase = math.remap(level, 0, 1, startTime, endTime)
 
-    return math.clamp(phase, lipSyncStartTime, lipSyncEndTime)
+    return math.clamp(phase, startTime, endTime)
 end
 
 return this
