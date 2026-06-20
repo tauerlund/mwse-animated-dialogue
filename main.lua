@@ -33,6 +33,7 @@ function this.initializeMod(_)
 		services.eventLogger,
 		services.dialogueActivator,
 		services.renderingController,
+		services.npcAnimator,
 	}
 
 	this.initializer.initialize(services, initializedServices)

@@ -7,9 +7,16 @@ local this = {
 
     renderingController = require("tauer.animated-dialogue.services.rendering.renderingController"),
 
+    npcAnimator = require("tauer.animated-dialogue.services.npcs.npcAnimator"),
+
     ---@class enums
     enums = {
-        events = require("tauer.animated-dialogue.services.events.enums.events")
+        events = require("tauer.animated-dialogue.services.events.enums.events"),
+
+        ---@class constants
+        constants = {
+            npcs = require("tauer.animated-dialogue.services.npcs.enums.constants")
+        }
     }
 }
 
