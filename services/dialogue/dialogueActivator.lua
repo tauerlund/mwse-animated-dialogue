@@ -10,15 +10,15 @@ this.eventHandlers = nil
 this.eventRegistrar = nil
 
 ---@private
----@type enums
-this.enums = nil
+---@type events
+this.events = nil
 
 ---@public
 ---@param services serviceCollection
 ---@return boolean,string|nil
 function this.initialize(services)
     this.eventRegistrar = services.eventRegistrar
-    this.enums = services.enums
+    this.events = services.enums.events
 
     this.eventHandlers = {
         [tes3.event.uiActivated] = { this.onUiActivated, { filter = "MenuDialog" } },
@@ -51,12 +51,12 @@ function this.onUiActivated(e)
     local eventData = {
         npc = reference
     }
-    event.trigger(this.enums.events.dialogueStarted, eventData)
+    event.trigger(this.events.dialogueStarted, eventData)
 end
 
 ---@private
 function this.onMenuDialogDestroyed()
-    event.trigger(this.enums.events.dialogueEnded)
+    event.trigger(this.events.dialogueEnded)
 end
 
 ---@private

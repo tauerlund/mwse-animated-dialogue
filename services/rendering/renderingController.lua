@@ -6,10 +6,6 @@ local this = {}
 this.eventRegistrar = nil
 
 ---@private
----@type enums
-this.enums = nil
-
----@private
 ---@type eventHandlers
 this.eventHandlers = nil
 
@@ -22,9 +18,8 @@ this.pauseRenderingInMenus = nil
 ---@return boolean,string|nil
 function this.initialize(services)
     this.eventRegistrar = services.eventRegistrar
-    this.enums = services.enums
 
-    local events = this.enums.events
+    local events = services.enums.events
 
     this.eventHandlers = {
         [events.dialogueStarted] = this.onDialogueStarted,

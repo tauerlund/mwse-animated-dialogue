@@ -5,10 +5,6 @@ local this = {}
 this.logger = mwse.Logger.new()
 
 ---@private
----@type enums
-this.enums = nil
-
----@private
 ---@type eventRegistrar
 this.eventRegistrar = nil
 
@@ -24,7 +20,6 @@ this.logger = mwse.Logger.new()
 ---@param services serviceCollection
 ---@return boolean, string|nil
 function this.initialize(services)
-    this.enums = services.enums
     this.eventRegistrar = services.eventRegistrar
 
     local events = services.enums.events
