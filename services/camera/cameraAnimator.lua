@@ -36,10 +36,6 @@ this.targetOffset = nil
 ---@type number
 this.animationTime = 0
 
----@private
----@type tes3reference
-this.npc = nil
-
 ---@public
 ---@param services serviceCollection
 ---@return boolean,string|nil
@@ -72,8 +68,6 @@ end
 ---@private
 ---@param e dialogueStartedEventData
 function this.onDialogueStarted(e)
-    this.npc = e.npc
-
     this.setupWrappers()
     this.computeTargetOffset(e.npc)
     this.animationTime = 0
@@ -85,7 +79,6 @@ end
 function this.onDialogueEnded()
     this.eventRegistrar.unregister(this.eventHandlers.dialogue)
     this.resetWrappers()
-    this.npc = nil
     this.targetOffset = nil
 end
 
