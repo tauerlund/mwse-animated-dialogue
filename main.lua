@@ -1,4 +1,4 @@
----@class ModernLockpicking
+---@class AnimatedDialogue
 local this = {}
 
 ---@private
@@ -10,13 +10,10 @@ this.services = require("tauer.animated-dialogue.services")
 ---@private
 this.initializer = require("tauer.animated-dialogue.initializer")
 
----@private
-this.logger = mwse.Logger.new()
-
 ---@package
 ---@param _ modConfigReadyEventData
 function this.initializeMcm(_)
-	-- this.services.mcmInitializer.initialize(this.services)
+	this.services.mcmInitializer.initialize(this.services)
 end
 
 ---@package

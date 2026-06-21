@@ -12,16 +12,23 @@ local this = {
 
     cameraAnimator = require("tauer.animated-dialogue.services.camera.cameraAnimator"),
 
+    mcmInitializer = require("tauer.animated-dialogue.services.mcm.mcmInitializer"),
+    mcmSettings = require("tauer.animated-dialogue.services.mcm.mcmSettings"),
+    settings = require("tauer.animated-dialogue.services.mcm.mcmSettings").mcm,
+
+    translations = require("tauer.animated-dialogue.services.translations.translations"),
+
     ---@class enums
     enums = {
         events = require("tauer.animated-dialogue.services.events.enums.events"),
+        translationKey = require("tauer.animated-dialogue.services.translations.enums.translationKey"),
     }
 }
 
 ---@public
 ---@return service[]
 function this.unnamedServices()
-    return { this.enums }
+    return { this.enums, this.settings }
 end
 
 return this
