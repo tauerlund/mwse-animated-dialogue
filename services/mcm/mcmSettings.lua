@@ -4,12 +4,13 @@ local this = {}
 ---@private
 this.path = "animated-dialogue"
 
----@type settings
+---@class settings
 this.defaults = {
     cameraEnabled = true,
     npcAnimEnabled = true,
     npcTurnEnabled = true,
-    npcHeadAnimEnabled = true,
+    npcHeadMorphAnimEnabled = true,
+    npcHeadLookAtEnabled = true,
     distance = 75,
     horizontalOffset = 0,
     verticalOffset = 0,

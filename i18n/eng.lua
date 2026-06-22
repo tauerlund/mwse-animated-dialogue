@@ -10,9 +10,12 @@ return {
     [keys.npcAnimEnabledDescription] = "Enables or disables NPC body animations during dialogue.",
     [keys.npcTurnEnabled] = "Enable NPC Turning",
     [keys.npcTurnEnabledDescription] = "Enables or disables the NPC turning to face the player when dialogue starts.",
-    [keys.npcHeadAnimEnabled] = "Enable Head Animations",
-    [keys.npcHeadAnimEnabledDescription] =
-    "Enables or disables NPC head animations during dialogue. This includes blinking and lip syncing (for voiced dialogue).",
+    [keys.npcHeadMorphAnimEnabled] = "Enable Head Morph Animations",
+    [keys.npcHeadMorphAnimEnabledDescription] =
+    "Enables or disables NPC head morph animations during dialogue. This includes blinking and lip syncing (for voiced dialogue).",
+    [keys.npcHeadLookAtEnabled] = "Enable Head Look-At",
+    [keys.npcHeadLookAtEnabledDescription] =
+    "Enables or disables the NPC's head turning to look at the camera during dialogue.",
     [keys.positionCategory] = "Position",
     [keys.rotationCategory] = "Rotation",
     [keys.timingCategory] = "Timing",

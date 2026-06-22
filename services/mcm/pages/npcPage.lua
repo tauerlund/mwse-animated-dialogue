@@ -31,10 +31,19 @@ function this.initialize(template, services)
     })
 
     page:createOnOffButton({
-        label = translations.get(keys.npcHeadAnimEnabled),
-        description = translations.get(keys.npcHeadAnimEnabledDescription),
+        label = translations.get(keys.npcHeadMorphAnimEnabled),
+        description = translations.get(keys.npcHeadMorphAnimEnabledDescription),
         variable = mwse.mcm.createTableVariable({
-            id = "npcHeadAnimEnabled",
+            id = "npcHeadMorphAnimEnabled",
+            table = services.settings
+        }),
+    })
+
+    page:createOnOffButton({
+        label = translations.get(keys.npcHeadLookAtEnabled),
+        description = translations.get(keys.npcHeadLookAtEnabledDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "npcHeadLookAtEnabled",
             table = services.settings
         }),
     })
