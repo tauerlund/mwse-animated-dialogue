@@ -31,10 +31,6 @@ this.animationTime = 0
 ---@type tes3reference|nil
 this.npc = nil
 
----@private
----@type mwseTimer|nil
-this.animationTimer = nil
-
 ---@public
 ---@param services serviceCollection
 ---@return boolean,string|nil
@@ -83,18 +79,10 @@ function this.onDialogueStarted(e)
 
     if this.depthOfField and this.settings.dofEnabled then
         this.npc = e.npc
-
         this.depthOfField["focal_length"] = 0
         this.depthOfField.enabled = true
-
         this.animationTime = 0
-
         this.eventRegistrar.register(this.eventHandlers.dialogue)
-        this.animationTimer = timer.start({
-            duration = this.settings.animationDuration,
-            type = timer.real,
-            callback = this.onAnimationComplete,
-        })
     end
 end
 
@@ -102,23 +90,12 @@ end
 function this.onDialogueEnded()
     mge.render.pauseRenderingInMenus = this.pauseRenderingInMenus
 
-    if this.animationTimer then
-        this.animationTimer:cancel()
-        this.animationTimer = nil
-    end
     this.eventRegistrar.unregister(this.eventHandlers.dialogue)
     this.npc = nil
 
     if this.depthOfField then
         this.depthOfField.enabled = false
     end
-end
-
----@private
-function this.onAnimationComplete()
-    this.eventRegistrar.unregister(this.eventHandlers.dialogue)
-    this.depthOfField["focal_length"] = this.settings.dofStrength
-    this.animationTimer = nil
 end
 
 ---@private
@@ -137,6 +114,10 @@ function this.onEnterFrame(e)
         or this.npc.position
 
     this.depthOfField["focus_distance"] = (tes3.getCameraPosition() - npcPos):length() * 0.0142
+
+    if this.animationTime >= settings.animationDuration then
+        this.eventRegistrar.unregister(this.eventHandlers.dialogue)
+    end
 end
 
 return this

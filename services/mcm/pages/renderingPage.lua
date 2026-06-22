@@ -16,7 +16,7 @@ function this.initialize(template, services)
         label = translations.get(keys.dofEnabled),
         description = translations.get(keys.dofEnabledDescription),
         variable = mwse.mcm.createTableVariable({
-            id = "bokehEnabled",
+            id = "dofEnabled",
             table = services.settings
         }),
     })
