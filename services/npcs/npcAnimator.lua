@@ -36,6 +36,10 @@ this.targetYaw = nil
 ---@type number
 this.turnTime = 0
 
+---@private
+---@type fun(delta: number, data: tes3animationData)[]
+this.updaters = {}
+
 ---@public
 ---@param services serviceCollection
 ---@return boolean,string|nil
@@ -76,12 +80,28 @@ function this.onDialogueStarted(e)
     local dx = playerPos.x - e.npc.position.x
     local dy = playerPos.y - e.npc.position.y
     this.targetYaw = math.atan2(dx, dy)
+
+    this.updaters = {}
+
+    if this.settings.npcTurnEnabled then
+        table.insert(this.updaters, this.updateTurn)
+    end
+
+    if this.settings.npcAnimEnabled then
+        table.insert(this.updaters, this.updateControllers)
+    end
+
+    if this.settings.npcHeadAnimEnabled then
+        table.insert(this.updaters, this.updateHead)
+    end
+
     this.eventRegistrar.register(this.eventHandlers.dialogue)
 end
 
 ---@private
 function this.onDialogueEnded()
     this.eventRegistrar.unregister(this.eventHandlers.dialogue)
+    this.updaters = {}
     this.npc = nil
     this.originalYaw = nil
     this.targetYaw = nil
@@ -95,18 +115,15 @@ function this.onEnterFrame(e)
         return
     end
 
-    this.updateTurn(e.delta)
-    this.updateControllers(data)
-    this.updateHead(data)
-    this.incrementPhase(e.delta)
+    for _, updater in ipairs(this.updaters) do
+        updater(e.delta, data)
+    end
 end
 
+---@private
 ---@param delta number
-function this.updateTurn(delta)
-    if not this.originalYaw then
-        return
-    end
-
+---@param _ tes3animationData
+function this.updateTurn(delta, _)
     local duration = this.settings.turnDuration
     this.turnTime = math.min(this.turnTime + delta, duration)
     local t = math.ease.smoothstep(this.turnTime / duration)
@@ -114,6 +131,7 @@ function this.updateTurn(delta)
 
     local orientation = this.npc.orientation:copy()
     orientation.z = yaw
+
     this.npc.orientation = orientation
 end
 
@@ -134,18 +152,28 @@ function this.lerpAngle(a, b, t)
 end
 
 ---@private
+---@param delta number
 ---@param data tes3animationData
-function this.updateControllers(data)
+function this.updateControllers(delta, data)
     data.actorNode:update({
         controllers = true,
         children = true,
         time = this.phase
     })
+    data.headNode:update({
+        controllers = true,
+        time = 0
+    })
+    this.phase = this.phase + delta
+    if this.phase >= 2.666667 then
+        this.phase = 0
+    end
 end
 
 ---@private
+---@param _ number
 ---@param data tes3animationData
-function this.updateHead(data)
+function this.updateHead(_, data)
     local phase = this.isTalking()
         and this.getTalkPhase()
         or 0
@@ -154,15 +182,6 @@ function this.updateHead(data)
         controllers = true,
         time = phase
     })
-end
-
----@private
----@param delta number
-function this.incrementPhase(delta)
-    this.phase = math.min(this.phase + delta, 2.666667)
-    if this.phase >= 2.666667 then
-        this.phase = 0
-    end
 end
 
 ---@private

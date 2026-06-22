@@ -12,6 +12,15 @@ function this.initialize(template, services)
         label = translations.get(keys.cameraPage)
     })
 
+    page:createOnOffButton({
+        label = translations.get(keys.cameraEnabled),
+        description = translations.get(keys.cameraEnabledDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "cameraEnabled",
+            table = services.settings
+        }),
+    })
+
     local positionCategory = page:createCategory({
         label = translations.get(keys.positionCategory)
     })

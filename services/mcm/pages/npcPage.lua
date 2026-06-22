@@ -12,6 +12,33 @@ function this.initialize(template, services)
         label = translations.get(keys.npcPage)
     })
 
+    page:createOnOffButton({
+        label = translations.get(keys.npcTurnEnabled),
+        description = translations.get(keys.npcTurnEnabledDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "npcTurnEnabled",
+            table = services.settings
+        }),
+    })
+
+    page:createOnOffButton({
+        label = translations.get(keys.npcAnimEnabled),
+        description = translations.get(keys.npcAnimEnabledDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "npcAnimEnabled",
+            table = services.settings
+        }),
+    })
+
+    page:createOnOffButton({
+        label = translations.get(keys.npcHeadAnimEnabled),
+        description = translations.get(keys.npcHeadAnimEnabledDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "npcHeadAnimEnabled",
+            table = services.settings
+        }),
+    })
+
     local timingCategory = page:createCategory({
         label = translations.get(keys.timingCategory)
     })

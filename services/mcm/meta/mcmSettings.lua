@@ -1,6 +1,10 @@
 ---@meta
 
 ---@class settings
+---@field cameraEnabled boolean
+---@field npcAnimEnabled boolean
+---@field npcTurnEnabled boolean
+---@field npcHeadAnimEnabled boolean
 ---@field distance number
 ---@field horizontalOffset number
 ---@field verticalOffset number

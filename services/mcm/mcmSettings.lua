@@ -6,6 +6,10 @@ this.path = "animated-dialogue"
 
 ---@type settings
 this.defaults = {
+    cameraEnabled = true,
+    npcAnimEnabled = true,
+    npcTurnEnabled = true,
+    npcHeadAnimEnabled = true,
     distance = 75,
     horizontalOffset = 0,
     verticalOffset = 0,

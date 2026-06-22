@@ -80,6 +80,9 @@ end
 ---@private
 ---@param e dialogueStartedEventData
 function this.onDialogueStarted(e)
+    if not this.settings.cameraEnabled then
+        return
+    end
     this.setupWrappers()
     this.naturalCameraPosition = tes3.getCameraPosition()
     this.targetDisplacement = this.computeTargetDisplacement(e.npc)
