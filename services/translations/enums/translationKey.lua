@@ -32,6 +32,11 @@ local this = {
     animationDurationDescription = "animationDurationDescription",
     turnDuration = "turnDuration",
     turnDurationDescription = "turnDurationDescription",
+    renderingPage = "renderingPage",
+    dofEnabled = "dofEnabled",
+    dofEnabledDescription = "dofEnabledDescription",
+    dofStrength = "dofStrength",
+    dofStrengthDescription = "dofStrengthDescription",
 }
 
 return this

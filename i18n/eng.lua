@@ -42,4 +42,10 @@ return {
     [keys.turnDuration] = "Turn Duration",
     [keys.turnDurationDescription] =
     "How long the NPC takes to turn and face the player when dialogue starts, in seconds.",
+    [keys.renderingPage] = "Rendering",
+    [keys.dofEnabled] = "Enable Depth of Field",
+    [keys.dofEnabledDescription] =
+    "Applies a depth of field effect during dialogue, keeping the NPC in focus while blurring the background.",
+    [keys.dofStrength] = "Blur Strength",
+    [keys.dofStrengthDescription] = "Controls how strongly out-of-focus areas are blurred.",
 }
