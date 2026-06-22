@@ -1,0 +1,3 @@
+---@meta
+---@class dialogueStartedEventData
+---@field public npc tes3reference

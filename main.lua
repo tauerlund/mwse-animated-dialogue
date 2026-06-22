@@ -1,25 +1,42 @@
-local DialogueService = require("tauer.animated-dialogue.services.dialogue.DialogueService")
-local CameraAnimator = require("tauer.animated-dialogue.services.animation.CameraAnimator")
-local BipNodeAnimator = require("tauer.animated-dialogue.services.animation.BipNodeAnimator")
-local MeshNodeAnimator = require("tauer.animated-dialogue.services.animation.MeshNodeAnimator")
-local HeadNodeAnimator = require("tauer.animated-dialogue.services.animation.HeadNodeAnimator")
+---@class AnimatedDialogue
+local this = {}
 
-local function initializeMcm()
-    dofile("Data Files\\MWSE\\mods\\tauer\\animated-dialogue\\mcm.lua")
+---@private
+this.tests = require("tauer.animated-dialogue.tests")
+
+---@private
+this.services = require("tauer.animated-dialogue.services")
+
+---@private
+this.initializer = require("tauer.animated-dialogue.initializer")
+
+---@package
+---@param _ modConfigReadyEventData
+function this.initializeMcm(_)
+	this.services.mcmInitializer.initialize(this.services)
 end
 
-local function startMod()
-    DialogueService.Initialize()
-    CameraAnimator.Initialize()
+---@package
+---@param _ initializedEventData
+function this.initializeMod(_)
+	if this.tests.enabled then
+		this.tests.run()
+	end
+
+	local services = this.services
+
+	---@type initializedService[]
+	local initializedServices = {
+		services.eventLogger,
+		services.dialogueActivator,
+		services.dialogueAnimationResolver,
+		services.renderingController,
+		services.npcAnimator,
+		services.cameraAnimator,
+	}
+
+	this.initializer.initialize(services, initializedServices)
 end
 
-local function resetMod()
-    CameraAnimator.Stop()
-    BipNodeAnimator.Stop()
-    MeshNodeAnimator.Stop()
-    HeadNodeAnimator.Stop()
-end
-
-event.register(tes3.event.modConfigReady, initializeMcm)
-event.register(tes3.event.loaded, startMod)
-event.register(tes3.event.load, resetMod)
+event.register(tes3.event.modConfigReady, this.initializeMcm)
+event.register(tes3.event.initialized, this.initializeMod)
