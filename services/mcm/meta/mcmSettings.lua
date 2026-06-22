@@ -2,4 +2,10 @@
 
 ---@class settings
 ---@field distance number
+---@field horizontalOffset number
+---@field verticalOffset number
+---@field pitchOffset number
+---@field yawOffset number
+---@field rollOffset number
 ---@field animationDuration number
+---@field turnDuration number

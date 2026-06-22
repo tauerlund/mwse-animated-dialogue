@@ -2,6 +2,10 @@
 local this = {}
 
 ---@private
+---@type settings
+this.settings = nil
+
+---@private
 ---@type eventRegistrar
 this.eventRegistrar = nil
 
@@ -20,11 +24,24 @@ this.npc = nil
 ---@type number
 this.phase = 0
 
+---@private
+---@type number
+this.originalYaw = nil
+
+---@private
+---@type number
+this.targetYaw = nil
+
+---@private
+---@type number
+this.turnTime = 0
+
 ---@public
 ---@param services serviceCollection
 ---@return boolean,string|nil
 function this.initialize(services)
     this.eventRegistrar = services.eventRegistrar
+    this.settings = services.settings
 
     local events = services.enums.events
 
@@ -53,6 +70,12 @@ end
 function this.onDialogueStarted(e)
     this.npc = e.npc
     this.phase = 0
+    this.turnTime = 0
+    this.originalYaw = e.npc.orientation.z
+    local playerPos = tes3.player.position
+    local dx = playerPos.x - e.npc.position.x
+    local dy = playerPos.y - e.npc.position.y
+    this.targetYaw = math.atan2(dx, dy)
     this.eventRegistrar.register(this.eventHandlers.dialogue)
 end
 
@@ -60,6 +83,8 @@ end
 function this.onDialogueEnded()
     this.eventRegistrar.unregister(this.eventHandlers.dialogue)
     this.npc = nil
+    this.originalYaw = nil
+    this.targetYaw = nil
 end
 
 ---@private
@@ -70,9 +95,42 @@ function this.onEnterFrame(e)
         return
     end
 
+    this.updateTurn(e.delta)
     this.updateControllers(data)
     this.updateHead(data)
     this.incrementPhase(e.delta)
+end
+
+---@param delta number
+function this.updateTurn(delta)
+    if not this.originalYaw then
+        return
+    end
+
+    local duration = this.settings.turnDuration
+    this.turnTime = math.min(this.turnTime + delta, duration)
+    local t = math.ease.smoothstep(this.turnTime / duration)
+    local yaw = this.lerpAngle(this.originalYaw, this.targetYaw, t)
+
+    local orientation = this.npc.orientation:copy()
+    orientation.z = yaw
+    this.npc.orientation = orientation
+end
+
+---@private
+---@param a number
+---@param b number
+---@param t number
+---@return number
+function this.lerpAngle(a, b, t)
+    local diff = b - a
+    if diff > math.pi then
+        diff = diff - 2 * math.pi
+    end
+    if diff < -math.pi then
+        diff = diff + 2 * math.pi
+    end
+    return a + diff * t
 end
 
 ---@private

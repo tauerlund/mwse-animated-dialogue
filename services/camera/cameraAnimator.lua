@@ -26,11 +26,23 @@ this.skyWrapper = nil
 
 ---@private
 ---@type tes3vector3
-this.originalWrapperPosition = nil
+this.cameraRootLocalPos = nil
 
 ---@private
 ---@type tes3vector3
-this.targetOffset = nil
+this.naturalCameraPosition = nil
+
+---@private
+---@type tes3vector3
+this.targetDisplacement = nil
+
+---@private
+---@type niQuaternion
+this.originalRotation = nil
+
+---@private
+---@type niQuaternion
+this.targetRotation = nil
 
 ---@private
 ---@type number
@@ -69,9 +81,11 @@ end
 ---@param e dialogueStartedEventData
 function this.onDialogueStarted(e)
     this.setupWrappers()
-    this.computeTargetOffset(e.npc)
+    this.naturalCameraPosition = tes3.getCameraPosition()
+    this.targetDisplacement = this.computeTargetDisplacement(e.npc)
+    this.originalRotation = this.captureOriginalRotation()
+    this.computeTargetRotation(e.npc)
     this.animationTime = 0
-
     this.eventRegistrar.register(this.eventHandlers.dialogue)
 end
 
@@ -79,13 +93,16 @@ end
 function this.onDialogueEnded()
     this.eventRegistrar.unregister(this.eventHandlers.dialogue)
     this.resetWrappers()
-    this.targetOffset = nil
+    this.targetDisplacement = nil
+    this.naturalCameraPosition = nil
+    this.originalRotation = nil
+    this.targetRotation = nil
 end
 
 ---@private
 ---@param e enterFrameEventData
 function this.onEnterFrame(e)
-    if not this.targetOffset then
+    if not this.targetDisplacement then
         return
     end
 
@@ -93,9 +110,8 @@ function this.onEnterFrame(e)
 
     this.animationTime = math.min(this.animationTime + e.delta, settings.animationDuration)
     local t = math.ease.smoothstep(this.animationTime / settings.animationDuration)
-    local offset = this.originalWrapperPosition:lerp(this.originalWrapperPosition + this.targetOffset, t)
 
-    this.applyOffset(offset)
+    this.applyTransform(this.targetDisplacement * t, t)
 end
 
 ---@private
@@ -105,40 +121,136 @@ function this.setupWrappers()
 
     this.cameraWrapper = this.getOrCreateWrapper(camera, "cameraAnimator")
     this.skyWrapper = this.getOrCreateWrapper(sky, "skyAnimator")
-    this.originalWrapperPosition = this.cameraWrapper.translation:copy()
+
+    this.cameraRootLocalPos = camera.translation:copy()
 end
 
 ---@private
 function this.resetWrappers()
-    if not this.cameraWrapper or not this.originalWrapperPosition then
+    if not this.cameraWrapper then
         return
     end
-    this.applyOffset(this.originalWrapperPosition)
-end
-
----@private
----@param offset tes3vector3
-function this.applyOffset(offset)
-    this.cameraWrapper.translation = offset
+    this.cameraWrapper.translation = tes3vector3.new(0, 0, 0)
+    this.cameraWrapper.rotation:toIdentity()
     this.cameraWrapper:update()
-    this.skyWrapper.translation = offset
+    this.skyWrapper.translation = tes3vector3.new(0, 0, 0)
     this.skyWrapper:update()
 end
 
 ---@private
----@param npc tes3reference
-function this.computeTargetOffset(npc)
-    local data = npc.animationData
-    if not data or not data.headNode then
-        return nil
+---@param displacement tes3vector3
+---@param t number
+function this.applyTransform(displacement, t)
+    if not this.originalRotation then
+        return
     end
 
-    local headPosition = data.headNode.worldTransform.translation
-    local cameraPosition = tes3.getCameraPosition()
-    local distance = cameraPosition:distance(headPosition)
-    local direction = (headPosition - cameraPosition):normalized()
+    local D                        = this.originalRotation:slerp(this.targetRotation, t):toRotation()
+    local Rc                       = tes3.worldController.worldCamera.cameraRoot.rotation
+    local Rw                       = D * Rc:transpose()
 
-    this.targetOffset = direction * (distance - this.settings.distance)
+    local P                        = this.cameraRootLocalPos
+    this.cameraWrapper.translation = displacement + P - Rw * P
+    this.cameraWrapper.rotation    = Rw
+    this.cameraWrapper:update()
+
+    this.skyWrapper.translation = displacement
+    this.skyWrapper:update()
+end
+
+---@private
+---@return niQuaternion
+function this.captureOriginalRotation()
+    return tes3.worldController.worldCamera.cameraRoot.rotation:toQuaternion()
+end
+
+---@private
+---@param npc tes3reference
+---@return tes3vector3
+function this.getNpcHorizontalForward(npc)
+    local playerPos = tes3.player.position
+    return tes3vector3.new(playerPos.x - npc.position.x, playerPos.y - npc.position.y, 0):normalized()
+end
+
+---@private
+---@param npc tes3reference
+function this.computeTargetRotation(npc)
+    local settings   = this.settings
+    local worldUp    = tes3vector3.new(0, 0, 1)
+
+    local npcForward = this.getNpcHorizontalForward(npc)
+    local npcRight   = worldUp:cross(npcForward)
+
+    local lookDir    = -npcForward
+    local right      = lookDir:cross(worldUp)
+    if npcRight:length() < 0.001 then
+        npcRight = tes3vector3.new(1, 0, 0)
+    else
+        npcRight = npcRight:normalized()
+    end
+
+    if settings.yawOffset ~= 0 then
+        lookDir = this.rotateAroundAxis(lookDir, worldUp, settings.yawOffset)
+        right   = this.rotateAroundAxis(right, worldUp, settings.yawOffset)
+    end
+    if settings.pitchOffset ~= 0 then
+        lookDir = this.rotateAroundAxis(lookDir, npcRight, settings.pitchOffset)
+        right   = this.rotateAroundAxis(right, npcRight, settings.pitchOffset)
+    end
+    if settings.rollOffset ~= 0 then
+        lookDir = this.rotateAroundAxis(lookDir, npcForward, settings.rollOffset)
+        right   = this.rotateAroundAxis(right, npcForward, settings.rollOffset)
+    end
+
+    local up = right:cross(lookDir):normalized()
+
+    local D = tes3matrix33.new()
+    D.x = tes3vector3.new(right.x, lookDir.x, up.x)
+    D.y = tes3vector3.new(right.y, lookDir.y, up.y)
+    D.z = tes3vector3.new(right.z, lookDir.z, up.z)
+
+    this.targetRotation = D:toQuaternion()
+end
+
+---@private
+---@param v tes3vector3
+---@param axis tes3vector3
+---@param degrees number
+---@return tes3vector3
+function this.rotateAroundAxis(v, axis, degrees)
+    local q = niQuaternion.new()
+    q:fromAngleAxis(math.rad(degrees), axis)
+    return q:toRotation() * v
+end
+
+---@private
+---@param npc tes3reference
+---@return tes3vector3
+function this.computeTargetDisplacement(npc)
+    local data = npc.animationData
+    if not data or not data.headNode then
+        return tes3vector3.new(0, 0, 0)
+    end
+
+    local settings   = this.settings
+    local headPos    = data.headNode.worldTransform.translation
+    local cameraPos  = this.naturalCameraPosition
+    local worldUp    = tes3vector3.new(0, 0, 1)
+
+    local npcForward = this.getNpcHorizontalForward(npc)
+    local right      = worldUp:cross(npcForward)
+    if right:length() < 0.001 then
+        right = tes3vector3.new(1, 0, 0)
+    else
+        right = right:normalized()
+    end
+
+    local targetPos = headPos
+        + npcForward * settings.distance
+        + right * settings.horizontalOffset
+        + worldUp * settings.verticalOffset
+
+    return targetPos - cameraPos
 end
 
 ---@private

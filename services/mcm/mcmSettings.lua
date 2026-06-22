@@ -7,7 +7,13 @@ this.path = "animated-dialogue"
 ---@type settings
 this.defaults = {
     distance = 75,
+    horizontalOffset = 0,
+    verticalOffset = 0,
+    pitchOffset = 0,
+    yawOffset = 0,
+    rollOffset = 0,
     animationDuration = 1.0,
+    turnDuration = 0.5,
 }
 
 ---@type settings
