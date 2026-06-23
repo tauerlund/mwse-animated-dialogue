@@ -21,6 +21,9 @@ this.antiParallelThreshold = 1e-4
 this.maxHeadYaw = math.pi / 2
 
 ---@private
+this.arc = niQuaternion.new()
+
+---@private
 this.eventHandlers = nil
 
 ---@public
@@ -151,15 +154,13 @@ function this.calculateArc(direction, forward)
         axis:normalize()
     end
 
-    local arc = niQuaternion.new()
-
     if math.abs(dot + 1) < this.antiParallelThreshold then
-        arc:fromAngleAxis(math.pi, tes3vector3.new(0, 0, 1))
+        this.arc:fromAngleAxis(math.pi, tes3vector3.new(0, 0, 1))
     else
-        arc:fromAngleAxis(math.acos(dot), axis)
+        this.arc:fromAngleAxis(math.acos(dot), axis)
     end
 
-    return arc
+    return this.arc
 end
 
 return this
