@@ -12,14 +12,24 @@ this.logger = mwse.Logger.new()
 ---@see event.register.options
 function this.register(handlers)
     for evt, entry in pairs(handlers) do
-        local handler, options = this.resolveEntry(entry)
-
-        if handler then
-            if not event.isRegistered(evt, handler, options) then
-                event.register(evt, handler, options)
-            else
-                this.logger:debug("Attempted to register handler for '%s' that is already registered", evt)
+        if type(entry) == "table" and type(entry[1]) == "table" then
+            for _, subEntry in ipairs(entry) do
+                this.registerSingle(evt, subEntry)
             end
+        else
+            this.registerSingle(evt, entry)
+        end
+    end
+end
+
+---@private
+function this.registerSingle(evt, entry)
+    local handler, options = this.resolveEntry(entry)
+    if handler then
+        if not event.isRegistered(evt, handler, options) then
+            event.register(evt, handler, options)
+        else
+            this.logger:debug("Attempted to register handler for '%s' that is already registered", evt)
         end
     end
 end
@@ -30,14 +40,24 @@ end
 ---@see event.unregister
 function this.unregister(handlers)
     for evt, entry in pairs(handlers) do
-        local handler, options = this.resolveEntry(entry)
-
-        if handler then
-            if event.isRegistered(evt, handler, options) then
-                event.unregister(evt, handler, options)
-            else
-                this.logger:debug("Attempted to unregister handler for '%s' that is already unregistered", evt)
+        if type(entry) == "table" and type(entry[1]) == "table" then
+            for _, subEntry in ipairs(entry) do
+                this.unregisterSingle(evt, subEntry)
             end
+        else
+            this.unregisterSingle(evt, entry)
+        end
+    end
+end
+
+---@private
+function this.unregisterSingle(evt, entry)
+    local handler, options = this.resolveEntry(entry)
+    if handler then
+        if event.isRegistered(evt, handler, options) then
+            event.unregister(evt, handler, options)
+        else
+            this.logger:debug("Attempted to unregister handler for '%s' that is already unregistered", evt)
         end
     end
 end

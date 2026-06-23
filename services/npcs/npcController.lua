@@ -36,6 +36,9 @@ this.npcHeadMorphAnimator = nil
 ---@type npcHeadLookAtAnimator
 this.npcHeadLookAtAnimator = nil
 
+---@private
+this.paused = false
+
 ---@public
 ---@param services serviceCollection
 ---@return boolean,string|nil
@@ -56,6 +59,8 @@ function this.initialize(services)
         },
         dialogue = {
             [tes3.event.enterFrame] = this.onEnterFrame,
+            [events.gamePaused]     = this.onGamePaused,
+            [events.gameUnpaused]   = this.onGameUnpaused,
         }
     }
 
@@ -100,8 +105,25 @@ function this.onDialogueEnded()
 end
 
 ---@private
+function this.onGamePaused()
+    this.paused = true
+end
+
+---@private
+this.logger = mwse.Logger.new()
+
+---@private
+function this.onGameUnpaused()
+    this.paused = false
+end
+
+---@private
 ---@param e enterFrameEventData
 function this.onEnterFrame(e)
+    if this.paused then
+        return
+    end
+
     for _, animator in ipairs(this.animators) do
         animator.update(e.delta)
     end

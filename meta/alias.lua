@@ -2,7 +2,7 @@
 ---@alias reason string|nil
 ---@alias callback fun()
 ---@alias eventId string
----@alias eventHandlers { [eventId]: callback|callbackWithOptions }
+---@alias eventHandlers { [eventId]: callback|callbackWithOptions|callbackWithOptions[] }
 ---@alias eventHandlerGroups table<string, eventHandlers>
 
 ---@meta

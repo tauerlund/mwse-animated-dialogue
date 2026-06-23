@@ -21,7 +21,11 @@ function this.initialize(services)
     this.events = services.enums.events
 
     this.eventHandlers = {
-        [tes3.event.uiActivated] = { this.onUiActivated, { filter = "MenuDialog" } },
+        [tes3.event.uiActivated] = {
+            { this.onMenuDialogActivated,  { filter = "MenuDialog" } },
+            { this.onMenuOptionsActivated, { filter = "MenuOptions" } },
+            { this.onMenuConsoleActivated, { filter = "MenuConsole" } },
+        },
     }
 
     this.eventRegistrar.register(this.eventHandlers)
@@ -31,12 +35,12 @@ end
 
 ---@public
 function this.uninitialize()
-    this.eventRegistrar.register(this.eventHandlers)
+    this.eventRegistrar.unregister(this.eventHandlers)
 end
 
 ---@private
 ---@param e uiActivatedEventData
-function this.onUiActivated(e)
+function this.onMenuDialogActivated(e)
     local reference = tes3ui.getServiceActor().reference --[[@as tes3reference]]
     if not this.isNpc(reference) then
         return
@@ -55,7 +59,48 @@ function this.onUiActivated(e)
 end
 
 ---@private
-function this.onMenuDialogDestroyed()
+---@param e uiActivatedEventData
+function this.onMenuOptionsActivated(e)
+    e.element:getContentElement():registerAfter(
+        tes3.uiEvent.destroy,
+        this.onMenuOptionsDestroyed
+    )
+
+    event.trigger(this.events.gamePaused)
+end
+
+---@private
+---@param e uiActivatedEventData
+function this.onMenuConsoleActivated(e)
+    e.element:registerAfter(
+        tes3.uiEvent.update,
+        this.onMenuConsoleUpdated
+    )
+
+    event.trigger(this.events.gamePaused)
+end
+
+---@private
+---@param e uiEventEventData
+function this.onMenuConsoleUpdated(e)
+    if e.source.visible then
+        return
+    end
+
+    e.source:unregisterAfter(tes3.uiEvent.update, this.onMenuConsoleUpdated)
+
+    event.trigger(this.events.gameUnpaused)
+end
+
+---@private
+---@param _ uiEventEventData
+function this.onMenuOptionsDestroyed(_)
+    event.trigger(this.events.gameUnpaused)
+end
+
+---@private
+---@param _ uiEventEventData
+function this.onMenuDialogDestroyed(_)
     event.trigger(this.events.dialogueEnded)
 end
 

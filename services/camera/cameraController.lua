@@ -40,6 +40,9 @@ this.cameraStartAnimator = nil
 ---@type cameraSwayAnimator
 this.cameraSwayAnimator = nil
 
+---@private
+this.paused = false
+
 ---@public
 ---@param services serviceCollection
 ---@return boolean,string|nil
@@ -57,7 +60,9 @@ function this.initialize(services)
             [events.dialogueEnded]   = this.onDialogueEnded,
         },
         dialogue = {
-            [tes3.event.enterFrame] = this.onEnterFrame
+            [tes3.event.enterFrame] = this.onEnterFrame,
+            [events.gamePaused]     = this.onGamePaused,
+            [events.gameUnpaused]   = this.onGameUnpaused,
         }
     }
 
@@ -97,8 +102,22 @@ function this.onDialogueEnded()
 end
 
 ---@private
+function this.onGamePaused()
+    this.paused = true
+end
+
+---@private
+function this.onGameUnpaused()
+    this.paused = false
+end
+
+---@private
 ---@param e enterFrameEventData
 function this.onEnterFrame(e)
+    if this.paused then
+        return
+    end
+
     local settings     = this.settings
     this.animationTime = math.min(this.animationTime + e.delta, settings.animationDuration)
     local t            = math.ease.smoothstep(this.animationTime / settings.animationDuration)
