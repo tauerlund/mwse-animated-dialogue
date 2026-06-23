@@ -32,7 +32,9 @@ function this.initializeMod(_)
 		services.dialogueAnimationResolver,
 		services.renderingController,
 		services.npcAnimator,
-		services.cameraAnimator,
+		services.cameraController,
+		services.cameraStartAnimator,
+		services.cameraSwayAnimator,
 	}
 
 	this.initializer.initialize(services, initializedServices)

@@ -21,6 +21,9 @@ this.defaults = {
     turnDuration = 0.5,
     dofEnabled = false,
     dofStrength = 1.0,
+    swayEnabled = false,
+    swayAmplitude = 0.3,
+    swayFrequency = 0.2,
 }
 
 ---@type settings

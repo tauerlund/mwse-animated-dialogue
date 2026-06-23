@@ -1,0 +1,3 @@
+---@meta
+---@class cameraAnimator
+---@field public update fun(cameraWrapper:niNode, skyWrapper:niNode, animationProgress:number, delta:number)

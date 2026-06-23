@@ -48,4 +48,11 @@ return {
     "Applies a depth of field effect during dialogue, keeping the NPC in focus while blurring the background.",
     [keys.dofStrength] = "Blur Strength",
     [keys.dofStrengthDescription] = "Controls how strongly out-of-focus areas are blurred.",
+    [keys.swayCategory] = "Sway",
+    [keys.swayEnabled] = "Enable Camera Sway",
+    [keys.swayEnabledDescription] = "Adds a subtle oscillation to the camera during dialogue for a more cinematic, living feel.",
+    [keys.swayAmplitude] = "Amplitude",
+    [keys.swayAmplitudeDescription] = "How far the camera sways, in degrees. Lower values are more subtle.",
+    [keys.swayFrequency] = "Frequency",
+    [keys.swayFrequencyDescription] = "How fast the camera sways, in cycles per second. Lower values give a slow, breathing-like motion.",
 }

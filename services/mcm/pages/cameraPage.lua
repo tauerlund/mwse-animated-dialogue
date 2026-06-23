@@ -125,6 +125,47 @@ function this.initialize(template, services)
         decimalPlaces = 1,
     })
 
+    local swayCategory = page:createCategory({
+        label = translations.get(keys.swayCategory)
+    })
+
+    swayCategory:createOnOffButton({
+        label = translations.get(keys.swayEnabled),
+        description = translations.get(keys.swayEnabledDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "swayEnabled",
+            table = services.settings
+        }),
+    })
+
+    swayCategory:createSlider({
+        label = translations.get(keys.swayAmplitude),
+        description = translations.get(keys.swayAmplitudeDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "swayAmplitude",
+            table = services.settings
+        }),
+        min = 0,
+        max = 3,
+        step = 0.1,
+        jump = 0.5,
+        decimalPlaces = 1,
+    })
+
+    swayCategory:createSlider({
+        label = translations.get(keys.swayFrequency),
+        description = translations.get(keys.swayFrequencyDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "swayFrequency",
+            table = services.settings
+        }),
+        min = 0.05,
+        max = 1.0,
+        step = 0.05,
+        jump = 0.2,
+        decimalPlaces = 2,
+    })
+
 end
 
 return this

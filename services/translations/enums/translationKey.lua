@@ -37,6 +37,13 @@ local this = {
     dofEnabledDescription = "dofEnabledDescription",
     dofStrength = "dofStrength",
     dofStrengthDescription = "dofStrengthDescription",
+    swayCategory = "swayCategory",
+    swayEnabled = "swayEnabled",
+    swayEnabledDescription = "swayEnabledDescription",
+    swayAmplitude = "swayAmplitude",
+    swayAmplitudeDescription = "swayAmplitudeDescription",
+    swayFrequency = "swayFrequency",
+    swayFrequencyDescription = "swayFrequencyDescription",
 }
 
 return this

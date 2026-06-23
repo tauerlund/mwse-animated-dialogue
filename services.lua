@@ -10,7 +10,9 @@ local this = {
 
     npcAnimator = require("tauer.animated-dialogue.services.npcs.npcAnimator"),
 
-    cameraAnimator = require("tauer.animated-dialogue.services.camera.cameraAnimator"),
+    cameraController = require("tauer.animated-dialogue.services.camera.cameraController"),
+    cameraStartAnimator = require("tauer.animated-dialogue.services.camera.animators.startAnimator"),
+    cameraSwayAnimator = require("tauer.animated-dialogue.services.camera.animators.swayAnimator"),
 
     mcmInitializer = require("tauer.animated-dialogue.services.mcm.mcmInitializer"),
     mcmSettings = require("tauer.animated-dialogue.services.mcm.mcmSettings"),
