@@ -24,6 +24,15 @@ this.maxHeadYaw = math.pi / 2
 this.arc = niQuaternion.new()
 
 ---@private
+this.lerpSpeed = 8
+
+---@private
+this.currentEulerX = nil
+
+---@private
+this.currentEulerZ = nil
+
+---@private
 this.eventHandlers = nil
 
 ---@public
@@ -58,11 +67,13 @@ end
 ---@private
 function this.onDialogueEnded()
     this.npc = nil
+    this.currentEulerX = nil
+    this.currentEulerZ = nil
 end
 
 ---@public
----@param _ number
-function this.update(_)
+---@param delta number
+function this.update(delta)
     local animationData = this.npc.animationData
     if not animationData then
         return
@@ -85,10 +96,19 @@ function this.update(_)
     local invertedParentWorldRotation, _ = node.parent.worldTransform.rotation:copy():invert()
     local updatedLocalRotation           = invertedParentWorldRotation * updatedWorldRotation
 
-    local originalEuler, _               = node.rotation:toEulerXYZ()
-    local updatedEuler, _                = updatedLocalRotation:toEulerXYZ()
+    local originalEuler, _ = node.rotation:toEulerXYZ()
+    local updatedEuler, _  = updatedLocalRotation:toEulerXYZ()
 
-    node.rotation:fromEulerXYZ(updatedEuler.x, originalEuler.y, updatedEuler.z)
+    if this.currentEulerX == nil then
+        this.currentEulerX = originalEuler.x
+        this.currentEulerZ = originalEuler.z
+    end
+
+    local t            = 1 - math.exp(-this.lerpSpeed * delta)
+    this.currentEulerX = this.currentEulerX + (updatedEuler.x - this.currentEulerX) * t
+    this.currentEulerZ = this.currentEulerZ + (updatedEuler.z - this.currentEulerZ) * t
+
+    node.rotation:fromEulerXYZ(this.currentEulerX, originalEuler.y, this.currentEulerZ)
     node:update()
 end
 
