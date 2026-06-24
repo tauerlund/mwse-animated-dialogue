@@ -2,9 +2,6 @@
 local this = {}
 
 ---@private
-this.logger = mwse.Logger.new()
-
----@private
 ---@type eventRegistrar
 this.eventRegistrar = nil
 
