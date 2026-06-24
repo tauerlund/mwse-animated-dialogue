@@ -81,6 +81,7 @@ function this.uninitializeServices(initializedServices)
     for _, service in ipairs(initializedServices) do
         if service.initialized and service.uninitialize then
             service.uninitialize()
+            service.initialized = false
         end
     end
 end
