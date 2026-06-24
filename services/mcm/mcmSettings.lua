@@ -19,6 +19,7 @@ this.defaults = {
     rollOffset = 0,
     animationDuration = 1.0,
     turnDuration = 0.5,
+    transitionDuration = 0.3,
     dofEnabled = false,
     dofStrength = 1.0,
     swayEnabled = false,

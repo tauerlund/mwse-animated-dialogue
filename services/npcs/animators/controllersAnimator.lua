@@ -10,6 +10,10 @@ this.eventRegistrar = nil
 this.settings = nil
 
 ---@private
+---@type npcPoseBlender
+this.npcPoseBlender = nil
+
+---@private
 ---@type tes3reference
 this.npc = nil
 
@@ -26,6 +30,7 @@ this.eventHandlers = nil
 function this.initialize(services)
     this.eventRegistrar = services.eventRegistrar
     this.settings       = services.settings
+    this.npcPoseBlender = services.npcPoseBlender
 
     local events        = services.enums.events
     this.eventHandlers  = {
@@ -46,13 +51,19 @@ end
 ---@private
 ---@param event dialogueStartedEventData
 function this.onDialogueStarted(event)
-    this.npc   = event.npc
-    this.phase = 0
+    this.npc            = event.npc
+    this.phase          = 0
+
+    local animationData = event.npc.animationData
+    if animationData then
+        this.npcPoseBlender.capture(animationData.actorNode, this.settings.transitionDuration)
+    end
 end
 
 ---@private
 function this.onDialogueEnded()
     this.npc = nil
+    this.npcPoseBlender.reset()
 end
 
 ---@public
@@ -68,6 +79,11 @@ function this.update(delta)
         children    = true,
         time        = this.phase
     })
+
+    if this.npcPoseBlender.isActive() then
+        this.npcPoseBlender.update(animationData.actorNode, delta)
+    end
+
     animationData.headNode:update({
         controllers = true,
         time        = 0

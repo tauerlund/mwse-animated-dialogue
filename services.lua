@@ -9,6 +9,7 @@ local this = {
     renderingController = require("tauer.animated-dialogue.services.rendering.renderingController"),
 
     npcController = require("tauer.animated-dialogue.services.npcs.npcController"),
+    npcPoseBlender = require("tauer.animated-dialogue.services.npcs.npcPoseBlender"),
     npcTurnAnimator = require("tauer.animated-dialogue.services.npcs.animators.turnAnimator"),
     npcControllersAnimator = require("tauer.animated-dialogue.services.npcs.animators.controllersAnimator"),
     npcHeadMorphAnimator = require("tauer.animated-dialogue.services.npcs.animators.headMorphAnimator"),

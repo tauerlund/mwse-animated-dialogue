@@ -65,6 +65,20 @@ function this.initialize(template, services)
         jump = 0.5,
         decimalPlaces = 1,
     })
+
+    timingCategory:createSlider({
+        label = translations.get(keys.transitionDuration),
+        description = translations.get(keys.transitionDurationDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "transitionDuration",
+            table = services.settings
+        }),
+        min = 0,
+        max = 5,
+        step = 0.1,
+        jump = 0.5,
+        decimalPlaces = 1,
+    })
 end
 
 return this

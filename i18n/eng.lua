@@ -42,6 +42,9 @@ return {
     [keys.turnDuration] = "Turn Duration",
     [keys.turnDurationDescription] =
     "How long the NPC takes to turn and face the player when dialogue starts, in seconds.",
+    [keys.transitionDuration] = "Transition Duration",
+    [keys.transitionDurationDescription] =
+    "How long the NPC's body takes to ease into the dialogue animation when dialogue starts, in seconds. Set to 0 to snap instantly.",
     [keys.renderingPage] = "Rendering",
     [keys.dofEnabled] = "Enable Depth of Field",
     [keys.dofEnabledDescription] =
