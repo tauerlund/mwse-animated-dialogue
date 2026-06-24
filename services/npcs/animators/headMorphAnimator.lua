@@ -126,6 +126,7 @@ function this.startBlinkTimer()
     this.blinkInterval = this.getRandomBlinkInterval()
 end
 
+---@private
 function this.stopBlinkTimer()
     this.blinkTimer = 0
 end
