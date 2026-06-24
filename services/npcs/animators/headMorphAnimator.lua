@@ -2,6 +2,20 @@
 local this = {}
 
 ---@private
+this.minBlinkInterval = 2
+
+---@private
+this.maxBlinkInterval = 6
+
+---@private
+---@type number time accumulated since the last blink ended
+this.blinkTimer = 0
+
+---@private
+---@type number seconds to wait before the next blink
+this.blinkInterval = 0
+
+---@private
 ---@type eventRegistrar
 this.eventRegistrar = nil
 
@@ -43,6 +57,7 @@ end
 ---@param event dialogueStartedEventData
 function this.onDialogueStarted(event)
     this.npc = event.npc
+    this.startBlinkTimer()
 end
 
 ---@private
@@ -51,19 +66,16 @@ function this.onDialogueEnded()
 end
 
 ---@public
----@param _ number
-function this.update(_)
+---@param delta number
+function this.update(delta)
     local animationData = this.npc.animationData
     if not animationData then
         return
     end
 
-    local phase
-    if animationData.lipsyncLevel ~= -1 then
-        phase = this.getTalkPhase(animationData)
-    else
-        phase = 0
-    end
+    local phase = animationData.lipsyncLevel ~= -1
+        and this.getTalkPhase(animationData)
+        or this.getBlinkPhase(animationData, delta)
 
     animationData.headNode:update({
         controllers = true,
@@ -75,11 +87,53 @@ end
 ---@param animationData tes3animationData
 ---@return number
 function this.getTalkPhase(animationData)
+    this.stopBlinkTimer()
+
     local level     = animationData.lipsyncLevel
     local startTime = animationData.talkMorphStartTime
     local endTime   = animationData.talkMorphEndTime
     local phase     = math.remap(level, 0, 1, startTime, endTime)
     return math.clamp(phase, startTime, endTime)
+end
+
+---@private
+---@param animationData tes3animationData
+---@param delta number
+---@return number
+function this.getBlinkPhase(animationData, delta)
+    local startTime = animationData.blinkMorphStartTime
+    local endTime   = animationData.blinkMorphEndTime
+    local duration  = endTime - startTime
+
+    this.blinkTimer = this.blinkTimer + delta
+
+    if this.blinkTimer < this.blinkInterval then
+        return startTime
+    end
+
+    local elapsed = this.blinkTimer - this.blinkInterval
+    if elapsed >= duration then
+        this.startBlinkTimer()
+        return startTime
+    end
+
+    return startTime + elapsed
+end
+
+---@private
+function this.startBlinkTimer()
+    this.blinkTimer = 0
+    this.blinkInterval = this.getRandomBlinkInterval()
+end
+
+function this.stopBlinkTimer()
+    this.blinkTimer = 0
+end
+
+---@private
+---@return number
+function this.getRandomBlinkInterval()
+    return this.minBlinkInterval + math.random() * (this.maxBlinkInterval - this.minBlinkInterval)
 end
 
 return this
