@@ -58,6 +58,11 @@ function this.onDialogueStarted(event)
     if animationData then
         this.npcPoseBlender.capture(animationData.actorNode, this.settings.transitionDuration)
     end
+
+    tes3.playAnimation({
+        reference = event.npc,
+        group     = tes3.animationGroup.idle
+    })
 end
 
 ---@private
