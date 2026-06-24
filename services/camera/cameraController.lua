@@ -120,7 +120,11 @@ function this.onEnterFrame(e)
 
     local settings     = this.settings
     this.animationTime = math.min(this.animationTime + e.delta, settings.animationDuration)
-    local t            = math.ease.smoothstep(this.animationTime / settings.animationDuration)
+
+    local t            = 1
+    if settings.animationDuration > 0 then
+        t = math.ease.smoothstep(this.animationTime / settings.animationDuration)
+    end
 
     for _, animator in ipairs(this.animators) do
         animator.update(this.cameraWrapper, this.skyWrapper, t, e.delta)

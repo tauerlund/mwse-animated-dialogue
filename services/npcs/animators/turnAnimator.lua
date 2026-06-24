@@ -78,7 +78,11 @@ function this.update(delta)
     local duration       = this.settings.turnDuration
     this.turnTime        = math.min(this.turnTime + delta, duration)
 
-    local progress       = math.ease.smoothstep(this.turnTime / duration)
+    local progress       = 1
+    if duration > 0 then
+        progress = math.ease.smoothstep(this.turnTime / duration)
+    end
+
     local yaw            = this.lerpAngle(this.originalYaw, this.targetYaw, progress)
     local orientation    = this.npc.orientation:copy()
 
