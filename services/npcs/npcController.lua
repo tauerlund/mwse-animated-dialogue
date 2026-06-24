@@ -110,9 +110,6 @@ function this.onGamePaused()
 end
 
 ---@private
-this.logger = mwse.Logger.new()
-
----@private
 function this.onGameUnpaused()
     this.paused = false
 end
