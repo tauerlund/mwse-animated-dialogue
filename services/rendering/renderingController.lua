@@ -31,6 +31,9 @@ this.animationTime = 0
 ---@type tes3reference|nil
 this.npc = nil
 
+---@private
+this.paused = false
+
 ---@public
 ---@param services serviceCollection
 ---@return boolean,string|nil
@@ -46,7 +49,9 @@ function this.initialize(services)
             [events.dialogueEnded] = this.onDialogueEnded,
         },
         dialogue = {
-            [tes3.event.enterFrame] = this.onEnterFrame
+            [tes3.event.enterFrame] = this.onEnterFrame,
+            [events.gamePaused]     = this.onGamePaused,
+            [events.gameUnpaused]   = this.onGameUnpaused,
         }
     }
 
@@ -82,8 +87,19 @@ function this.onDialogueStarted(e)
         this.depthOfField["focal_length"] = 0
         this.depthOfField.enabled = true
         this.animationTime = 0
+        this.paused = false
         this.eventRegistrar.register(this.eventHandlers.dialogue)
     end
+end
+
+---@private
+function this.onGamePaused()
+    this.paused = true
+end
+
+---@private
+function this.onGameUnpaused()
+    this.paused = false
 end
 
 ---@private
@@ -101,6 +117,10 @@ end
 ---@private
 ---@param e enterFrameEventData
 function this.onEnterFrame(e)
+    if this.paused then
+        return
+    end
+
     local settings = this.settings
 
     this.animationTime = math.min(this.animationTime + e.delta, settings.animationDuration)
