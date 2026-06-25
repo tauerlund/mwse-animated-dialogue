@@ -100,7 +100,9 @@ function this.onDialogueStarted(_)
         table.insert(this.animators, this.npcHeadLookAtAnimator)
     end
 
-    table.insert(this.animators, this.npcParticlesAnimator)
+    if this.settings.npcParticlesEnabled then
+        table.insert(this.animators, this.npcParticlesAnimator)
+    end
 
     this.eventRegistrar.register(this.eventHandlers.dialogue)
 end

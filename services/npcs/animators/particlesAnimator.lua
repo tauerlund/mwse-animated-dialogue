@@ -6,10 +6,6 @@ local this = {}
 this.eventRegistrar = nil
 
 ---@private
----@type settings
-this.settings = nil
-
----@private
 ---@type eventHandlers
 this.eventHandlers = nil
 
@@ -22,8 +18,6 @@ this.particleControllers = {}
 ---@return boolean,string|nil
 function this.initialize(services)
     this.eventRegistrar = services.eventRegistrar
-    this.settings       = services.settings
-    this.npcPoseBlender = services.npcPoseBlender
 
     local events        = services.enums.events
     this.eventHandlers  = {
@@ -49,7 +43,7 @@ function this.onDialogueStarted(e)
     ---@type niParticleSystemController[]
     local controllers = {}
 
-    this.findParticleControllers(controllers, node --[[@as niNode]])
+    this.discoverControllers(controllers, node --[[@as niNode]])
 
     this.particleControllers = controllers
 end
@@ -62,7 +56,11 @@ end
 ---@private
 ---@param controllers niParticleSystemController[]
 ---@param node niNode
-function this.findParticleControllers(controllers, node)
+function this.discoverControllers(controllers, node)
+    if not node then
+        return
+    end
+
     local controller = node.controller
     while controller do
         if controller:isOfType(ni.type.NiParticleSystemController) then
@@ -71,8 +69,12 @@ function this.findParticleControllers(controllers, node)
         controller = controller.nextController
     end
 
+    if not node.children then
+        return
+    end
+
     for _, child in ipairs(node.children) do
-        this.findParticleControllers(controllers, child --[[@as niNode]])
+        this.discoverControllers(controllers, child --[[@as niNode]])
     end
 end
 
@@ -81,7 +83,9 @@ end
 function this.update(delta)
     for _, controller in ipairs(this.particleControllers) do
         local node = controller.target --[[@as niNode]]
-        node:update({ controllers = true, time = controller.lastTime + delta })
+        if node then
+            node:update({ controllers = true, time = controller.lastTime + delta })
+        end
     end
 end
 
