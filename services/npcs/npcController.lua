@@ -37,6 +37,10 @@ this.npcHeadMorphAnimator = nil
 this.npcHeadLookAtAnimator = nil
 
 ---@private
+---@type npcParticlesAnimator
+this.npcParticlesAnimator = nil
+
+---@private
 this.paused = false
 
 ---@public
@@ -49,6 +53,7 @@ function this.initialize(services)
     this.npcControllersAnimator = services.npcControllersAnimator
     this.npcHeadMorphAnimator   = services.npcHeadMorphAnimator
     this.npcHeadLookAtAnimator  = services.npcHeadLookAtAnimator
+    this.npcParticlesAnimator   = services.npcParticlesAnimator
 
     local events                = services.enums.events
 
@@ -93,6 +98,10 @@ function this.onDialogueStarted(_)
 
     if this.settings.npcHeadLookAtEnabled then
         table.insert(this.animators, this.npcHeadLookAtAnimator)
+    end
+
+    if this.settings.npcParticlesEnabled then
+        table.insert(this.animators, this.npcParticlesAnimator)
     end
 
     this.eventRegistrar.register(this.eventHandlers.dialogue)

@@ -16,6 +16,9 @@ return {
     [keys.npcHeadLookAtEnabled] = "Enable Head Look-At",
     [keys.npcHeadLookAtEnabledDescription] =
     "Enables or disables the NPC's head turning to look at the camera during dialogue.",
+    [keys.npcParticlesEnabled] = "Enable Particle Effects",
+    [keys.npcParticlesEnabledDescription] =
+    "Enables or disables particle effects on the NPC (such as the flame on a held torch) animating during dialogue. Without this, they remain frozen while in menu mode.",
     [keys.positionCategory] = "Position",
     [keys.rotationCategory] = "Rotation",
     [keys.timingCategory] = "Timing",
