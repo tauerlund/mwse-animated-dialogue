@@ -1,4 +1,4 @@
----@class renderingPage : mcmPage
+---@class miscPage : mcmPage
 local this = {}
 
 ---@public
@@ -9,7 +9,7 @@ function this.initialize(template, services)
     local keys = services.enums.translationKey
 
     local page = template:createSideBarPage({
-        label = translations.get(keys.renderingPage)
+        label = translations.get(keys.miscPage)
     })
 
     page:createOnOffButton({
@@ -32,6 +32,15 @@ function this.initialize(template, services)
         max = 20,
         step = 1,
         jump = 5,
+    })
+
+    page:createOnOffButton({
+        label = translations.get(keys.precipitationEnabled),
+        description = translations.get(keys.precipitationEnabledDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "precipitationEnabled",
+            table = services.settings
+        }),
     })
 end
 

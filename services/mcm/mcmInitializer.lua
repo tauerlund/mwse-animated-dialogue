@@ -6,7 +6,7 @@ local this = {}
 this.pages = {
 	require("tauer.animated-dialogue.services.mcm.pages.cameraPage"),
 	require("tauer.animated-dialogue.services.mcm.pages.npcPage"),
-	require("tauer.animated-dialogue.services.mcm.pages.renderingPage"),
+	require("tauer.animated-dialogue.services.mcm.pages.miscPage"),
 }
 
 ---@private

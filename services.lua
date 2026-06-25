@@ -20,6 +20,9 @@ local this = {
     cameraStartAnimator = require("tauer.animated-dialogue.services.camera.animators.startAnimator"),
     cameraSwayAnimator = require("tauer.animated-dialogue.services.camera.animators.swayAnimator"),
 
+    weatherPrecipitationController = require("tauer.animated-dialogue.services.weather.weatherPrecipitationController"),
+    weatherStormController = require("tauer.animated-dialogue.services.weather.weatherStormController"),
+
     mcmInitializer = require("tauer.animated-dialogue.services.mcm.mcmInitializer"),
     mcmSettings = require("tauer.animated-dialogue.services.mcm.mcmSettings"),
     settings = require("tauer.animated-dialogue.services.mcm.mcmSettings").mcm,

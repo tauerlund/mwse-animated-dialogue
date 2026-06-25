@@ -12,6 +12,7 @@ this.defaults = {
     npcHeadMorphAnimEnabled = true,
     npcHeadLookAtEnabled = true,
     npcParticlesEnabled = true,
+    precipitationEnabled = true,
     distance = 75,
     horizontalOffset = 0,
     verticalOffset = 0,
