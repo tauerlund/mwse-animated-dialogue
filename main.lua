@@ -36,6 +36,7 @@ function this.initializeMod(_)
 		services.npcControllersAnimator,
 		services.npcHeadMorphAnimator,
 		services.npcHeadLookAtAnimator,
+		services.npcParticlesAnimator,
 		services.cameraController,
 		services.cameraStartAnimator,
 		services.cameraSwayAnimator,

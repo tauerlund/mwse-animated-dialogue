@@ -14,6 +14,7 @@ local this = {
     npcControllersAnimator = require("tauer.animated-dialogue.services.npcs.animators.controllersAnimator"),
     npcHeadMorphAnimator = require("tauer.animated-dialogue.services.npcs.animators.headMorphAnimator"),
     npcHeadLookAtAnimator = require("tauer.animated-dialogue.services.npcs.animators.headLookAtAnimator"),
+    npcParticlesAnimator = require("tauer.animated-dialogue.services.npcs.animators.particlesAnimator"),
 
     cameraController = require("tauer.animated-dialogue.services.camera.cameraController"),
     cameraStartAnimator = require("tauer.animated-dialogue.services.camera.animators.startAnimator"),
