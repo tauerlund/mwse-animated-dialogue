@@ -109,8 +109,8 @@ function this.advanceStorm(delta)
 end
 
 ---@private
----@param e dialogueStartedEventData
-function this.onDialogueStarted(e)
+---@param _ dialogueStartedEventData
+function this.onDialogueStarted(_)
     if not this.settings.precipitationEnabled then
         return
     end
