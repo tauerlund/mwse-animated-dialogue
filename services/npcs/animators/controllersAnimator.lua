@@ -22,6 +22,17 @@ this.npc = nil
 this.phase = 0
 
 ---@private
+---@type niKeyframeController[]
+this.sectionControllers = {}
+
+---@private
+---@type number[]
+this.sectionOriginalPhases = {}
+
+---@private
+this.sectionCount = 0
+
+---@private
 this.eventHandlers = nil
 
 ---@public
@@ -63,12 +74,70 @@ function this.onDialogueStarted(event)
         reference = event.npc,
         group     = tes3.animationGroup.idle
     })
+
+    if animationData then
+        this.captureSectionPhases(animationData)
+    end
 end
 
 ---@private
 function this.onDialogueEnded()
+    this.restoreSectionPhases()
     this.npc = nil
     this.npcPoseBlender.reset()
+end
+
+---@private
+---@param animationData tes3animationData
+function this.captureSectionPhases(animationData)
+    this.sectionCount = 0
+
+    local sections = tes3.animationBodySection
+
+    this.cancelSectionOffset(animationData, sections.lower, "lower")
+    this.cancelSectionOffset(animationData, sections.upper, "upper")
+    this.cancelSectionOffset(animationData, sections.leftArm, "leftArm")
+end
+
+---@private
+---@param animationData tes3animationData
+---@param section tes3.animationBodySection
+---@param field string
+function this.cancelSectionOffset(animationData, section, field)
+    local layer = animationData.currentAnimGroupLayers[section + 1]
+    if not layer then
+        return
+    end
+
+    local group    = animationData.keyframeLayers[layer + 1]
+    local sequence = group and group[field] --[[@as niSequence]]
+    if not sequence then
+        return
+    end
+
+    local offset = sequence.offset
+    if offset == 0 then
+        return
+    end
+
+    for _, controller in ipairs(sequence.controllers) do
+        local index                       = this.sectionCount + 1
+        this.sectionCount                 = index
+        this.sectionControllers[index]    = controller
+        this.sectionOriginalPhases[index] = controller.phase
+        controller.phase                  = controller.phase - offset
+    end
+end
+
+---@private
+function this.restoreSectionPhases()
+    for i = 1, this.sectionCount do
+        this.sectionControllers[i].phase = this.sectionOriginalPhases[i]
+        this.sectionControllers[i]       = nil
+        this.sectionOriginalPhases[i]    = nil
+    end
+
+    this.sectionCount = 0
 end
 
 ---@public
