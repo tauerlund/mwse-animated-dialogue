@@ -57,6 +57,9 @@ return {
     [keys.precipitationEnabled] = "Enable Precipitation",
     [keys.precipitationEnabledDescription] =
     "Keeps rain and snow falling during dialogue. Without this, precipitation freezes while in menu mode.",
+    [keys.stormsEnabled] = "Enable Storms",
+    [keys.stormsEnabledDescription] =
+    "Keeps ash, blight, and blizzard storms swirling during dialogue. Without this, storms freeze while in menu mode.",
     [keys.swayCategory] = "Sway",
     [keys.swayEnabled] = "Enable Camera Sway",
     [keys.swayEnabledDescription] = "Adds a subtle oscillation to the camera during dialogue for a more cinematic, living feel.",

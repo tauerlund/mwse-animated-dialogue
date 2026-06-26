@@ -10,6 +10,10 @@ this.settings = nil
 this.eventRegistrar = nil
 
 ---@private
+---@type particleController
+this.particleController = nil
+
+---@private
 ---@type eventHandlerGroups
 this.eventHandlers = {
     lifetime = {},
@@ -28,12 +32,13 @@ this.stormControllers = {}
 ---@param services serviceCollection
 ---@return boolean,string|nil
 function this.initialize(services)
-    this.eventRegistrar = services.eventRegistrar
-    this.settings       = services.settings
+    this.eventRegistrar     = services.eventRegistrar
+    this.settings           = services.settings
+    this.particleController = services.particleController
 
-    local events        = services.enums.events
+    local events            = services.enums.events
 
-    this.eventHandlers  = {
+    this.eventHandlers      = {
         lifetime = {
             [events.dialogueStarted] = this.onDialogueStarted,
             [events.dialogueEnded]   = this.onDialogueEnded,
@@ -55,67 +60,19 @@ function this.uninitialize()
     this.eventRegistrar.unregister(this.eventHandlers.lifetime)
 end
 
--- Ash/blight/blizzard storms are NiParticleSystem meshes under sceneStormRoot,
--- driven by NiParticleSystemControllers the engine stops ticking in menu-mode
--- (the same class as NPC torch flames). All three storm clouds coexist in the
--- graph with only the current one visible, so controllers are collected from
--- non-culled nodes only -- this animates just the active storm and also gates
--- the whole path off during rain/clear (those clouds are culled).
----@private
----@return niParticleSystemController[]
-function this.getStormControllers()
-    local controllers = {}
-
-    local weatherController = tes3.worldController and tes3.worldController.weatherController
-    if weatherController then
-        this.collectVisibleParticleControllers(weatherController.sceneStormRoot, controllers)
-    end
-
-    return controllers
-end
-
----@private
----@param node niNode|nil
----@param controllers niParticleSystemController[]
-function this.collectVisibleParticleControllers(node, controllers)
-    if not node or node.appCulled then
-        return
-    end
-
-    local controller = node.controller --[[@as niParticleSystemController]]
-    while controller do
-        if controller:isOfType(ni.type.NiParticleSystemController) then
-            controllers[#controllers + 1] = controller
-        end
-        controller = controller.nextController --[[@as niParticleSystemController]]
-    end
-
-    if node.children then
-        for _, child in ipairs(node.children) do
-            this.collectVisibleParticleControllers(child --[[@as niNode]], controllers)
-        end
-    end
-end
-
----@private
----@param delta number
-function this.advanceStorm(delta)
-    for _, controller in ipairs(this.stormControllers) do
-        local target = controller.target --[[@as niNode]]
-        if target then
-            target:update({ controllers = true, time = controller.lastTime + delta })
-        end
-    end
-end
-
 ---@private
 ---@param _ dialogueStartedEventData
 function this.onDialogueStarted(_)
-    if not this.settings.precipitationEnabled then
+    if not this.settings.stormsEnabled then
         return
     end
 
-    local stormControllers = this.getStormControllers()
+    local weatherController = tes3.worldController and tes3.worldController.weatherController
+    if not weatherController then
+        return
+    end
+
+    local stormControllers = this.particleController.resolve(weatherController.sceneStormRoot)
     if #stormControllers == 0 then
         return
     end
@@ -149,7 +106,7 @@ function this.onEnterFrame(e)
         return
     end
 
-    this.advanceStorm(e.delta)
+    this.particleController.update(this.stormControllers, e.delta)
 end
 
 return this

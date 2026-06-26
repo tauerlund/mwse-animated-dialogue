@@ -13,6 +13,7 @@ this.defaults = {
     npcHeadLookAtEnabled = true,
     npcParticlesEnabled = true,
     precipitationEnabled = true,
+    stormsEnabled = true,
     distance = 75,
     horizontalOffset = 0,
     verticalOffset = 0,
