@@ -8,6 +8,8 @@ local this = {
 
     renderingController = require("tauer.animated-dialogue.services.rendering.renderingController"),
 
+    particleController = require("tauer.animated-dialogue.services.particles.particleController"),
+
     npcController = require("tauer.animated-dialogue.services.npcs.npcController"),
     npcPoseBlender = require("tauer.animated-dialogue.services.npcs.npcPoseBlender"),
     npcTurnAnimator = require("tauer.animated-dialogue.services.npcs.animators.turnAnimator"),
@@ -19,6 +21,9 @@ local this = {
     cameraController = require("tauer.animated-dialogue.services.camera.cameraController"),
     cameraStartAnimator = require("tauer.animated-dialogue.services.camera.animators.startAnimator"),
     cameraSwayAnimator = require("tauer.animated-dialogue.services.camera.animators.swayAnimator"),
+
+    weatherPrecipitationController = require("tauer.animated-dialogue.services.weather.weatherPrecipitationController"),
+    weatherStormController = require("tauer.animated-dialogue.services.weather.weatherStormController"),
 
     mcmInitializer = require("tauer.animated-dialogue.services.mcm.mcmInitializer"),
     mcmSettings = require("tauer.animated-dialogue.services.mcm.mcmSettings"),

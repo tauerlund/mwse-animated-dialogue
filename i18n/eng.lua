@@ -48,12 +48,18 @@ return {
     [keys.transitionDuration] = "Transition Duration",
     [keys.transitionDurationDescription] =
     "How long the NPC's body takes to ease into the dialogue animation when dialogue starts, in seconds. Set to 0 to snap instantly.",
-    [keys.renderingPage] = "Rendering",
+    [keys.miscPage] = "Misc",
     [keys.dofEnabled] = "Enable Depth of Field",
     [keys.dofEnabledDescription] =
     "Applies a depth of field effect during dialogue, keeping the NPC in focus while blurring the background.",
     [keys.dofStrength] = "Blur Strength",
     [keys.dofStrengthDescription] = "Controls how strongly out-of-focus areas are blurred.",
+    [keys.precipitationEnabled] = "Enable Precipitation",
+    [keys.precipitationEnabledDescription] =
+    "Keeps rain and snow falling during dialogue. Without this, precipitation freezes while in menu mode.",
+    [keys.stormsEnabled] = "Enable Storms",
+    [keys.stormsEnabledDescription] =
+    "Keeps ash, blight, and blizzard storms swirling during dialogue. Without this, storms freeze while in menu mode.",
     [keys.swayCategory] = "Sway",
     [keys.swayEnabled] = "Enable Camera Sway",
     [keys.swayEnabledDescription] = "Adds a subtle oscillation to the camera during dialogue for a more cinematic, living feel.",

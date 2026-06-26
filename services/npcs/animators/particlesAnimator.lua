@@ -10,6 +10,10 @@ this.eventRegistrar = nil
 this.eventHandlers = nil
 
 ---@private
+---@type particleController
+this.particleController = nil
+
+---@private
 ---@type niParticleSystemController[]
 this.particleControllers = {}
 
@@ -17,10 +21,11 @@ this.particleControllers = {}
 ---@param services serviceCollection
 ---@return boolean,string|nil
 function this.initialize(services)
-    this.eventRegistrar = services.eventRegistrar
+    this.eventRegistrar     = services.eventRegistrar
+    this.particleController = services.particleController
 
-    local events        = services.enums.events
-    this.eventHandlers  = {
+    local events            = services.enums.events
+    this.eventHandlers      = {
         [events.dialogueStarted] = this.onDialogueStarted,
         [events.dialogueEnded]   = this.onDialogueEnded,
     }
@@ -38,14 +43,7 @@ end
 ---@private
 ---@param e dialogueStartedEventData
 function this.onDialogueStarted(e)
-    local node = e.npc.sceneNode
-
-    ---@type niParticleSystemController[]
-    local controllers = {}
-
-    this.discoverControllers(controllers, node --[[@as niNode]])
-
-    this.particleControllers = controllers
+    this.particleControllers = this.particleController.resolve(e.npc.sceneNode --[[@as niNode]])
 end
 
 ---@private
@@ -53,40 +51,10 @@ function this.onDialogueEnded()
     this.particleControllers = {}
 end
 
----@private
----@param controllers niParticleSystemController[]
----@param node niNode
-function this.discoverControllers(controllers, node)
-    if not node then
-        return
-    end
-
-    local controller = node.controller
-    while controller do
-        if controller:isOfType(ni.type.NiParticleSystemController) then
-            table.insert(controllers, controller)
-        end
-        controller = controller.nextController
-    end
-
-    if not node.children then
-        return
-    end
-
-    for _, child in ipairs(node.children) do
-        this.discoverControllers(controllers, child --[[@as niNode]])
-    end
-end
-
 ---@public
 ---@param delta number
 function this.update(delta)
-    for _, controller in ipairs(this.particleControllers) do
-        local node = controller.target --[[@as niNode]]
-        if node then
-            node:update({ controllers = true, time = controller.lastTime + delta })
-        end
-    end
+    this.particleController.update(this.particleControllers, delta)
 end
 
 return this
