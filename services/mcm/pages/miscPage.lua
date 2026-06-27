@@ -51,6 +51,45 @@ function this.initialize(template, services)
             table = services.settings
         }),
     })
+
+    local lightingCategory = page:createCategory({
+        label = translations.get(keys.lightingCategory)
+    })
+
+    lightingCategory:createOnOffButton({
+        label = translations.get(keys.lightEnabled),
+        description = translations.get(keys.lightEnabledDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "lightEnabled",
+            table = services.settings
+        }),
+    })
+
+    lightingCategory:createDropdown({
+        label = translations.get(keys.lightMode),
+        description = translations.get(keys.lightModeDescription),
+        options = {
+            { label = translations.get(keys.lightModeNpc),   value = "npc" },
+            { label = translations.get(keys.lightModeScene), value = "scene" },
+        },
+        variable = mwse.mcm.createTableVariable({
+            id = "lightMode",
+            table = services.settings
+        }),
+    })
+
+    lightingCategory:createSlider({
+        label = translations.get(keys.lightSceneDistance),
+        description = translations.get(keys.lightSceneDistanceDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "lightSceneDistance",
+            table = services.settings
+        }),
+        min = 256,
+        max = 8192,
+        step = 128,
+        jump = 512,
+    })
 end
 
 return this

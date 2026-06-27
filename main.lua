@@ -42,6 +42,7 @@ function this.initializeMod(_)
 		services.cameraSwayAnimator,
 		services.weatherPrecipitationController,
 		services.weatherStormController,
+		services.lightController,
 	}
 
 	this.initializer.initialize(services, initializedServices)

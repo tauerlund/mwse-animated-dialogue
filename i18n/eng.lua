@@ -60,6 +60,18 @@ return {
     [keys.stormsEnabled] = "Enable Storms",
     [keys.stormsEnabledDescription] =
     "Keeps ash, blight, and blizzard storms swirling during dialogue. Without this, storms freeze while in menu mode.",
+    [keys.lightingCategory] = "Lighting",
+    [keys.lightEnabled] = "Enable Light Animation",
+    [keys.lightEnabledDescription] =
+    "Keeps flickering and pulsing lights (such as torches, candles, and braziers) animating during dialogue. Without this, they freeze while in menu mode.",
+    [keys.lightMode] = "Light Animation Mode",
+    [keys.lightModeDescription] =
+    "NPC Only animates just the conversation partner's carried light. Scene animates all nearby flickering lights, including placed world lights and other actors' torches.",
+    [keys.lightModeNpc] = "NPC Only",
+    [keys.lightModeScene] = "Scene",
+    [keys.lightSceneDistance] = "Scene Distance",
+    [keys.lightSceneDistanceDescription] =
+    "In Scene mode, the maximum distance (in game units) a light may be from the conversation partner to be animated. Lights beyond this remain frozen.",
     [keys.swayCategory] = "Sway",
     [keys.swayEnabled] = "Enable Camera Sway",
     [keys.swayEnabledDescription] = "Adds a subtle oscillation to the camera during dialogue for a more cinematic, living feel.",
