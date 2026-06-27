@@ -36,12 +36,13 @@ function this.initializeMod(_)
 		services.npcControllersAnimator,
 		services.npcHeadMorphAnimator,
 		services.npcHeadLookAtAnimator,
-		services.npcParticlesAnimator,
 		services.cameraController,
 		services.cameraStartAnimator,
 		services.cameraSwayAnimator,
 		services.weatherPrecipitationController,
 		services.weatherStormController,
+		services.particleController,
+		services.lightController,
 	}
 
 	this.initializer.initialize(services, initializedServices)

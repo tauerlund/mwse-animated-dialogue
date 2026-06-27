@@ -16,9 +16,6 @@ return {
     [keys.npcHeadLookAtEnabled] = "Enable Head Look-At",
     [keys.npcHeadLookAtEnabledDescription] =
     "Enables or disables the NPC's head turning to look at the camera during dialogue.",
-    [keys.npcParticlesEnabled] = "Enable Particle Effects",
-    [keys.npcParticlesEnabledDescription] =
-    "Enables or disables particle effects on the NPC (such as the flame on a held torch) animating during dialogue. Without this, they remain frozen while in menu mode.",
     [keys.positionCategory] = "Position",
     [keys.rotationCategory] = "Rotation",
     [keys.timingCategory] = "Timing",
@@ -48,12 +45,29 @@ return {
     [keys.transitionDuration] = "Transition Duration",
     [keys.transitionDurationDescription] =
     "How long the NPC's body takes to ease into the dialogue animation when dialogue starts, in seconds. Set to 0 to snap instantly.",
-    [keys.miscPage] = "Misc",
+    [keys.effectsPage] = "Effects",
+    [keys.dofCategory] = "Depth of Field",
     [keys.dofEnabled] = "Enable Depth of Field",
     [keys.dofEnabledDescription] =
     "Applies a depth of field effect during dialogue, keeping the NPC in focus while blurring the background.",
     [keys.dofStrength] = "Blur Strength",
     [keys.dofStrengthDescription] = "Controls how strongly out-of-focus areas are blurred.",
+    [keys.lightingParticlesCategory] = "Lighting & Particles",
+    [keys.lightEnabled] = "Enable Light Animation",
+    [keys.lightEnabledDescription] =
+    "Keeps flickering and pulsing lights (such as torches, candles, and braziers) animating during dialogue. Without this, they freeze while in menu mode.",
+    [keys.particlesEnabled] = "Enable Particle Effects",
+    [keys.particlesEnabledDescription] =
+    "Keeps particle effects (such as the flame on a held torch) animating during dialogue. Without this, they remain frozen while in menu mode.",
+    [keys.effectsMode] = "Animation Mode",
+    [keys.effectsModeDescription] =
+    "NPC Only animates just the conversation partner's lights and particle effects. Scene animates all nearby lights and particle effects, including placed world lights, fireplaces, and other actors' torches.",
+    [keys.effectsModeNpc] = "NPC Only",
+    [keys.effectsModeScene] = "Scene",
+    [keys.effectsSceneDistance] = "Scene Distance",
+    [keys.effectsSceneDistanceDescription] =
+    "In Scene mode, the maximum distance (in game units) a light or particle effect may be from the conversation partner to be animated. Anything beyond this remains frozen.",
+    [keys.weatherPage] = "Weather",
     [keys.precipitationEnabled] = "Enable Precipitation",
     [keys.precipitationEnabledDescription] =
     "Keeps rain and snow falling during dialogue. Without this, precipitation freezes while in menu mode.",
