@@ -10,8 +10,12 @@ this.settings = nil
 this.eventRegistrar = nil
 
 ---@private
----@type particleController
-this.particleController = nil
+---@type particleResolver
+this.particleResolver = nil
+
+---@private
+---@type particleAnimator
+this.particleAnimator = nil
 
 ---@private
 ---@type eventHandlerGroups
@@ -34,7 +38,8 @@ this.stormControllers = {}
 function this.initialize(services)
     this.eventRegistrar     = services.eventRegistrar
     this.settings           = services.settings
-    this.particleController = services.particleController
+    this.particleResolver   = services.particleResolver
+    this.particleAnimator   = services.particleAnimator
 
     local events            = services.enums.events
 
@@ -72,7 +77,7 @@ function this.onDialogueStarted(_)
         return
     end
 
-    local stormControllers = this.particleController.resolve(weatherController.sceneStormRoot)
+    local stormControllers = this.particleResolver.resolve(weatherController.sceneStormRoot)
     if #stormControllers == 0 then
         return
     end
@@ -106,7 +111,7 @@ function this.onEnterFrame(e)
         return
     end
 
-    this.particleController.update(this.stormControllers, e.delta)
+    this.particleAnimator.update(this.stormControllers, e.delta)
 end
 
 return this

@@ -8,6 +8,8 @@ local this = {
 
     renderingController = require("tauer.animated-dialogue.services.rendering.renderingController"),
 
+    particleResolver = require("tauer.animated-dialogue.services.particles.particleResolver"),
+    particleAnimator = require("tauer.animated-dialogue.services.particles.particleAnimator"),
     particleController = require("tauer.animated-dialogue.services.particles.particleController"),
 
     npcController = require("tauer.animated-dialogue.services.npcs.npcController"),
@@ -16,7 +18,6 @@ local this = {
     npcControllersAnimator = require("tauer.animated-dialogue.services.npcs.animators.controllersAnimator"),
     npcHeadMorphAnimator = require("tauer.animated-dialogue.services.npcs.animators.headMorphAnimator"),
     npcHeadLookAtAnimator = require("tauer.animated-dialogue.services.npcs.animators.headLookAtAnimator"),
-    npcParticlesAnimator = require("tauer.animated-dialogue.services.npcs.animators.particlesAnimator"),
 
     cameraController = require("tauer.animated-dialogue.services.camera.cameraController"),
     cameraStartAnimator = require("tauer.animated-dialogue.services.camera.animators.startAnimator"),

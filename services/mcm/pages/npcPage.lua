@@ -48,15 +48,6 @@ function this.initialize(template, services)
         }),
     })
 
-    page:createOnOffButton({
-        label = translations.get(keys.npcParticlesEnabled),
-        description = translations.get(keys.npcParticlesEnabledDescription),
-        variable = mwse.mcm.createTableVariable({
-            id = "npcParticlesEnabled",
-            table = services.settings
-        }),
-    })
-
     local timingCategory = page:createCategory({
         label = translations.get(keys.timingCategory)
     })

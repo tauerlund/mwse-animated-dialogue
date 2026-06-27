@@ -90,7 +90,7 @@ function this.onDialogueStarted(e)
     this.smoothedTicks = 0
     this.paused = false
 
-    if this.settings.lightMode == "scene" then
+    if this.settings.effectsMode == "scene" then
         this.buildSceneLights(e.npc)
     else
         this.buildNpcLight(e.npc)
@@ -171,7 +171,7 @@ function this.buildSceneLights(npc)
     end
 
     local origin = npc.position
-    local maxDist = this.settings.lightSceneDistance
+    local maxDist = this.settings.effectsSceneDistance
 
     for ref in cell:iterateReferences(tes3.objectType.light, false) do
         this.tryAddLight(ref, ref.object --[[@as tes3light]], origin, maxDist)
