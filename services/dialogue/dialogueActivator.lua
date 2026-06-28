@@ -41,8 +41,10 @@ end
 ---@private
 ---@param e uiActivatedEventData
 function this.onMenuDialogActivated(e)
-    local reference = tes3ui.getServiceActor().reference --[[@as tes3reference]]
-    if not this.isNpc(reference) then
+    local serviceActor = tes3ui.getServiceActor()
+
+    local reference = serviceActor and serviceActor.reference --[[@as tes3reference]]
+    if not reference or not this.isNpc(reference) then
         return
     end
 

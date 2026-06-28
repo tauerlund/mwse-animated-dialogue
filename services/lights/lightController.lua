@@ -134,7 +134,8 @@ end
 function this.update(delta)
     this.smoothedTicks = 0.25 * (UPDATE_RATE * delta) + 0.75 * this.smoothedTicks
 
-    for _, entry in ipairs(this.lights) do
+    for i = 1, #this.lights do
+        local entry = this.lights[i]
         local increment = entry.rate * this.smoothedTicks
 
         local dimmer = entry.light.dimmer

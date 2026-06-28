@@ -5,7 +5,8 @@ local this = {}
 ---@param controllers niParticleSystemController[]
 ---@param delta number
 function this.update(controllers, delta)
-    for _, controller in ipairs(controllers) do
+    for i = 1, #controllers do
+        local controller = controllers[i]
         local target = controller.target --[[@as niNode]]
         if target then
             target:update({ controllers = true, time = controller.lastTime + delta })

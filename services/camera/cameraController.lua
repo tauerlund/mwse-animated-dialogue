@@ -126,8 +126,8 @@ function this.onEnterFrame(e)
         t = math.ease.smoothstep(this.animationTime / settings.animationDuration)
     end
 
-    for _, animator in ipairs(this.animators) do
-        animator.update(this.cameraWrapper, this.skyWrapper, t, e.delta)
+    for i = 1, #this.animators do
+        this.animators[i].update(this.cameraWrapper, this.skyWrapper, t, e.delta)
     end
 
     this.cameraWrapper:update()
