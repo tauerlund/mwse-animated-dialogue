@@ -1,3 +1,5 @@
+-- WIP - ignore for now
+
 ---@class dialogueAnimationResolver : initializedService
 local this = {}
 
