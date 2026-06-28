@@ -38,6 +38,7 @@ local this = {
     enums = {
         events = require("tauer.animated-dialogue.services.events.enums.events"),
         translationKey = require("tauer.animated-dialogue.services.translations.enums.translationKey"),
+        effectModes = require("tauer.animated-dialogue.services.mcm.pages.enums.effectModes"),
     }
 }
 

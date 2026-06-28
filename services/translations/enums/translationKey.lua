@@ -49,6 +49,7 @@ local this = {
     effectsModeDescription = "effectsModeDescription",
     effectsModeNpc = "effectsModeNpc",
     effectsModeCurrentCell = "effectsModeCurrentCell",
+    effectsModeActiveCells = "effectsModeActiveCells",
     effectsCellDistance = "effectsCellDistance",
     effectsCellDistanceDescription = "effectsCellDistanceDescription",
     weatherPage = "weatherPage",

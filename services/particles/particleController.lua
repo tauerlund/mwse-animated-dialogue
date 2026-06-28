@@ -32,18 +32,22 @@ this.paused = false
 ---@type niParticleSystemController[]
 this.controllers = {}
 
+---@private
+---@type { [string]: fun(npc: tes3reference) }
+this.resolveParticlesStrategies = nil
+
 ---@public
 ---@param services serviceCollection
 ---@return boolean,string|nil
 function this.initialize(services)
-    this.eventRegistrar   = services.eventRegistrar
-    this.settings         = services.settings
-    this.particleResolver = services.particleResolver
-    this.particleAnimator = services.particleAnimator
+    this.eventRegistrar             = services.eventRegistrar
+    this.settings                   = services.settings
+    this.particleResolver           = services.particleResolver
+    this.particleAnimator           = services.particleAnimator
 
-    local events          = services.enums.events
+    local events                    = services.enums.events
 
-    this.eventHandlers    = {
+    this.eventHandlers              = {
         lifetime = {
             [events.dialogueStarted] = this.onDialogueStarted,
             [events.dialogueEnded]   = this.onDialogueEnded,
@@ -53,6 +57,14 @@ function this.initialize(services)
             [events.gamePaused]     = this.onGamePaused,
             [events.gameUnpaused]   = this.onGameUnpaused,
         }
+    }
+
+    local effectModes               = services.enums.effectModes
+
+    this.resolveParticlesStrategies = {
+        [effectModes.npc] = this.resolveNpcParticles,
+        [effectModes.currentCell] = this.resolveCurrentCellParticles,
+        [effectModes.activeCells] = this.resolveActiveCellsParticles
     }
 
     this.eventRegistrar.register(this.eventHandlers.lifetime)
@@ -74,10 +86,9 @@ function this.onDialogueStarted(e)
 
     this.paused = false
 
-    if this.settings.effectsMode == "currentCell" then
-        this.controllers = this.resolveSceneParticles(e.npc)
-    else
-        this.controllers = this.resolveNpcParticles(e.npc)
+    local resolve = this.resolveParticlesStrategies[this.settings.effectsMode]
+    if resolve then
+        resolve(e.npc)
     end
 
     if #this.controllers == 0 then
@@ -115,14 +126,30 @@ end
 
 ---@private
 ---@param npc tes3reference
----@return niParticleSystemController[]
-function this.resolveSceneParticles(npc)
-    ---@type niParticleSystemController[]
-    local controllers = {}
+function this.resolveNpcParticles(npc)
+    this.controllers = this.particleResolver.resolve(npc.sceneNode --[[@as niNode]])
+end
 
-    local cell = npc.cell
+---@private
+---@param npc tes3reference
+function this.resolveCurrentCellParticles(npc)
+    this.resolveCellParticles(npc, npc.cell)
+end
+
+---@private
+---@param npc tes3reference
+function this.resolveActiveCellsParticles(npc)
+    for _, cell in ipairs(tes3.getActiveCells()) do
+        this.resolveCellParticles(npc, cell)
+    end
+end
+
+---@private
+---@param npc tes3reference
+---@param cell tes3cell?
+function this.resolveCellParticles(npc, cell)
     if not cell then
-        return controllers
+        return
     end
 
     local origin = npc.position
@@ -132,19 +159,10 @@ function this.resolveSceneParticles(npc)
         if ref.position:distance(origin) <= maxDist then
             local resolved = this.particleResolver.resolve(ref.sceneNode --[[@as niNode]])
             for _, controller in ipairs(resolved) do
-                controllers[#controllers + 1] = controller
+                this.controllers[#this.controllers + 1] = controller
             end
         end
     end
-
-    return controllers
-end
-
----@private
----@param npc tes3reference
----@return niParticleSystemController[]
-function this.resolveNpcParticles(npc)
-    return this.particleResolver.resolve(npc.sceneNode --[[@as niNode]])
 end
 
 return this
