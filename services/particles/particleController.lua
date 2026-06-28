@@ -74,7 +74,7 @@ function this.onDialogueStarted(e)
 
     this.paused = false
 
-    if this.settings.effectsMode == "scene" then
+    if this.settings.effectsMode == "currentCell" then
         this.controllers = this.resolveSceneParticles(e.npc)
     else
         this.controllers = this.resolveNpcParticles(e.npc)
@@ -126,7 +126,7 @@ function this.resolveSceneParticles(npc)
     end
 
     local origin = npc.position
-    local maxDist = this.settings.effectsSceneDistance
+    local maxDist = this.settings.effectsCellDistance
 
     for ref in cell:iterateReferences(nil, false) do
         if ref.position:distance(origin) <= maxDist then

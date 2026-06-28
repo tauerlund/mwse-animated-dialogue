@@ -61,12 +61,12 @@ return {
     "Keeps particle effects (such as the flame on a held torch) animating during dialogue. Without this, they remain frozen while in menu mode.",
     [keys.effectsMode] = "Animation Mode",
     [keys.effectsModeDescription] =
-    "NPC Only animates just the conversation partner's lights and particle effects. Scene animates all nearby lights and particle effects, including placed world lights, fireplaces, and other actors' torches.",
-    [keys.effectsModeNpc] = "NPC Only",
-    [keys.effectsModeScene] = "Scene",
-    [keys.effectsSceneDistance] = "Scene Distance",
-    [keys.effectsSceneDistanceDescription] =
-    "In Scene mode, the maximum distance (in game units) a light or particle effect may be from the conversation partner to be animated. Anything beyond this remains frozen.",
+    "NPC: animates just the NPC's lights and particle effects.\n\nCurrent cell: animates all lights and particle effects in the current cell, including placed world lights, fireplaces, and other actors' torches.",
+    [keys.effectsModeNpc] = "NPC",
+    [keys.effectsModeCurrentCell] = "Current cell",
+    [keys.effectsCellDistance] = "Scene Distance",
+    [keys.effectsCellDistanceDescription] =
+    "In Scene mode, the maximum distance (in game units) a light or particle effect may be from the NPC to be animated. Anything beyond this remains frozen.",
     [keys.weatherPage] = "Weather",
     [keys.precipitationEnabled] = "Enable Precipitation",
     [keys.precipitationEnabledDescription] =
@@ -76,9 +76,11 @@ return {
     "Keeps ash, blight, and blizzard storms swirling during dialogue. Without this, storms freeze while in menu mode.",
     [keys.swayCategory] = "Sway",
     [keys.swayEnabled] = "Enable Camera Sway",
-    [keys.swayEnabledDescription] = "Adds a subtle oscillation to the camera during dialogue for a more cinematic, living feel.",
+    [keys.swayEnabledDescription] =
+    "Adds a subtle oscillation to the camera during dialogue for a more cinematic, living feel.",
     [keys.swayAmplitude] = "Amplitude",
     [keys.swayAmplitudeDescription] = "How far the camera sways, in degrees. Lower values are more subtle.",
     [keys.swayFrequency] = "Frequency",
-    [keys.swayFrequencyDescription] = "How fast the camera sways, in cycles per second. Lower values give a slow, breathing-like motion.",
+    [keys.swayFrequencyDescription] =
+    "How fast the camera sways, in cycles per second. Lower values give a slow, breathing-like motion.",
 }

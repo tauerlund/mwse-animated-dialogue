@@ -60,12 +60,12 @@ function this.initialize(template, services)
         }),
     })
 
-    lightingParticlesCategory:createDropdown({
+    lightingParticlesCategory:createCycleButton({
         label = translations.get(keys.effectsMode),
         description = translations.get(keys.effectsModeDescription),
         options = {
-            { label = translations.get(keys.effectsModeNpc),   value = "npc" },
-            { label = translations.get(keys.effectsModeScene), value = "scene" },
+            { text = translations.get(keys.effectsModeNpc),         value = "npc" },
+            { text = translations.get(keys.effectsModeCurrentCell), value = "currentCell" },
         },
         variable = mwse.mcm.createTableVariable({
             id = "effectsMode",
@@ -74,10 +74,10 @@ function this.initialize(template, services)
     })
 
     lightingParticlesCategory:createSlider({
-        label = translations.get(keys.effectsSceneDistance),
-        description = translations.get(keys.effectsSceneDistanceDescription),
+        label = translations.get(keys.effectsCellDistance),
+        description = translations.get(keys.effectsCellDistanceDescription),
         variable = mwse.mcm.createTableVariable({
-            id = "effectsSceneDistance",
+            id = "effectsCellDistance",
             table = services.settings
         }),
         min = 256,
