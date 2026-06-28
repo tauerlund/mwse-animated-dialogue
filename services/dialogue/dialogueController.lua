@@ -1,4 +1,4 @@
----@class dialogueActivator : initializedService
+---@class dialogueController : initializedService
 local this = {}
 
 ---@private

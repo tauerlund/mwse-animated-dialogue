@@ -3,7 +3,7 @@ local this = {
     eventLogger = require("tauer.animated-dialogue.services.events.eventLogger"),
     eventRegistrar = require("tauer.animated-dialogue.services.events.eventRegistrar"),
 
-    dialogueActivator = require("tauer.animated-dialogue.services.dialogue.dialogueActivator"),
+    dialogueController = require("tauer.animated-dialogue.services.dialogue.dialogueController"),
     dialogueAnimationResolver = require("tauer.animated-dialogue.services.dialogue.dialogueAnimationResolver"),
 
     renderingController = require("tauer.animated-dialogue.services.rendering.renderingController"),
