@@ -61,12 +61,13 @@ return {
     "Keeps particle effects (such as the flame on a held torch) animating during dialogue. Without this, they remain frozen while in menu mode.",
     [keys.effectsMode] = "Animation Mode",
     [keys.effectsModeDescription] =
-    "NPC: animates just the NPC's lights and particle effects.\n\nCurrent cell: animates all lights and particle effects in the current cell, including placed world lights, fireplaces, and other actors' torches.",
+    "NPC: animates just the NPC's lights and particle effects.\n\nCurrent cell: animates all lights and particle effects in the current cell, including placed world lights, fireplaces, and other actors' torches.\n\nActive cells: like Current cell, but also includes neighboring loaded cells (exteriors). Within the cell distance. May have a bigger performance impact.",
     [keys.effectsModeNpc] = "NPC",
     [keys.effectsModeCurrentCell] = "Current cell",
-    [keys.effectsCellDistance] = "Scene Distance",
+    [keys.effectsModeActiveCells] = "Active cells",
+    [keys.effectsCellDistance] = "Cell Distance",
     [keys.effectsCellDistanceDescription] =
-    "In Scene mode, the maximum distance (in game units) a light or particle effect may be from the NPC to be animated. Anything beyond this remains frozen.",
+    "In the cell modes, the maximum distance (in game units) a light or particle effect may be from the NPC to be animated. Anything beyond this remains frozen.",
     [keys.weatherPage] = "Weather",
     [keys.precipitationEnabled] = "Enable Precipitation",
     [keys.precipitationEnabledDescription] =

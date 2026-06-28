@@ -68,6 +68,7 @@ function this.initialize(template, services)
         options = {
             { text = translations.get(keys.effectsModeNpc),         value = effectModes.npc },
             { text = translations.get(keys.effectsModeCurrentCell), value = effectModes.currentCell },
+            { text = translations.get(keys.effectsModeActiveCells), value = effectModes.activeCells },
         },
         variable = mwse.mcm.createTableVariable({
             id = "effectsMode",

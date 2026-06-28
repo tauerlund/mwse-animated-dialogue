@@ -1,7 +1,8 @@
 ---@class effectModes
 local this = {
     npc = "npc",
-    currentCell = "currentCell"
+    currentCell = "currentCell",
+    activeCells = "activeCells",
 }
 
 return this

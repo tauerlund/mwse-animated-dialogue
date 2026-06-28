@@ -77,7 +77,8 @@ function this.initialize(services)
 
     this.resolveLightsStrategies = {
         [effectModes.npc] = this.resolveNpcLights,
-        [effectModes.currentCell] = this.resolveCurrentCellLights
+        [effectModes.currentCell] = this.resolveCurrentCellLights,
+        [effectModes.activeCells] = this.resolveActiveCellsLights
     }
 
     this.eventRegistrar.register(this.eventHandlers.lifetime)
@@ -177,6 +178,14 @@ end
 ---@param npc tes3reference
 function this.resolveCurrentCellLights(npc)
     this.resolveCellLights(npc, npc.cell)
+end
+
+---@private
+---@param npc tes3reference
+function this.resolveActiveCellsLights(npc)
+    for _, cell in ipairs(tes3.getActiveCells()) do
+        this.resolveCellLights(npc, cell)
+    end
 end
 
 ---@private

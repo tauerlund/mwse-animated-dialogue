@@ -63,7 +63,8 @@ function this.initialize(services)
 
     this.resolveParticlesStrategies = {
         [effectModes.npc] = this.resolveNpcParticles,
-        [effectModes.currentCell] = this.resolveCurrentCellParticles
+        [effectModes.currentCell] = this.resolveCurrentCellParticles,
+        [effectModes.activeCells] = this.resolveActiveCellsParticles
     }
 
     this.eventRegistrar.register(this.eventHandlers.lifetime)
@@ -133,6 +134,14 @@ end
 ---@param npc tes3reference
 function this.resolveCurrentCellParticles(npc)
     this.resolveCellParticles(npc, npc.cell)
+end
+
+---@private
+---@param npc tes3reference
+function this.resolveActiveCellsParticles(npc)
+    for _, cell in ipairs(tes3.getActiveCells()) do
+        this.resolveCellParticles(npc, cell)
+    end
 end
 
 ---@private
