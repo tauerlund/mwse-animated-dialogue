@@ -39,7 +39,7 @@ this.lights = {}
 
 ---@private
 ---@enum flickerMode
-this.modes = {
+this.flickerModes = {
     flicker = 1,
     pulse = 2,
 }
@@ -48,16 +48,20 @@ this.modes = {
 ---@type number
 this.smoothedTicks = 0
 
+---@private
+---@type { [string]: fun(npc: tes3reference) }
+this.resolveLightsStrategies = nil
+
 ---@public
 ---@param services serviceCollection
 ---@return boolean,string|nil
 function this.initialize(services)
-    this.eventRegistrar = services.eventRegistrar
-    this.settings       = services.settings
+    this.eventRegistrar          = services.eventRegistrar
+    this.settings                = services.settings
 
-    local events        = services.enums.events
+    local events                 = services.enums.events
 
-    this.eventHandlers  = {
+    this.eventHandlers           = {
         lifetime = {
             [events.dialogueStarted] = this.onDialogueStarted,
             [events.dialogueEnded]   = this.onDialogueEnded,
@@ -67,6 +71,13 @@ function this.initialize(services)
             [events.gamePaused]     = this.onGamePaused,
             [events.gameUnpaused]   = this.onGameUnpaused,
         }
+    }
+
+    local effectModes            = services.enums.effectModes
+
+    this.resolveLightsStrategies = {
+        [effectModes.npc] = this.resolveNpcLights,
+        [effectModes.currentCell] = this.resolveCurrentCellLights
     }
 
     this.eventRegistrar.register(this.eventHandlers.lifetime)
@@ -90,10 +101,9 @@ function this.onDialogueStarted(e)
     this.smoothedTicks = 0
     this.paused = false
 
-    if this.settings.effectsMode == "currentCell" then
-        this.buildSceneLights(e.npc)
-    else
-        this.buildNpcLight(e.npc)
+    local resolve = this.resolveLightsStrategies[this.settings.effectsMode]
+    if resolve then
+        resolve(e.npc)
     end
 
     if #this.lights == 0 then
@@ -157,7 +167,7 @@ end
 
 ---@private
 ---@param npc tes3reference
-function this.buildNpcLight(npc)
+function this.resolveNpcLights(npc)
     local mobile = npc.mobile
     local source = mobile and mobile.torchSlot and mobile.torchSlot.object --[[@as tes3light]]
     this.tryAddLight(npc, source)
@@ -165,8 +175,14 @@ end
 
 ---@private
 ---@param npc tes3reference
-function this.buildSceneLights(npc)
-    local cell = npc.cell
+function this.resolveCurrentCellLights(npc)
+    this.resolveCellLights(npc, npc.cell)
+end
+
+---@private
+---@param npc tes3reference
+---@param cell tes3cell?
+function this.resolveCellLights(npc, cell)
     if not cell then
         return
     end
@@ -230,11 +246,11 @@ function this.resolveFlicker(source)
     end
 
     if source.pulses or source.pulsesSlowly then
-        return this.modes.pulse, source.pulsesSlowly and SLOW_RATE or FAST_RATE
+        return this.flickerModes.pulse, source.pulsesSlowly and SLOW_RATE or FAST_RATE
     end
 
     if source.flickers or source.flickersSlowly then
-        return this.modes.flicker, source.flickersSlowly and SLOW_RATE or FAST_RATE
+        return this.flickerModes.flicker, source.flickersSlowly and SLOW_RATE or FAST_RATE
     end
 
     return nil
@@ -244,7 +260,7 @@ end
 ---@param entry lightEntry
 ---@return number
 function this.nextTarget(entry)
-    if entry.mode == this.modes.pulse then
+    if entry.mode == this.flickerModes.pulse then
         if entry.target > 0.5 then
             return MIN_BRIGHTNESS
         end
