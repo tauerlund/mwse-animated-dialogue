@@ -9,6 +9,6 @@
 ---@field public sex ("male"|"female")? Matches the NPC's sex; omit for any sex.
 
 ---@class baseAnimationConfiguration
----@field public conditions animationConditions
+---@field public conditions animationConditions?
 ---@field public idle animationDefinition
----@field public talk animationDefinition[]
+---@field public talk animationDefinition[]?

@@ -17,7 +17,7 @@ this.fileTypes = {
 }
 
 ---@private
----@type string[]
+---@type baseAnimationConfiguration[]
 this.baseAnimationConfigurations = nil
 
 ---@public
@@ -49,6 +49,12 @@ function this.initialize(services)
     end
 
     return true, nil
+end
+
+---@public
+---@return baseAnimationConfiguration[]
+function this.getBaseConfigurations()
+    return this.baseAnimationConfigurations
 end
 
 ---@public

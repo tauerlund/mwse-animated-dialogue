@@ -22,6 +22,18 @@ this.npc = nil
 this.phase = 0
 
 ---@private
+---@type number
+this.phaseStart = 0
+
+---@private
+---@type number
+this.phaseEnd = 0
+
+---@private
+---@type mwseLogger
+this.logger = mwse.Logger.new()
+
+---@private
 ---@type niKeyframeController[]
 this.sectionControllers = {}
 
@@ -45,8 +57,8 @@ function this.initialize(services)
 
     local events        = services.enums.events
     this.eventHandlers  = {
-        [events.dialogueStarted] = this.onDialogueStarted,
-        [events.dialogueEnded]   = this.onDialogueEnded,
+        [events.dialogueAnimationResolved] = this.onDialogueAnimationResolved,
+        [events.dialogueEnded]             = this.onDialogueEnded,
     }
 
     this.eventRegistrar.register(this.eventHandlers)
@@ -60,29 +72,54 @@ function this.uninitialize()
 end
 
 ---@private
----@param event dialogueStartedEventData
-function this.onDialogueStarted(event)
-    this.npc            = event.npc
-    this.phase          = 0
+---@param e dialogueAnimationResolvedEventData
+function this.onDialogueAnimationResolved(e)
+    local animationData = e.npc.animationData
+    if not animationData then
+        return
+    end
 
-    local animationData = event.npc.animationData
-    if animationData then
-        this.npcPoseBlender.capture(animationData.actorNode, this.settings.transitionDuration)
+    this.npc   = e.npc
+    this.phase = 0
+
+    -- Capture the pre-dialogue pose before loading/playing so the walk/idle -> animation blend
+    -- starts from the NPC's genuine current pose.
+    this.npcPoseBlender.capture(animationData.actorNode, this.settings.transitionDuration)
+
+    tes3.loadAnimation({
+        reference = e.npc,
+        file      = e.animation.file
+    })
+
+    local group = tes3.animationGroup[e.animation.group]
+    if not group then
+        this.logger:error("Unknown animation group '%s'", e.animation.group)
+        this.npc = nil
+        return
     end
 
     tes3.playAnimation({
-        reference = event.npc,
-        group     = tes3.animationGroup.idle
+        reference = e.npc,
+        group     = group
     })
 
-    if animationData then
-        this.captureSectionPhases(animationData)
-    end
+    this.captureSectionPhases(animationData)
+
+    local start, stop = this.getGroupWindow(animationData, group)
+    this.phaseStart   = start or 0
+    this.phaseEnd     = stop or this.phaseStart
+    this.phase        = this.phaseStart
 end
 
 ---@private
 function this.onDialogueEnded()
     this.restoreSectionPhases()
+
+    -- Reset the actor's animations to default, undoing the loaded animation file.
+    if this.npc then
+        tes3.loadAnimation({ reference = this.npc })
+    end
+
     this.npc = nil
     this.npcPoseBlender.reset()
 end
@@ -226,6 +263,10 @@ end
 ---@public
 ---@param delta number
 function this.update(delta)
+    if not this.npc then
+        return
+    end
+
     local animationData = this.npc.animationData
     if not animationData then
         return
@@ -247,8 +288,8 @@ function this.update(delta)
     })
 
     this.phase = this.phase + delta
-    if this.phase >= 2.666667 then
-        this.phase = 0
+    if this.phase >= this.phaseEnd then
+        this.phase = this.phaseStart
     end
 end
 

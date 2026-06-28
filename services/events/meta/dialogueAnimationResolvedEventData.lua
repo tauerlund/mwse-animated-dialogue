@@ -1,5 +1,4 @@
 ---@meta
 ---@class dialogueAnimationResolvedEventData
----@field public file string
----@field public startTime number
----@field public endTime number
+---@field public npc tes3reference
+---@field public animation animationDefinition
