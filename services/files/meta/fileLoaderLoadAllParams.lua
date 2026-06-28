@@ -1,0 +1,4 @@
+---@meta
+---@class fileLoader.loadAll.params
+---@field public directory string
+---@field public fileType string

@@ -28,6 +28,7 @@ function this.initializeMod(_)
 	---@type initializedService[]
 	local initializedServices = {
 		services.eventLogger,
+		services.animationLoader,
 		services.dialogueController,
 		services.dialogueAnimationResolver,
 		services.renderingController,
