@@ -11,7 +11,6 @@ local this = {
     animationResolver = require("tauer.animated-dialogue.services.animations.animationResolver"),
 
     dialogueController = require("tauer.animated-dialogue.services.dialogue.dialogueController"),
-    dialogueAnimationResolver = require("tauer.animated-dialogue.services.dialogue.dialogueAnimationResolver"),
 
     renderingController = require("tauer.animated-dialogue.services.rendering.renderingController"),
 

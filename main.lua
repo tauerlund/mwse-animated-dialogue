@@ -30,7 +30,6 @@ function this.initializeMod(_)
 		services.eventLogger,
 		services.animationLoader,
 		services.dialogueController,
-		services.dialogueAnimationResolver,
 		services.renderingController,
 		services.npcController,
 		services.npcTurnAnimator,
