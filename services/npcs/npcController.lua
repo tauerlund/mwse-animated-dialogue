@@ -121,8 +121,8 @@ function this.onEnterFrame(e)
         return
     end
 
-    for _, animator in ipairs(this.animators) do
-        animator.update(e.delta)
+    for i = 1, #this.animators do
+        this.animators[i].update(e.delta)
     end
 end
 

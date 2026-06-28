@@ -110,14 +110,14 @@ function this.advanceParticles(particles, delta)
     local minZ = this.minZ
     local columnHeight = this.columnHeight
 
-    for _, particle in ipairs(particles) do
-        local object = particle.object
+    for i = 1, #particles do
+        local object = particles[i].object
         if object then
             -- Re-clear each frame: menu-mode freezes the engine's per-particle
             -- cull, which otherwise hides most of the column.
             object.appCulled = false
 
-            local velocity = particle.velocity
+            local velocity = particles[i].velocity
             local position = object.translation
 
             -- Component-wise to avoid allocating a vector per particle per frame.
