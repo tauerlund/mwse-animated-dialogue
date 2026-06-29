@@ -10,5 +10,7 @@
 
 ---@class baseAnimationConfiguration
 ---@field public conditions animationConditions?
+---@field public torchCompatible boolean?
+---@field public shieldCompatible boolean?
 ---@field public idle animationDefinition
 ---@field public talk animationDefinition[]?
