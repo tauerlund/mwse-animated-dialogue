@@ -2,6 +2,7 @@
 local this = {}
 
 local LEFT_ARM_ROOT = "Bip01 L Clavicle"
+local BONE_PREFIX   = "Bip"
 
 local REGION = {
     all     = "all",
@@ -119,11 +120,12 @@ function this.collectTimings(node, startMarker, stopMarker, result)
     while extra do
         if extra.keys then
             for i = 1, #extra.keys do
-                local text = extra.keys[i].text:lower()
-                if text == startMarker then
-                    result.start = extra.keys[i].time
-                elseif text == stopMarker then
-                    result.stop = extra.keys[i].time
+                local key = extra.keys[i]
+                local marker = key.text:lower():trim()
+                if marker == startMarker then
+                    result.start = key.time
+                elseif marker == stopMarker then
+                    result.stop = key.time
                 end
             end
         end
@@ -250,7 +252,7 @@ function this.collectBones(node, map)
         return
     end
 
-    if node.name then
+    if node.name and node.name:sub(1, #BONE_PREFIX) == BONE_PREFIX then
         map[node.name] = node
     end
 
