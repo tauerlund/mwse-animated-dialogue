@@ -1,21 +1,21 @@
 ---@class npcTrackBinder : service
-local this = {}
+local this          = {}
 
 local LEFT_ARM_ROOT = "Bip01 L Clavicle"
 local BONE_PREFIX   = "Bip"
 
-local REGION = {
+local REGION        = {
     all     = "all",
     body    = "body",
     leftArm = "leftArm",
 }
 
 ---@public
-this.region = REGION
+this.region         = REGION
 
 ---@private
 ---@type mwseLogger
-this.logger = mwse.Logger.new()
+this.logger         = mwse.Logger.new()
 
 ---@public
 ---@return track
@@ -39,7 +39,7 @@ end
 function this.bind(params)
     local track = params.track
 
-    local source = tes3.loadMesh(params.file, true)
+    local source = tes3.loadMesh(params.file, true):clone()
     if not source then
         this.logger:error("Could not load animation mesh '%s'", params.file)
         return 0
