@@ -37,23 +37,16 @@ this.phaseEnd = 0
 ---@type mwseLogger
 this.logger = mwse.Logger.new()
 
--- The standalone-loaded animation mesh whose keyframe controllers we drive onto the live
--- skeleton. Held so it is not garbage-collected while bound.
 ---@private
 ---@type niNode
 this.source = nil
 
--- Each entry: { target = niNode, controller = niKeyframeController }. The controller has been
--- moved onto the live bone (it both owns and targets it), so ticking the bone poses it.
 ---@private
 this.boundControllers = {}
 
 ---@private
 this.boundCount = 0
 
--- Bones the source animation does not keyframe (e.g. the Bip01 root). Each entry:
--- { target = niNode, rotation = tes3matrix33 }. Held at the source's rest rotation every frame
--- so stale locomotion tilt cannot persist or be dragged back in by the pose blend.
 ---@private
 this.restBones = {}
 
@@ -62,6 +55,10 @@ this.restCount = 0
 
 ---@private
 this.eventHandlers = nil
+
+---@private
+---@type animationDefinition
+this.idleAnimation = nil
 
 ---@public
 ---@param services serviceCollection
@@ -72,8 +69,8 @@ function this.initialize(services)
     this.npcPoseBlender    = services.npcPoseBlender
     this.animationResolver = services.animationResolver
 
-    local events        = services.enums.events
-    this.eventHandlers  = {
+    local events           = services.enums.events
+    this.eventHandlers     = {
         [events.dialogueStarted] = this.onDialogueStarted,
         [events.dialogueEnded]   = this.onDialogueEnded,
         [tes3.event.infoGetText] = this.onInfoGetText,
@@ -97,7 +94,9 @@ function this.onDialogueStarted(e)
         return
     end
 
-    this.applyAnimation(e.npc, animation)
+    this.npc = e.npc
+    this.idleAnimation = animation
+    this.applyAnimation(animation, true)
 end
 
 ---@private
@@ -112,7 +111,7 @@ function this.onInfoGetText(_)
         return
     end
 
-    this.applyAnimation(this.npc, animation)
+    this.applyAnimation(animation, false)
 end
 
 ---@private
@@ -123,23 +122,16 @@ function this.onDialogueEnded()
     this.npcPoseBlender.reset()
 end
 
--- Load the resolved animation mesh and rebind its keyframe controllers onto the live skeleton.
 ---@private
----@param npc tes3reference
 ---@param animation animationDefinition
-function this.applyAnimation(npc, animation)
-    this.npc = npc
-
+---@param loop boolean
+function this.applyAnimation(animation, loop)
     local animationData = this.npc.animationData
     if not animationData then
         return
     end
 
-    -- Re-applying (e.g. a talk animation mid-dialogue) rebinds to a new source.
     this.releaseSource()
-
-    -- Capture the genuine current pose so the transition into the animation blends from it.
-    -- We never call tes3.loadAnimation, so the skeleton is intact and these node refs stay valid.
     this.npcPoseBlender.capture(animationData.actorNode, this.settings.transitionDuration)
 
     local source = tes3.loadMesh(animation.file, false)
@@ -160,12 +152,9 @@ function this.applyAnimation(npc, animation)
     end
 
     this.phase = this.phaseStart
+    this.looping = loop
 end
 
--- Move each of the source mesh's keyframe controllers onto the live skeleton bone of the same
--- name (attach + retarget), so the live bone both owns and is the target of the controller --
--- the only arrangement that actually ticks (a detached source node never updates). Establishes
--- the [start, stop] loop window from the controllers' own key range.
 ---@private
 ---@param actorNode niNode
 ---@param source niNode
@@ -205,19 +194,18 @@ end
 ---@param controller niKeyframeController
 ---@param liveBone niNode
 function this.bindController(node, controller, liveBone)
-    controller.animTimingType = 1 -- treat fed time as an offset from the start
+    controller.animTimingType = 1
     controller.frequency      = 1
     controller.phase          = 0
     controller.active         = true
 
-    -- Prepend before removing so the controller is never at a zero ref count mid-move.
     liveBone:prependController(controller)
     node:removeController(controller)
     controller:setTarget(liveBone)
 
-    local index                  = this.boundCount + 1
-    this.boundCount              = index
-    this.boundControllers[index] = this.boundControllers[index] or {}
+    local index                             = this.boundCount + 1
+    this.boundCount                         = index
+    this.boundControllers[index]            = this.boundControllers[index] or {}
     this.boundControllers[index].target     = liveBone
     this.boundControllers[index].controller = controller
 
@@ -230,9 +218,9 @@ end
 ---@param node niNode
 ---@param liveBone niNode
 function this.recordRestBone(node, liveBone)
-    local index            = this.restCount + 1
-    this.restCount         = index
-    this.restBones[index]  = this.restBones[index] or {}
+    local index                    = this.restCount + 1
+    this.restCount                 = index
+    this.restBones[index]          = this.restBones[index] or {}
     this.restBones[index].target   = liveBone
     this.restBones[index].rotation = node.rotation:copy()
 end
@@ -263,8 +251,6 @@ function this.buildBoneMap(actorNode)
     return map
 end
 
--- Detach our controllers from the live skeleton so the engine's own animation manager resumes
--- posing the bones once dialogue closes; otherwise the actor stays frozen in the last pose.
 ---@private
 function this.releaseSource()
     for i = 1, this.boundCount do
@@ -304,7 +290,6 @@ function this.update(delta)
         })
     end
 
-    -- Hold un-keyframed bones at rest each frame, before the blend reads the pose.
     for i = 1, this.restCount do
         this.restBones[i].target.rotation = this.restBones[i].rotation
     end
@@ -322,7 +307,11 @@ function this.update(delta)
 
     this.phase = this.phase + delta
     if this.phase >= this.phaseEnd then
-        this.phase = this.phaseStart
+        if this.looping then
+            this.phase = this.phaseStart
+        else
+            this.applyAnimation(this.idleAnimation, true)
+        end
     end
 end
 

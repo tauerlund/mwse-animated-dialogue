@@ -17,8 +17,6 @@ function this.initialize(services)
     return true, nil
 end
 
--- Resolve the base (idle) animation for the NPC's context, remembering the chosen configuration
--- so talk animations for the rest of the dialogue are drawn from the same one.
 ---@public
 ---@param npc tes3reference
 ---@return animationDefinition|nil
@@ -33,7 +31,6 @@ function this.resolveIdle(npc)
     return configuration.idle
 end
 
--- Pick a talk animation from the configuration resolved for the current dialogue, if any.
 ---@public
 ---@return animationDefinition|nil
 function this.resolveTalk()
@@ -50,7 +47,6 @@ function this.reset()
     this.configuration = nil
 end
 
--- THE SEAM for the future context-driven selection pattern; currently returns the first config.
 ---@private
 ---@param npc tes3reference
 ---@return baseAnimationConfiguration|nil
