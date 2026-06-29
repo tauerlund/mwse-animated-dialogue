@@ -5,8 +5,10 @@ local this = {
 
     fileLoader = require("tauer.animated-dialogue.services.files.fileLoader"),
 
-    animationConfigurationValidator = require(
-        "tauer.animated-dialogue.services.animations.animationConfigurationValidator"),
+    animationValidator = require(
+        "tauer.animated-dialogue.services.animations.animationValidator"),
+    animationFilterer = require(
+        "tauer.animated-dialogue.services.animations.animationFilterer"),
     animationLoader = require("tauer.animated-dialogue.services.animations.animationLoader"),
     animationResolver = require("tauer.animated-dialogue.services.animations.animationResolver"),
 
@@ -41,6 +43,8 @@ local this = {
     settings = require("tauer.animated-dialogue.services.mcm.mcmSettings").mcm,
 
     translations = require("tauer.animated-dialogue.services.translations.translations"),
+
+    ruleLoader = require("tauer.animated-dialogue.services.rules.ruleLoader"),
 
     ---@class enums
     enums = {

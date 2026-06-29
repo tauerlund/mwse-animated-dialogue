@@ -6,6 +6,10 @@ local this = {}
 this.animationLoader = nil
 
 ---@private
+---@type animationFilterer
+this.animationFilterer = nil
+
+---@private
 ---@type baseAnimationConfiguration
 this.configuration = nil
 
@@ -14,6 +18,7 @@ this.configuration = nil
 ---@return boolean, string|nil
 function this.initialize(services)
     this.animationLoader = services.animationLoader
+    this.animationFilterer = services.animationFilterer
     return true, nil
 end
 
@@ -28,18 +33,8 @@ function this.resolve(npc)
     end
 
     this.configuration = configuration
+
     return configuration
-end
-
----@public
----@return animationDefinition|nil
-function this.resolveTalk()
-    local talk = this.configuration and this.configuration.talk
-    if not talk then
-        return nil
-    end
-
-    return (table.choice(talk))
 end
 
 ---@public
@@ -52,7 +47,13 @@ end
 ---@return baseAnimationConfiguration|nil
 function this.resolveBaseConfiguration(npc)
     local configurations = this.animationLoader.getBaseConfigurations()
-    return configurations and configurations[1]
+
+    local filtered = this.animationFilterer.filter(configurations, npc)
+    if #filtered == 0 then
+        return nil
+    end
+
+    return (table.choice(filtered))
 end
 
 return this

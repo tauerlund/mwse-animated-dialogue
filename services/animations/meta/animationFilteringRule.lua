@@ -1,0 +1,3 @@
+---@meta
+---@class animationFilteringRule
+---@field public isMet fun(configuration: baseAnimationConfiguration, npc: tes3reference):boolean

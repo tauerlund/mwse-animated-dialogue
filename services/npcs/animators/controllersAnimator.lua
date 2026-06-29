@@ -99,7 +99,12 @@ function this.onInfoGetText(_)
         return
     end
 
-    local animation = table.choice(this.animationConfiguration.talk)
+    local talk = this.animationConfiguration.talk
+    if not talk or #talk == 0 then
+        return
+    end
+
+    local animation = table.choice(talk)
 
     this.applyAnimation(animation, false)
 end

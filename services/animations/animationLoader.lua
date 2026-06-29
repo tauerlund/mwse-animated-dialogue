@@ -33,7 +33,7 @@ function this.initialize(services)
         return false, "base animation configurations could not be loaded"
     end
 
-    local validator = services.animationConfigurationValidator
+    local validator = services.animationValidator
 
     for _, file in ipairs(files) do
         local configuration = mwse.loadConfig(this.buildPath(file)) --[[@as baseAnimationConfiguration]]

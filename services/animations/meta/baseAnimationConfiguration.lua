@@ -7,6 +7,7 @@
 ---@class animationConditions
 ---@field public class string[]? Matches if the NPC's class is any of these; omit for any class.
 ---@field public sex ("male"|"female")? Matches the NPC's sex; omit for any sex.
+---@field public beast boolean
 
 ---@class baseAnimationConfiguration
 ---@field public conditions animationConditions?

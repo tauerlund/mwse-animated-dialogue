@@ -1,4 +1,4 @@
----@class animationConfigurationValidator : service
+---@class animationValidator : service
 local this = {}
 
 ---@public

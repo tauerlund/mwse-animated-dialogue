@@ -1,0 +1,3 @@
+---@meta
+---@class animationValidationRule
+---@field public validate fun(configuration: baseAnimationConfiguration):boolean, string|nil
