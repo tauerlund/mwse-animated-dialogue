@@ -14,39 +14,58 @@ this.settings = nil
 this.npcPoseBlender = nil
 
 ---@private
+---@type animationResolver
+this.animationResolver = nil
+
+---@private
+---@type npcTrackBinder
+this.npcTrackBinder = nil
+
+---@private
 ---@type tes3reference
 this.npc = nil
 
 ---@private
----@type number
-this.phase = 0
+---@type mwseLogger
+this.logger = mwse.Logger.new()
 
 ---@private
----@type niKeyframeController[]
-this.sectionControllers = {}
+---@type track
+this.bodyTrack = nil
 
 ---@private
----@type number[]
-this.sectionOriginalPhases = {}
+---@type track
+this.torchTrack = nil
 
 ---@private
-this.sectionCount = 0
+---@type animationDefinition
+this.torchArmAnimation = { file = "tauer\\ad\\torch.nif", group = "idle9" }
 
 ---@private
 this.eventHandlers = nil
+
+---@private
+---@type baseAnimationConfiguration
+this.animationConfiguration = nil
 
 ---@public
 ---@param services serviceCollection
 ---@return boolean,string|nil
 function this.initialize(services)
-    this.eventRegistrar = services.eventRegistrar
-    this.settings       = services.settings
-    this.npcPoseBlender = services.npcPoseBlender
+    this.eventRegistrar    = services.eventRegistrar
+    this.settings          = services.settings
+    this.npcPoseBlender    = services.npcPoseBlender
+    this.animationResolver = services.animationResolver
+    this.npcTrackBinder    = services.npcTrackBinder
 
-    local events        = services.enums.events
-    this.eventHandlers  = {
+    this.bodyTrack         = this.npcTrackBinder.create()
+    this.torchTrack        = this.npcTrackBinder.create()
+
+    local events           = services.enums.events
+    this.eventHandlers     = {
         [events.dialogueStarted] = this.onDialogueStarted,
         [events.dialogueEnded]   = this.onDialogueEnded,
+        [tes3.event.infoGetText] = this.onInfoGetText,
     }
 
     this.eventRegistrar.register(this.eventHandlers)
@@ -60,84 +79,88 @@ function this.uninitialize()
 end
 
 ---@private
----@param event dialogueStartedEventData
-function this.onDialogueStarted(event)
-    this.npc            = event.npc
-    this.phase          = 0
-
-    local animationData = event.npc.animationData
-    if animationData then
-        this.npcPoseBlender.capture(animationData.actorNode, this.settings.transitionDuration)
+---@param e dialogueStartedEventData
+function this.onDialogueStarted(e)
+    local configuration = this.animationResolver.resolve(e.npc)
+    if not configuration then
+        return
     end
 
-    tes3.playAnimation({
-        reference = event.npc,
-        group     = tes3.animationGroup.idle
-    })
+    this.npc = e.npc
+    this.animationConfiguration = configuration
 
-    if animationData then
-        this.captureSectionPhases(animationData)
+    this.applyAnimation(configuration.idle, true)
+end
+
+---@private
+---@param _ infoGetTextEventData
+function this.onInfoGetText(_)
+    if not this.npc then
+        return
     end
+
+    local animation = table.choice(this.animationConfiguration.talk)
+
+    this.applyAnimation(animation, false)
 end
 
 ---@private
 function this.onDialogueEnded()
-    this.restoreSectionPhases()
+    this.animationResolver.reset()
+    this.resetTracks()
     this.npc = nil
     this.npcPoseBlender.reset()
 end
 
 ---@private
----@param animationData tes3animationData
-function this.captureSectionPhases(animationData)
-    this.sectionCount = 0
+---@param animation animationDefinition
+---@param loop boolean
+function this.applyAnimation(animation, loop)
+    local animationData = this.npc.animationData
+    if not animationData then
+        return
+    end
 
-    local sections = tes3.animationBodySection
+    this.resetTracks()
+    this.npcPoseBlender.capture(animationData.actorNode, this.settings.transitionDuration)
 
-    this.cancelSectionOffset(animationData, sections.lower, "lower")
-    this.cancelSectionOffset(animationData, sections.upper, "upper")
+    local holdingTorch = this.isHoldingTorch()
 
-    -- The leftArm of a torch-carrier should hold the torch raised, not drop to idle. Anchor
-    -- it into the vanilla `torch` group's window instead of cancelling it to the idle region.
-    if this.isHoldingTorch() then
-        this.anchorTorchArm(animationData)
-    else
-        this.cancelSectionOffset(animationData, sections.leftArm, "leftArm")
+    local region       = holdingTorch and
+        this.npcTrackBinder.region.body or
+        this.npcTrackBinder.region.all
+
+    local count        = this.npcTrackBinder.bind({
+        track     = this.bodyTrack,
+        actorNode = animationData.actorNode,
+        file      = animation.file,
+        group     = animation.group,
+        region    = region,
+        loop      = loop,
+    })
+
+    if count == 0 then
+        this.resetTracks()
+        this.npc = nil
+        return
+    end
+
+    if holdingTorch then
+        this.applyTorchArm(animationData.actorNode)
     end
 end
 
 ---@private
----@param animationData tes3animationData
----@param section tes3.animationBodySection
----@param field string
----@return niSequence|nil
-function this.resolveSectionSequence(animationData, section, field)
-    local layer = animationData.currentAnimGroupLayers[section + 1]
-    if not layer then
-        return nil
-    end
-
-    local group = animationData.keyframeLayers[layer + 1]
-    return group and group[field] --[[@as niSequence]]
-end
-
----@private
----@param animationData tes3animationData
----@param section tes3.animationBodySection
----@param field string
-function this.cancelSectionOffset(animationData, section, field)
-    local sequence = this.resolveSectionSequence(animationData, section, field)
-    if not sequence then
-        return
-    end
-
-    local offset = sequence.offset
-    if offset == 0 then
-        return
-    end
-
-    -- Cancelling the offset drives the section at `phase` (the idle window at [0, 2.666667]).
-    this.captureSectionShift(sequence, -offset)
+---@param actorNode niNode
+function this.applyTorchArm(actorNode)
+    this.npcTrackBinder.bind({
+        track     = this.torchTrack,
+        actorNode = actorNode,
+        file      = this.torchArmAnimation.file,
+        group     = this.torchArmAnimation.group,
+        region    = this.npcTrackBinder.region.leftArm,
+        loop      = true,
+    })
 end
 
 ---@private
@@ -147,95 +170,64 @@ function this.isHoldingTorch()
     return mobile ~= nil and mobile.torchSlot ~= nil and mobile.torchSlot.object ~= nil
 end
 
--- Drive the leftArm in the vanilla `torch` group's keyframe window instead of the idle one,
--- so the manager poses the arm raised. `offset` (read-only) is what the manager folds into the
--- fed time; the writable `controller.phase` lets us re-target by shifting `torchStart - offset`,
--- making the effective time `phase + torchStart`. The torch span equals the idle period
--- (2.666667), so the existing phase wrap sweeps exactly [torchStart, torchStop] and loops cleanly.
 ---@private
----@param animationData tes3animationData
-function this.anchorTorchArm(animationData)
-    local sequence = this.resolveSectionSequence(animationData, tes3.animationBodySection.leftArm, "leftArm")
-    if not sequence then
+function this.resetTracks()
+    this.npcTrackBinder.reset(this.bodyTrack)
+    this.npcTrackBinder.reset(this.torchTrack)
+end
+
+---@private
+---@param track track
+function this.updateTrack(track)
+    for i = 1, track.count do
+        track.controllers[i].target:update({
+            controllers = true,
+            time        = track.phase
+        })
+    end
+
+    for i = 1, track.restCount do
+        track.rest[i].target.rotation = track.rest[i].rotation
+    end
+end
+
+---@private
+---@param track track
+---@param delta number
+function this.advanceTrack(track, delta)
+    if track.count == 0 then
         return
     end
 
-    local torchStart = this.getGroupWindow(animationData, tes3.animationGroup.torch)
-    if not torchStart then
-        -- No torch window available; fall back to the idle cancel (arm down, but not flailing).
-        this.captureSectionShift(sequence, -sequence.offset)
+    track.phase = track.phase + delta
+
+    if track.phase < track.stop then
         return
     end
 
-    this.captureSectionShift(sequence, torchStart - sequence.offset)
-end
-
--- An animation group's absolute [start, stop] time on the concatenated KF timeline, from its
--- action note keys (actionTimings[1]/[2]). Verified against idle = [0, 2.666667]. Read per-actor
--- so it adapts to the actor's own keyframes rather than hardcoding a base-anim value.
----@private
----@param animationData tes3animationData
----@param group tes3.animationGroup
----@return number|nil start, number|nil stop
-function this.getGroupWindow(animationData, group)
-    local groups = animationData.animationGroups
-    if not groups then
-        return nil, nil
+    if track.looping then
+        track.phase = track.start
+    else
+        this.applyAnimation(this.animationConfiguration.idle, true)
     end
-
-    local animationGroup = groups[group + 1]
-    if not animationGroup or (animationGroup.actionCount or 0) < 2 then
-        return nil, nil
-    end
-
-    local timings = animationGroup.actionTimings
-    return timings[1], timings[2]
-end
-
--- Shift every (non-nil) controller of a section's sequence by `phaseShift` seconds, caching
--- the originals so restoreSectionPhases can undo it. Effective drive time becomes
--- `phase + offset + originalPhase + phaseShift`.
----@private
----@param sequence niSequence
----@param phaseShift number
-function this.captureSectionShift(sequence, phaseShift)
-    -- MWSE's controllers array is sparse (nil holes), and ipairs over it yields the nils
-    -- rather than terminating, so guard each entry.
-    for _, controller in ipairs(sequence.controllers) do
-        if controller then
-            local index                       = this.sectionCount + 1
-            this.sectionCount                 = index
-            this.sectionControllers[index]    = controller
-            this.sectionOriginalPhases[index] = controller.phase
-            controller.phase                  = controller.phase + phaseShift
-        end
-    end
-end
-
----@private
-function this.restoreSectionPhases()
-    for i = 1, this.sectionCount do
-        this.sectionControllers[i].phase = this.sectionOriginalPhases[i]
-        this.sectionControllers[i]       = nil
-        this.sectionOriginalPhases[i]    = nil
-    end
-
-    this.sectionCount = 0
 end
 
 ---@public
 ---@param delta number
 function this.update(delta)
+    if not this.npc then
+        return
+    end
+
     local animationData = this.npc.animationData
     if not animationData then
         return
     end
 
-    animationData.actorNode:update({
-        controllers = true,
-        children    = true,
-        time        = this.phase
-    })
+    this.updateTrack(this.bodyTrack)
+    this.updateTrack(this.torchTrack)
+
+    animationData.actorNode:update({ children = true })
 
     if this.npcPoseBlender.isActive() then
         this.npcPoseBlender.update(animationData.actorNode, delta)
@@ -246,10 +238,8 @@ function this.update(delta)
         time        = 0
     })
 
-    this.phase = this.phase + delta
-    if this.phase >= 2.666667 then
-        this.phase = 0
-    end
+    this.advanceTrack(this.torchTrack, delta)
+    this.advanceTrack(this.bodyTrack, delta)
 end
 
 return this

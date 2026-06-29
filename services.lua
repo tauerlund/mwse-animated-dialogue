@@ -3,8 +3,14 @@ local this = {
     eventLogger = require("tauer.animated-dialogue.services.events.eventLogger"),
     eventRegistrar = require("tauer.animated-dialogue.services.events.eventRegistrar"),
 
+    fileLoader = require("tauer.animated-dialogue.services.files.fileLoader"),
+
+    animationConfigurationValidator = require(
+        "tauer.animated-dialogue.services.animations.animationConfigurationValidator"),
+    animationLoader = require("tauer.animated-dialogue.services.animations.animationLoader"),
+    animationResolver = require("tauer.animated-dialogue.services.animations.animationResolver"),
+
     dialogueController = require("tauer.animated-dialogue.services.dialogue.dialogueController"),
-    dialogueAnimationResolver = require("tauer.animated-dialogue.services.dialogue.dialogueAnimationResolver"),
 
     renderingController = require("tauer.animated-dialogue.services.rendering.renderingController"),
 
@@ -14,6 +20,7 @@ local this = {
 
     npcController = require("tauer.animated-dialogue.services.npcs.npcController"),
     npcPoseBlender = require("tauer.animated-dialogue.services.npcs.npcPoseBlender"),
+    npcTrackBinder = require("tauer.animated-dialogue.services.npcs.npcTrackBinder"),
     npcTurnAnimator = require("tauer.animated-dialogue.services.npcs.animators.turnAnimator"),
     npcControllersAnimator = require("tauer.animated-dialogue.services.npcs.animators.controllersAnimator"),
     npcHeadMorphAnimator = require("tauer.animated-dialogue.services.npcs.animators.headMorphAnimator"),

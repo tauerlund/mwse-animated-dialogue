@@ -1,5 +1,0 @@
----@meta
----@class dialogueAnimationResolvedEventData
----@field public file string
----@field public startTime number
----@field public endTime number
