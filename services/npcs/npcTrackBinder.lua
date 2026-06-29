@@ -39,7 +39,7 @@ end
 function this.bind(params)
     local track = params.track
 
-    local source = tes3.loadMesh(params.file, true):clone()
+    local source = tes3.loadMesh(params.file, true)
     if not source then
         this.logger:error("Could not load animation mesh '%s'", params.file)
         return 0
