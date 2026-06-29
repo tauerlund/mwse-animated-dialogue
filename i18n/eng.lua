@@ -75,6 +75,9 @@ return {
     [keys.stormsEnabled] = "Enable Storms",
     [keys.stormsEnabledDescription] =
     "Keeps ash, blight, and blizzard storms swirling during dialogue. Without this, storms freeze while in menu mode.",
+    [keys.cloudsEnabled] = "Enable Clouds",
+    [keys.cloudsEnabledDescription] =
+    "Keeps clouds drifting across the sky during dialogue. Without this, clouds freeze while in menu mode.",
     [keys.swayCategory] = "Sway",
     [keys.swayEnabled] = "Enable Camera Sway",
     [keys.swayEnabledDescription] =
