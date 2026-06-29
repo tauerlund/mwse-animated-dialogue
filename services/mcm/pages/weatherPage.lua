@@ -29,6 +29,15 @@ function this.initialize(template, services)
             table = services.settings
         }),
     })
+
+    page:createOnOffButton({
+        label = translations.get(keys.cloudsEnabled),
+        description = translations.get(keys.cloudsEnabledDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "cloudsEnabled",
+            table = services.settings
+        }),
+    })
 end
 
 return this

@@ -20,6 +20,7 @@ this.defaults = {
     effectsCellDistance = 4096,
     precipitationEnabled = true,
     stormsEnabled = true,
+    cloudsEnabled = true,
     distance = 90,
     horizontalOffset = 40,
     verticalOffset = -15,
@@ -31,7 +32,7 @@ this.defaults = {
     transitionDuration = 0.5,
     dofEnabled = true,
     dofStrength = 3.0,
-    swayEnabled = false,
+    swayEnabled = true,
     swayAmplitude = 0.3,
     swayFrequency = 0.1,
 }

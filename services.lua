@@ -31,6 +31,7 @@ local this = {
 
     weatherPrecipitationController = require("tauer.animated-dialogue.services.weather.weatherPrecipitationController"),
     weatherStormController = require("tauer.animated-dialogue.services.weather.weatherStormController"),
+    weatherSkyController = require("tauer.animated-dialogue.services.weather.weatherSkyController"),
 
     lightController = require("tauer.animated-dialogue.services.lights.lightController"),
 
