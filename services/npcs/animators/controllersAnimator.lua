@@ -14,6 +14,10 @@ this.settings = nil
 this.npcPoseBlender = nil
 
 ---@private
+---@type animationResolver
+this.animationResolver = nil
+
+---@private
 ---@type tes3reference
 this.npc = nil
 
@@ -33,16 +37,28 @@ this.phaseEnd = 0
 ---@type mwseLogger
 this.logger = mwse.Logger.new()
 
+-- The standalone-loaded animation mesh whose keyframe controllers we drive onto the live
+-- skeleton. Held so it is not garbage-collected while bound.
 ---@private
----@type niKeyframeController[]
-this.sectionControllers = {}
+---@type niNode
+this.source = nil
+
+-- Each entry: { target = niNode, controller = niKeyframeController }. The controller has been
+-- moved onto the live bone (it both owns and targets it), so ticking the bone poses it.
+---@private
+this.boundControllers = {}
 
 ---@private
----@type number[]
-this.sectionOriginalPhases = {}
+this.boundCount = 0
+
+-- Bones the source animation does not keyframe (e.g. the Bip01 root). Each entry:
+-- { target = niNode, rotation = tes3matrix33 }. Held at the source's rest rotation every frame
+-- so stale locomotion tilt cannot persist or be dragged back in by the pose blend.
+---@private
+this.restBones = {}
 
 ---@private
-this.sectionCount = 0
+this.restCount = 0
 
 ---@private
 this.eventHandlers = nil
@@ -51,14 +67,16 @@ this.eventHandlers = nil
 ---@param services serviceCollection
 ---@return boolean,string|nil
 function this.initialize(services)
-    this.eventRegistrar = services.eventRegistrar
-    this.settings       = services.settings
-    this.npcPoseBlender = services.npcPoseBlender
+    this.eventRegistrar    = services.eventRegistrar
+    this.settings          = services.settings
+    this.npcPoseBlender    = services.npcPoseBlender
+    this.animationResolver = services.animationResolver
 
     local events        = services.enums.events
     this.eventHandlers  = {
-        [events.dialogueAnimationResolved] = this.onDialogueAnimationResolved,
-        [events.dialogueEnded]             = this.onDialogueEnded,
+        [events.dialogueStarted] = this.onDialogueStarted,
+        [events.dialogueEnded]   = this.onDialogueEnded,
+        [tes3.event.infoGetText] = this.onInfoGetText,
     }
 
     this.eventRegistrar.register(this.eventHandlers)
@@ -72,198 +90,205 @@ function this.uninitialize()
 end
 
 ---@private
----@param e dialogueAnimationResolvedEventData
-function this.onDialogueAnimationResolved(e)
-    local animationData = e.npc.animationData
-    if not animationData then
+---@param e dialogueStartedEventData
+function this.onDialogueStarted(e)
+    local animation = this.animationResolver.resolveIdle(e.npc)
+    if not animation then
         return
     end
 
-    this.npc   = e.npc
-    this.phase = 0
+    this.applyAnimation(e.npc, animation)
+end
 
-    -- Capture the pre-dialogue pose before loading/playing so the walk/idle -> animation blend
-    -- starts from the NPC's genuine current pose.
-    this.npcPoseBlender.capture(animationData.actorNode, this.settings.transitionDuration)
-
-    tes3.loadAnimation({
-        reference = e.npc,
-        file      = e.animation.file
-    })
-
-    local group = tes3.animationGroup[e.animation.group]
-    if not group then
-        this.logger:error("Unknown animation group '%s'", e.animation.group)
-        this.npc = nil
+---@private
+---@param _ infoGetTextEventData
+function this.onInfoGetText(_)
+    if not this.npc then
         return
     end
 
-    tes3.playAnimation({
-        reference = e.npc,
-        group     = group
-    })
+    local animation = this.animationResolver.resolveTalk()
+    if not animation then
+        return
+    end
 
-    this.captureSectionPhases(animationData)
-
-    local start, stop = this.getGroupWindow(animationData, group)
-    this.phaseStart   = start or 0
-    this.phaseEnd     = stop or this.phaseStart
-    this.phase        = this.phaseStart
+    this.applyAnimation(this.npc, animation)
 end
 
 ---@private
 function this.onDialogueEnded()
-    this.restoreSectionPhases()
-
-    -- Reset the actor's animations to default, undoing the loaded animation file.
-    if this.npc then
-        tes3.loadAnimation({ reference = this.npc })
-    end
-
+    this.animationResolver.reset()
+    this.releaseSource()
     this.npc = nil
     this.npcPoseBlender.reset()
 end
 
+-- Load the resolved animation mesh and rebind its keyframe controllers onto the live skeleton.
 ---@private
----@param animationData tes3animationData
-function this.captureSectionPhases(animationData)
-    this.sectionCount = 0
+---@param npc tes3reference
+---@param animation animationDefinition
+function this.applyAnimation(npc, animation)
+    this.npc = npc
 
-    local sections = tes3.animationBodySection
-
-    this.cancelSectionOffset(animationData, sections.lower, "lower")
-    this.cancelSectionOffset(animationData, sections.upper, "upper")
-
-    -- The leftArm of a torch-carrier should hold the torch raised, not drop to idle. Anchor
-    -- it into the vanilla `torch` group's window instead of cancelling it to the idle region.
-    if this.isHoldingTorch() then
-        this.anchorTorchArm(animationData)
-    else
-        this.cancelSectionOffset(animationData, sections.leftArm, "leftArm")
-    end
-end
-
----@private
----@param animationData tes3animationData
----@param section tes3.animationBodySection
----@param field string
----@return niSequence|nil
-function this.resolveSectionSequence(animationData, section, field)
-    local layer = animationData.currentAnimGroupLayers[section + 1]
-    if not layer then
-        return nil
-    end
-
-    local group = animationData.keyframeLayers[layer + 1]
-    return group and group[field] --[[@as niSequence]]
-end
-
----@private
----@param animationData tes3animationData
----@param section tes3.animationBodySection
----@param field string
-function this.cancelSectionOffset(animationData, section, field)
-    local sequence = this.resolveSectionSequence(animationData, section, field)
-    if not sequence then
+    local animationData = this.npc.animationData
+    if not animationData then
         return
     end
 
-    local offset = sequence.offset
-    if offset == 0 then
+    -- Re-applying (e.g. a talk animation mid-dialogue) rebinds to a new source.
+    this.releaseSource()
+
+    -- Capture the genuine current pose so the transition into the animation blends from it.
+    -- We never call tes3.loadAnimation, so the skeleton is intact and these node refs stay valid.
+    this.npcPoseBlender.capture(animationData.actorNode, this.settings.transitionDuration)
+
+    local source = tes3.loadMesh(animation.file, false)
+    if not source then
+        this.logger:error("Could not load animation mesh '%s'", animation.file)
+        this.npc = nil
         return
     end
 
-    -- Cancelling the offset drives the section at `phase` (the idle window at [0, 2.666667]).
-    this.captureSectionShift(sequence, -offset)
-end
+    this.source = source
+    this.bindControllers(animationData.actorNode, source)
 
----@private
----@return boolean
-function this.isHoldingTorch()
-    local mobile = this.npc.mobile
-    return mobile ~= nil and mobile.torchSlot ~= nil and mobile.torchSlot.object ~= nil
-end
-
--- Drive the leftArm in the vanilla `torch` group's keyframe window instead of the idle one,
--- so the manager poses the arm raised. `offset` (read-only) is what the manager folds into the
--- fed time; the writable `controller.phase` lets us re-target by shifting `torchStart - offset`,
--- making the effective time `phase + torchStart`. The torch span equals the idle period
--- (2.666667), so the existing phase wrap sweeps exactly [torchStart, torchStop] and loops cleanly.
----@private
----@param animationData tes3animationData
-function this.anchorTorchArm(animationData)
-    local sequence = this.resolveSectionSequence(animationData, tes3.animationBodySection.leftArm, "leftArm")
-    if not sequence then
+    if this.boundCount == 0 then
+        this.logger:error("No bones matched for animation '%s'", animation.file)
+        this.releaseSource()
+        this.npc = nil
         return
     end
 
-    local torchStart = this.getGroupWindow(animationData, tes3.animationGroup.torch)
-    if not torchStart then
-        -- No torch window available; fall back to the idle cancel (arm down, but not flailing).
-        this.captureSectionShift(sequence, -sequence.offset)
-        return
-    end
-
-    this.captureSectionShift(sequence, torchStart - sequence.offset)
+    this.phase = this.phaseStart
 end
 
--- An animation group's absolute [start, stop] time on the concatenated KF timeline, from its
--- action note keys (actionTimings[1]/[2]). Verified against idle = [0, 2.666667]. Read per-actor
--- so it adapts to the actor's own keyframes rather than hardcoding a base-anim value.
+-- Move each of the source mesh's keyframe controllers onto the live skeleton bone of the same
+-- name (attach + retarget), so the live bone both owns and is the target of the controller --
+-- the only arrangement that actually ticks (a detached source node never updates). Establishes
+-- the [start, stop] loop window from the controllers' own key range.
 ---@private
----@param animationData tes3animationData
----@param group tes3.animationGroup
----@return number|nil start, number|nil stop
-function this.getGroupWindow(animationData, group)
-    local groups = animationData.animationGroups
-    if not groups then
-        return nil, nil
-    end
+---@param actorNode niNode
+---@param source niNode
+function this.bindControllers(actorNode, source)
+    this.boundCount = 0
+    this.restCount  = 0
+    this.phaseStart = 0
+    this.phaseEnd   = 0
 
-    local animationGroup = groups[group + 1]
-    if not animationGroup or (animationGroup.actionCount or 0) < 2 then
-        return nil, nil
-    end
+    local liveBones = this.buildBoneMap(actorNode)
 
-    local timings = animationGroup.actionTimings
-    return timings[1], timings[2]
-end
+    local function walk(node)
+        if not node then
+            return
+        end
 
--- Shift every (non-nil) controller of a section's sequence by `phaseShift` seconds, caching
--- the originals so restoreSectionPhases can undo it. Effective drive time becomes
--- `phase + offset + originalPhase + phaseShift`.
----@private
----@param sequence niSequence
----@param phaseShift number
-function this.captureSectionShift(sequence, phaseShift)
-    -- MWSE's controllers array is sparse (nil holes), and ipairs over it yields the nils
-    -- rather than terminating, so guard each entry.
-    for _, controller in ipairs(sequence.controllers) do
-        if controller then
-            local index                       = this.sectionCount + 1
-            this.sectionCount                 = index
-            this.sectionControllers[index]    = controller
-            this.sectionOriginalPhases[index] = controller.phase
-            controller.phase                  = controller.phase + phaseShift
+        local liveBone   = node.name and liveBones[node.name]
+        local controller = node.controller
+        if controller and liveBone then
+            this.bindController(node, controller, liveBone)
+        elseif liveBone then
+            this.recordRestBone(node, liveBone)
+        end
+
+        if node.children then
+            for i = 1, #node.children do
+                walk(node.children[i])
+            end
         end
     end
+
+    walk(source)
 end
 
 ---@private
-function this.restoreSectionPhases()
-    for i = 1, this.sectionCount do
-        this.sectionControllers[i].phase = this.sectionOriginalPhases[i]
-        this.sectionControllers[i]       = nil
-        this.sectionOriginalPhases[i]    = nil
+---@param node niNode
+---@param controller niKeyframeController
+---@param liveBone niNode
+function this.bindController(node, controller, liveBone)
+    controller.animTimingType = 1 -- treat fed time as an offset from the start
+    controller.frequency      = 1
+    controller.phase          = 0
+    controller.active         = true
+
+    -- Prepend before removing so the controller is never at a zero ref count mid-move.
+    liveBone:prependController(controller)
+    node:removeController(controller)
+    controller:setTarget(liveBone)
+
+    local index                  = this.boundCount + 1
+    this.boundCount              = index
+    this.boundControllers[index] = this.boundControllers[index] or {}
+    this.boundControllers[index].target     = liveBone
+    this.boundControllers[index].controller = controller
+
+    if controller.highKeyFrame > this.phaseEnd then
+        this.phaseEnd = controller.highKeyFrame
+    end
+end
+
+---@private
+---@param node niNode
+---@param liveBone niNode
+function this.recordRestBone(node, liveBone)
+    local index            = this.restCount + 1
+    this.restCount         = index
+    this.restBones[index]  = this.restBones[index] or {}
+    this.restBones[index].target   = liveBone
+    this.restBones[index].rotation = node.rotation:copy()
+end
+
+---@private
+---@param actorNode niNode
+---@return table<string, niNode>
+function this.buildBoneMap(actorNode)
+    local map = {}
+
+    local function walk(node)
+        if not node then
+            return
+        end
+
+        if node.name then
+            map[node.name] = node
+        end
+
+        if node.children then
+            for i = 1, #node.children do
+                walk(node.children[i])
+            end
+        end
     end
 
-    this.sectionCount = 0
+    walk(actorNode)
+    return map
+end
+
+-- Detach our controllers from the live skeleton so the engine's own animation manager resumes
+-- posing the bones once dialogue closes; otherwise the actor stays frozen in the last pose.
+---@private
+function this.releaseSource()
+    for i = 1, this.boundCount do
+        local bound = this.boundControllers[i]
+        bound.target:removeController(bound.controller)
+        bound.target     = nil
+        bound.controller = nil
+    end
+
+    for i = 1, this.restCount do
+        this.restBones[i].target   = nil
+        this.restBones[i].rotation = nil
+    end
+
+    this.boundCount = 0
+    this.restCount  = 0
+    this.source     = nil
+    this.phase      = 0
 end
 
 ---@public
 ---@param delta number
 function this.update(delta)
-    if not this.npc then
+    if not this.npc or not this.source then
         return
     end
 
@@ -272,11 +297,19 @@ function this.update(delta)
         return
     end
 
-    animationData.actorNode:update({
-        controllers = true,
-        children    = true,
-        time        = this.phase
-    })
+    for i = 1, this.boundCount do
+        this.boundControllers[i].target:update({
+            controllers = true,
+            time        = this.phase
+        })
+    end
+
+    -- Hold un-keyframed bones at rest each frame, before the blend reads the pose.
+    for i = 1, this.restCount do
+        this.restBones[i].target.rotation = this.restBones[i].rotation
+    end
+
+    animationData.actorNode:update({ children = true })
 
     if this.npcPoseBlender.isActive() then
         this.npcPoseBlender.update(animationData.actorNode, delta)

@@ -29,6 +29,7 @@ function this.initializeMod(_)
 	local initializedServices = {
 		services.eventLogger,
 		services.animationLoader,
+		services.animationResolver,
 		services.dialogueController,
 		services.renderingController,
 		services.npcController,

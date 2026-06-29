@@ -1,4 +1,0 @@
----@meta
----@class dialogueAnimationResolvedEventData
----@field public npc tes3reference
----@field public animation animationDefinition

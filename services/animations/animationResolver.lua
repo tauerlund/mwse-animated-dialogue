@@ -2,20 +2,8 @@
 local this = {}
 
 ---@private
----@type eventRegistrar
-this.eventRegistrar = nil
-
----@private
 ---@type animationLoader
 this.animationLoader = nil
-
----@private
----@type events
-this.events = nil
-
----@private
----@type eventHandlers
-this.eventHandlers = nil
 
 ---@private
 ---@type baseAnimationConfiguration
@@ -25,52 +13,48 @@ this.configuration = nil
 ---@param services serviceCollection
 ---@return boolean, string|nil
 function this.initialize(services)
-    this.eventRegistrar  = services.eventRegistrar
     this.animationLoader = services.animationLoader
-    this.events          = services.enums.events
-
-    this.eventHandlers   = {
-        [this.events.dialogueStarted] = this.onDialogueStarted,
-        [this.events.dialogueEnded]   = this.onDialogueEnded,
-    }
-
-    this.eventRegistrar.register(this.eventHandlers)
-
     return true, nil
 end
 
+-- Resolve the base (idle) animation for the NPC's context, remembering the chosen configuration
+-- so talk animations for the rest of the dialogue are drawn from the same one.
 ---@public
-function this.uninitialize()
-    this.eventRegistrar.unregister(this.eventHandlers)
-end
-
----@private
----@param e dialogueStartedEventData
-function this.onDialogueStarted(e)
-    local configuration = this.resolveBaseConfiguration()
+---@param npc tes3reference
+---@return animationDefinition|nil
+function this.resolveIdle(npc)
+    local configuration = this.resolveBaseConfiguration(npc)
     if not configuration or not configuration.idle then
-        return
+        this.configuration = nil
+        return nil
     end
 
     this.configuration = configuration
-
-    ---@type dialogueAnimationResolvedEventData
-    local eventData = {
-        npc       = e.npc,
-        animation = configuration.idle,
-    }
-
-    event.trigger(this.events.dialogueAnimationResolved, eventData)
+    return configuration.idle
 end
 
----@private
-function this.onDialogueEnded()
+-- Pick a talk animation from the configuration resolved for the current dialogue, if any.
+---@public
+---@return animationDefinition|nil
+function this.resolveTalk()
+    local talk = this.configuration and this.configuration.talk
+    if not talk then
+        return nil
+    end
+
+    return (table.choice(talk))
+end
+
+---@public
+function this.reset()
     this.configuration = nil
 end
 
+-- THE SEAM for the future context-driven selection pattern; currently returns the first config.
 ---@private
+---@param npc tes3reference
 ---@return baseAnimationConfiguration|nil
-function this.resolveBaseConfiguration()
+function this.resolveBaseConfiguration(npc)
     local configurations = this.animationLoader.getBaseConfigurations()
     return configurations and configurations[1]
 end

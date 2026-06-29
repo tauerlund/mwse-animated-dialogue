@@ -18,7 +18,7 @@ this.fileTypes = {
 
 ---@private
 ---@type baseAnimationConfiguration[]
-this.baseAnimationConfigurations = nil
+this.baseAnimationConfigurations = {}
 
 ---@public
 ---@param services serviceCollection
@@ -34,8 +34,6 @@ function this.initialize(services)
     end
 
     local validator = services.animationConfigurationValidator
-
-    this.baseAnimationConfigurations = {}
 
     for _, file in ipairs(files) do
         local configuration = mwse.loadConfig(this.buildPath(file)) --[[@as baseAnimationConfiguration]]
@@ -59,7 +57,7 @@ end
 
 ---@public
 function this.uninitialize()
-    this.baseAnimationConfigurations = nil
+    this.baseAnimationConfigurations = {}
 end
 
 ---@private
