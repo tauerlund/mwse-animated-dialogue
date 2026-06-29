@@ -57,8 +57,8 @@ this.restCount = 0
 this.eventHandlers = nil
 
 ---@private
----@type animationDefinition
-this.idleAnimation = nil
+---@type baseAnimationConfiguration
+this.animationConfiguration = nil
 
 ---@public
 ---@param services serviceCollection
@@ -89,14 +89,14 @@ end
 ---@private
 ---@param e dialogueStartedEventData
 function this.onDialogueStarted(e)
-    local animation = this.animationResolver.resolveIdle(e.npc)
+    local animation = this.animationResolver.resolve(e.npc)
     if not animation then
         return
     end
 
     this.npc = e.npc
-    this.idleAnimation = animation
-    this.applyAnimation(animation, true)
+    this.animationConfiguration = animation
+    this.applyAnimation(animation.idle, true)
 end
 
 ---@private
@@ -106,10 +106,7 @@ function this.onInfoGetText(_)
         return
     end
 
-    local animation = this.animationResolver.resolveTalk()
-    if not animation then
-        return
-    end
+    local animation = table.choice(this.animationConfiguration.talk)
 
     this.applyAnimation(animation, false)
 end
@@ -117,7 +114,7 @@ end
 ---@private
 function this.onDialogueEnded()
     this.animationResolver.reset()
-    this.releaseSource()
+    this.resetControllers()
     this.npc = nil
     this.npcPoseBlender.reset()
 end
@@ -131,7 +128,7 @@ function this.applyAnimation(animation, loop)
         return
     end
 
-    this.releaseSource()
+    this.resetControllers()
     this.npcPoseBlender.capture(animationData.actorNode, this.settings.transitionDuration)
 
     local source = tes3.loadMesh(animation.file, false)
@@ -146,7 +143,7 @@ function this.applyAnimation(animation, loop)
 
     if this.boundCount == 0 then
         this.logger:error("No bones matched for animation '%s'", animation.file)
-        this.releaseSource()
+        this.resetControllers()
         this.npc = nil
         return
     end
@@ -252,7 +249,7 @@ function this.buildBoneMap(actorNode)
 end
 
 ---@private
-function this.releaseSource()
+function this.resetControllers()
     for i = 1, this.boundCount do
         local bound = this.boundControllers[i]
         bound.target:removeController(bound.controller)
@@ -310,7 +307,7 @@ function this.update(delta)
         if this.looping then
             this.phase = this.phaseStart
         else
-            this.applyAnimation(this.idleAnimation, true)
+            this.applyAnimation(this.animationConfiguration.idle, true)
         end
     end
 end

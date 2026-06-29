@@ -19,8 +19,8 @@ end
 
 ---@public
 ---@param npc tes3reference
----@return animationDefinition|nil
-function this.resolveIdle(npc)
+---@return baseAnimationConfiguration|nil
+function this.resolve(npc)
     local configuration = this.resolveBaseConfiguration(npc)
     if not configuration or not configuration.idle then
         this.configuration = nil
@@ -28,7 +28,7 @@ function this.resolveIdle(npc)
     end
 
     this.configuration = configuration
-    return configuration.idle
+    return configuration
 end
 
 ---@public
