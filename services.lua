@@ -20,6 +20,7 @@ local this = {
 
     npcController = require("tauer.animated-dialogue.services.npcs.npcController"),
     npcPoseBlender = require("tauer.animated-dialogue.services.npcs.npcPoseBlender"),
+    npcTrackBinder = require("tauer.animated-dialogue.services.npcs.npcTrackBinder"),
     npcTurnAnimator = require("tauer.animated-dialogue.services.npcs.animators.turnAnimator"),
     npcControllersAnimator = require("tauer.animated-dialogue.services.npcs.animators.controllersAnimator"),
     npcHeadMorphAnimator = require("tauer.animated-dialogue.services.npcs.animators.headMorphAnimator"),

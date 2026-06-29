@@ -1,0 +1,8 @@
+---@meta
+---@class npcTrackBinder.bind.param
+---@field public track track
+---@field public actorNode niNode
+---@field public file string
+---@field public group string
+---@field public region string
+---@field public loop boolean
