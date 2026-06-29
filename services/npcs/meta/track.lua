@@ -2,7 +2,7 @@
 
 ---@class trackBinding
 ---@field public target niNode
----@field public controller niKeyframeController
+---@field public controller niTimeController
 
 ---@class trackRestBone
 ---@field public target niNode

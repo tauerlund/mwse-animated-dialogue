@@ -146,9 +146,9 @@ function this.bindBones(track, actorNode, source, region)
     track.count     = 0
     track.restCount = 0
 
-    local liveBones = this.buildBoneMap(actorNode)
+    local bones     = this.buildBoneMap(actorNode)
 
-    this.bindNode(source, false, track, region, liveBones)
+    this.bindNode(source, false, track, region, bones)
 end
 
 ---@private
@@ -156,8 +156,8 @@ end
 ---@param inLeftArm boolean
 ---@param track track
 ---@param region string
----@param liveBones table<string, niNode>
-function this.bindNode(node, inLeftArm, track, region, liveBones)
+---@param bones table<string, niNode>
+function this.bindNode(node, inLeftArm, track, region, bones)
     if not node then
         return
     end
@@ -165,20 +165,20 @@ function this.bindNode(node, inLeftArm, track, region, liveBones)
     inLeftArm = inLeftArm or node.name == LEFT_ARM_ROOT
 
     if node.name and this.isBoneInRegion(region, inLeftArm) then
-        local liveBone = liveBones[node.name]
-        if liveBone then
+        local bone = bones[node.name]
+        if bone then
             local controller = node.controller
             if controller then
-                this.bindController(track, node, controller --[[@as niKeyframeController]], liveBone)
+                this.bindController(track, node, controller, bone)
             else
-                this.recordRestBone(track, node, liveBone)
+                this.storeRestBone(track, node, bone)
             end
         end
     end
 
     if node.children then
         for i = 1, #node.children do
-            this.bindNode(node.children[i] --[[@as niNode]], inLeftArm, track, region, liveBones)
+            this.bindNode(node.children[i] --[[@as niNode]], inLeftArm, track, region, bones)
         end
     end
 end
@@ -200,7 +200,7 @@ end
 ---@private
 ---@param track track
 ---@param node niNode
----@param controller niKeyframeController
+---@param controller niTimeController
 ---@param liveBone niNode
 function this.bindController(track, node, controller, liveBone)
     controller.animTimingType = 1
@@ -223,7 +223,7 @@ end
 ---@param track track
 ---@param node niNode
 ---@param liveBone niNode
-function this.recordRestBone(track, node, liveBone)
+function this.storeRestBone(track, node, liveBone)
     local index                = track.restCount + 1
     track.restCount            = index
     track.rest[index]          = track.rest[index] or {}
