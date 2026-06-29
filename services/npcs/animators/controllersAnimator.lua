@@ -139,6 +139,15 @@ function this.applyAnimation(animation, loop)
     end
 
     this.source = source
+
+    local start, stop = this.resolveGroupWindow(source, animation.group)
+    if not start or not stop then
+        this.logger:error("No '%s' group window in '%s'", animation.group, animation.file)
+        this.resetControllers()
+        this.npc = nil
+        return
+    end
+
     this.bindControllers(animationData.actorNode, source)
 
     if this.boundCount == 0 then
@@ -148,8 +157,50 @@ function this.applyAnimation(animation, loop)
         return
     end
 
-    this.phase = this.phaseStart
-    this.looping = loop
+    this.phaseStart = start
+    this.phaseEnd   = stop
+    this.phase      = start
+    this.looping    = loop
+end
+
+---@private
+---@param source niNode
+---@param group string
+---@return number|nil start, number|nil stop
+function this.resolveGroupWindow(source, group)
+    local startMarker = group:lower() .. ": start"
+    local stopMarker  = group:lower() .. ": stop"
+    local start, stop
+
+    local function walk(node)
+        if not node then
+            return
+        end
+
+        local extra = node.extraData
+        while extra do
+            if extra.keys then
+                for i = 1, #extra.keys do
+                    local text = extra.keys[i].text:lower()
+                    if text == startMarker then
+                        start = extra.keys[i].time
+                    elseif text == stopMarker then
+                        stop = extra.keys[i].time
+                    end
+                end
+            end
+            extra = extra.next
+        end
+
+        if node.children then
+            for i = 1, #node.children do
+                walk(node.children[i])
+            end
+        end
+    end
+
+    walk(source)
+    return start, stop
 end
 
 ---@private
@@ -158,8 +209,6 @@ end
 function this.bindControllers(actorNode, source)
     this.boundCount = 0
     this.restCount  = 0
-    this.phaseStart = 0
-    this.phaseEnd   = 0
 
     local liveBones = this.buildBoneMap(actorNode)
 
@@ -205,10 +254,6 @@ function this.bindController(node, controller, liveBone)
     this.boundControllers[index]            = this.boundControllers[index] or {}
     this.boundControllers[index].target     = liveBone
     this.boundControllers[index].controller = controller
-
-    if controller.highKeyFrame > this.phaseEnd then
-        this.phaseEnd = controller.highKeyFrame
-    end
 end
 
 ---@private
