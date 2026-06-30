@@ -10,8 +10,15 @@ this.animationLoader = nil
 this.animationFilterer = nil
 
 ---@private
+---@type arrays
+this.arrays = nil
+
+---@private
 ---@type baseAnimationConfiguration
 this.configuration = nil
+
+---@private
+this.logger = mwse.Logger.new()
 
 ---@public
 ---@param services serviceCollection
@@ -19,6 +26,7 @@ this.configuration = nil
 function this.initialize(services)
     this.animationLoader = services.animationLoader
     this.animationFilterer = services.animationFilterer
+    this.arrays = services.arrays
     return true, nil
 end
 
@@ -50,10 +58,18 @@ function this.resolveBaseConfiguration(npc)
 
     local filtered = this.animationFilterer.filter(configurations, npc)
     if #filtered == 0 then
+        this.logger:error("Could not resolve base animation")
         return nil
     end
 
-    return (table.choice(filtered))
+    return this.arrays.weightedChoice(filtered, this.resolveWeight)
+end
+
+---@private
+---@param configuration baseAnimationConfiguration
+---@return number
+function this.resolveWeight(configuration)
+    return configuration.weight or 1
 end
 
 return this

@@ -5,11 +5,14 @@ local this = {}
 ---@type animationFilteringRule[]
 this.rules = nil
 
+---@private
+this.logger = mwse.Logger.new({ level = mwse.logLevel.debug })
+
 ---@public
 ---@param services serviceCollection
 ---@return boolean,string|nil
 function this.initialize(services)
-    this.rules = services.ruleLoader.loadRules("animations\\filtering-rules")
+    this.rules = services.ruleLoader.loadRules("services\\animations\\filtering-rules")
     return true, nil
 end
 
@@ -46,24 +49,16 @@ function this.valid(configuration, npc)
     for i = 1, #this.rules do
         local rule = this.rules[i]
         if not rule.isMet(configuration, npc) then
+            this.logger:debug("Animation '%s' not valid for '%s' because '%s' was violated",
+                configuration.id,
+                npc.baseObject.id,
+                rule.name)
+
             return false
         end
     end
 
     return true
-end
-
----@private
----@param values string[]
----@param value string
----@return boolean
-function this.contains(values, value)
-    for i = 1, #values do
-        if values[i]:lower() == value:lower() then
-            return true
-        end
-    end
-    return false
 end
 
 return this

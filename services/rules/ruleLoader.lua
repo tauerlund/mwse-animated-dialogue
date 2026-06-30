@@ -5,11 +5,15 @@ local this = {}
 ---@type fileLoader
 this.fileLoader = nil
 
+---@private
+---@type serviceCollection
+this.services = nil
+
 ---@public
 ---@param services serviceCollection
 ---@return boolean,string|nil
 function this.initialize(services)
-	this.fileLoader = services.fileLoader
+	this.services = services
 
 	return true, nil
 end
@@ -18,11 +22,13 @@ end
 ---@param directory string
 ---@return rule[] rules
 function this.loadRules(directory)
+	local services = this.services
+
 	local fullPath = string.format("data files\\mwse\\mods\\tauer\\animated-dialogue\\%s", directory)
 
 	local rules = {}
 
-	local files = this.fileLoader.loadAll({
+	local files = services.fileLoader.loadAll({
 		directory = fullPath,
 		fileType = ".lua"
 	})
@@ -33,6 +39,9 @@ function this.loadRules(directory)
 
 	for _, file in pairs(files) do
 		local rule = this.loadRule(file, directory)
+		if rule.initialize then
+			rule.initialize(services)
+		end
 		table.insert(rules, rule)
 	end
 

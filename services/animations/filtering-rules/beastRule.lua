@@ -6,13 +6,15 @@ local this = {}
 ---@param npc tes3reference
 ---@return boolean
 function this.isMet(configuration, npc)
-    local npcIsBeast = npc.baseObject.race.isBeast
-
-    local beastExclusive = configuration.conditions
+    local beastOnly = configuration.conditions
         and configuration.conditions.beast == true
         or false
 
-    return npcIsBeast == beastExclusive
+    if beastOnly then
+        return npc.baseObject.race.isBeast
+    end
+
+    return not npc.baseObject.race.isBeast
 end
 
 return this

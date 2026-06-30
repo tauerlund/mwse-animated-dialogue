@@ -46,6 +46,8 @@ local this = {
 
     ruleLoader = require("tauer.animated-dialogue.services.rules.ruleLoader"),
 
+    arrays = require("tauer.animated-dialogue.services.arrays.arrays"),
+
     ---@class enums
     enums = {
         events = require("tauer.animated-dialogue.services.events.enums.events"),

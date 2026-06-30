@@ -28,8 +28,6 @@ function this.registerSingle(evt, entry)
     if handler then
         if not event.isRegistered(evt, handler, options) then
             event.register(evt, handler, options)
-        else
-            this.logger:debug("Attempted to register handler for '%s' that is already registered", evt)
         end
     end
 end
@@ -56,8 +54,6 @@ function this.unregisterSingle(evt, entry)
     if handler then
         if event.isRegistered(evt, handler, options) then
             event.unregister(evt, handler, options)
-        else
-            this.logger:debug("Attempted to unregister handler for '%s' that is already unregistered", evt)
         end
     end
 end
