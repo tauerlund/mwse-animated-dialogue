@@ -33,11 +33,13 @@ function this.initialize(services)
         return false, "base animation configurations could not be loaded"
     end
 
-    local validator = services.animationConfigurationValidator
+    local validator = services.animationValidator
 
     for _, file in ipairs(files) do
-        local configuration = mwse.loadConfig(this.buildPath(file)) --[[@as baseAnimationConfiguration]]
+        local id = this.removeExtension(file)
+        local configuration = mwse.loadConfig(this.buildPath(id)) --[[@as baseAnimationConfiguration]]
         if validator.validate(configuration) then
+            configuration.id = id
             table.insert(this.baseAnimationConfigurations, configuration)
         end
     end
@@ -65,6 +67,13 @@ end
 ---@return string
 function this.buildPath(file)
     return (string.format("%s\\%s", this.animationsBaseDirectory, file):gsub(this.fileTypes.json, ""))
+end
+
+---@private
+---@param file string
+---@return string
+function this.removeExtension(file)
+    return (file:gsub(this.fileTypes.json, ""))
 end
 
 return this
