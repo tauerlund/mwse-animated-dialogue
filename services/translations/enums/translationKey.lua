@@ -1,6 +1,9 @@
 ---@class translationKey
 local this = {
     modName = "modName",
+    generalPage = "generalPage",
+    modEnabled = "modEnabled",
+    modEnabledDescription = "modEnabledDescription",
     cameraPage = "cameraPage",
     cameraEnabled = "cameraEnabled",
     cameraEnabledDescription = "cameraEnabledDescription",

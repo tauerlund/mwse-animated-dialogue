@@ -6,7 +6,7 @@ local this = {}
 this.rules = nil
 
 ---@private
-this.logger = mwse.Logger.new({ level = mwse.logLevel.debug })
+this.logger = mwse.Logger.new()
 
 ---@public
 ---@param services serviceCollection

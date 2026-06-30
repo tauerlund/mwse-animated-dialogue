@@ -2,6 +2,9 @@ local keys = require("tauer.animated-dialogue.services.translations.enums.transl
 
 return {
     [keys.modName] = "Animated Dialogue",
+    [keys.generalPage] = "General",
+    [keys.modEnabled] = "Enabled",
+    [keys.modEnabledDescription] = "Enable or disable the Animated Dialogue mod.",
     [keys.cameraPage] = "Camera",
     [keys.cameraEnabled] = "Enable Camera Animation",
     [keys.cameraEnabledDescription] = "Enables or disables the camera animation during dialogue.",

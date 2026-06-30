@@ -4,6 +4,7 @@ local this = {}
 --- @private
 --- @type mcmPage[]
 this.pages = {
+	require("tauer.animated-dialogue.services.mcm.pages.generalPage"),
 	require("tauer.animated-dialogue.services.mcm.pages.cameraPage"),
 	require("tauer.animated-dialogue.services.mcm.pages.npcPage"),
 	require("tauer.animated-dialogue.services.mcm.pages.effectsPage"),

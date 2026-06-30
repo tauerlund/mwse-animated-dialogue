@@ -13,12 +13,17 @@ this.eventRegistrar = nil
 ---@type events
 this.events = nil
 
+---@private
+---@type settings
+this.settings = nil
+
 ---@public
 ---@param services serviceCollection
 ---@return boolean,string|nil
 function this.initialize(services)
     this.eventRegistrar = services.eventRegistrar
     this.events = services.enums.events
+    this.settings = services.settings
 
     this.eventHandlers = {
         [tes3.event.uiActivated] = {
@@ -41,6 +46,10 @@ end
 ---@private
 ---@param e uiActivatedEventData
 function this.onMenuDialogActivated(e)
+    if not this.settings.enabled then
+        return
+    end
+
     local serviceActor = tes3ui.getServiceActor()
 
     local reference = serviceActor and serviceActor.reference --[[@as tes3reference]]

@@ -9,6 +9,7 @@ this.effectModes = require("tauer.animated-dialogue.services.mcm.pages.enums.eff
 
 ---@class settings
 this.defaults = {
+    enabled = true,
     cameraEnabled = true,
     npcAnimEnabled = true,
     npcTurnEnabled = true,
@@ -35,6 +36,7 @@ this.defaults = {
     swayEnabled = true,
     swayAmplitude = 0.3,
     swayFrequency = 0.1,
+    logLevel = mwse.logLevel.info,
 }
 
 ---@type settings
