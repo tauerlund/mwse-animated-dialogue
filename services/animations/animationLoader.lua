@@ -5,44 +5,34 @@ local this = {}
 this.basePath = "data files\\mwse\\config"
 
 ---@private
-this.animationsBaseDirectory = "animated-dialogue\\animations\\base"
-
----@private
-this.animationsDialogueDirectory = ""
-
----@private
 ---@enum fileType
 this.fileTypes = {
     json = ".json"
 }
 
 ---@private
+this.baseAnimationsPath = "animated-dialogue\\animations\\base"
+
+---@private
+this.talkAnimationsPath = "animated-dialogue\\animations\\talk"
+
+---@private
 ---@type baseAnimationConfiguration[]
 this.baseAnimationConfigurations = {}
+
+---@private
+---@type { [string]: talkAnimationConfiguration }
+this.talkAnimationConfigurations = {}
 
 ---@public
 ---@param services serviceCollection
 ---@return boolean, string|nil
 function this.initialize(services)
-    local files = services.fileLoader.loadAll({
-        directory = string.format("%s\\%s", this.basePath, this.animationsBaseDirectory),
-        fileType = this.fileTypes.json
-    })
+    this.fileLoader = services.fileLoader
+    this.validator = services.animationValidator
 
-    if not files then
-        return false, "base animation configurations could not be loaded"
-    end
-
-    local validator = services.animationValidator
-
-    for _, file in ipairs(files) do
-        local id = this.removeExtension(file)
-        local configuration = mwse.loadConfig(this.buildPath(id)) --[[@as baseAnimationConfiguration]]
-        if validator.validate(configuration) then
-            configuration.id = id
-            table.insert(this.baseAnimationConfigurations, configuration)
-        end
-    end
+    this.loadBaseConfigurations()
+    this.loadTalkConfigurations()
 
     if table.empty(this.baseAnimationConfigurations) then
         return false, "no valid base animation configurations found"
@@ -58,15 +48,56 @@ function this.getBaseConfigurations()
 end
 
 ---@public
+---@return { [string]: talkAnimationConfiguration}
+function this.getTalkConfigurations()
+    return this.talkAnimationConfigurations
+end
+
+---@public
 function this.uninitialize()
     this.baseAnimationConfigurations = {}
+    this.talkAnimationConfigurations = {}
 end
 
 ---@private
----@param file string
----@return string
-function this.buildPath(file)
-    return (string.format("%s\\%s", this.animationsBaseDirectory, file):gsub(this.fileTypes.json, ""))
+function this.loadBaseConfigurations()
+    local files = this.fileLoader.loadAll({
+        directory = string.format("%s\\%s", this.basePath, this.baseAnimationsPath),
+        fileType = this.fileTypes.json
+    })
+
+    if not files then
+        return
+    end
+
+    for _, file in ipairs(files) do
+        local id = this.removeExtension(file)
+        local path = string.format("%s\\%s", this.baseAnimationsPath, id)
+        local configuration = mwse.loadConfig(path) --[[@as baseAnimationConfiguration]]
+        if this.validator.validate(configuration) then
+            configuration.id = id
+            table.insert(this.baseAnimationConfigurations, configuration)
+        end
+    end
+end
+
+---@private
+function this.loadTalkConfigurations()
+    local files = this.fileLoader.loadAll({
+        directory = string.format("%s\\%s", this.basePath, this.talkAnimationsPath),
+        fileType = this.fileTypes.json
+    })
+
+    if not files then
+        return
+    end
+
+    for _, file in ipairs(files) do
+        local id = this.removeExtension(file)
+        local path = string.format("%s\\%s", this.talkAnimationsPath, id)
+        local configuration = mwse.loadConfig(path) --[[@as talkAnimationConfiguration]]
+        this.talkAnimationConfigurations[configuration.dialogueId] = configuration
+    end
 end
 
 ---@private

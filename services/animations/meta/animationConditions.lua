@@ -1,0 +1,7 @@
+---@meta
+---@class animationConditions
+---@field public class? string[]
+---@field public sex? ("male"|"female")
+---@field public beast? boolean
+---@field public torchCompatible? boolean
+---@field public shieldCompatible? boolean

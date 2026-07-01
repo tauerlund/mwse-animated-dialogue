@@ -2,10 +2,6 @@
 local this = {}
 
 ---@private
----@type animationLoader
-this.animationLoader = nil
-
----@private
 ---@type animationFilterer
 this.animationFilterer = nil
 
@@ -18,16 +14,36 @@ this.arrays = nil
 this.configuration = nil
 
 ---@private
+---@type baseAnimationConfiguration[]
+this.baseConfigurations = nil
+
+---@private
+---@type { [string]: talkAnimationConfiguration }
+this.talkConfigurations = nil
+
+---@private
 this.logger = mwse.Logger.new()
 
 ---@public
 ---@param services serviceCollection
 ---@return boolean, string|nil
 function this.initialize(services)
-    this.animationLoader = services.animationLoader
     this.animationFilterer = services.animationFilterer
     this.arrays = services.arrays
+
+    local animationLoader = services.animationLoader
+
+    this.baseConfigurations = animationLoader.getBaseConfigurations()
+    this.talkConfigurations = animationLoader.getTalkConfigurations()
+
     return true, nil
+end
+
+---@public
+---@param services serviceCollection
+---@return initializedService[]
+function this.dependencies(services)
+    return { services.animationLoader }
 end
 
 ---@public
@@ -36,27 +52,24 @@ end
 function this.resolve(npc)
     local configuration = this.resolveBaseConfiguration(npc)
     if not configuration or not configuration.idle then
-        this.configuration = nil
         return nil
     end
-
-    this.configuration = configuration
 
     return configuration
 end
 
 ---@public
-function this.reset()
-    this.configuration = nil
+---@param dialogueId string
+---@return talkAnimationConfiguration|nil
+function this.tryResolve(dialogueId)
+    return this.talkConfigurations[dialogueId]
 end
 
 ---@private
 ---@param npc tes3reference
 ---@return baseAnimationConfiguration|nil
 function this.resolveBaseConfiguration(npc)
-    local configurations = this.animationLoader.getBaseConfigurations()
-
-    local filtered = this.animationFilterer.filter(configurations, npc)
+    local filtered = this.animationFilterer.filter(this.baseConfigurations, npc)
     if #filtered == 0 then
         this.logger:error("Could not resolve base animation")
         return nil

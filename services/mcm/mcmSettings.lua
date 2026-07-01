@@ -12,6 +12,7 @@ this.defaults = {
     enabled = true,
     cameraEnabled = true,
     npcAnimEnabled = true,
+    npcTalkAnimEnabled = true,
     npcTurnEnabled = true,
     npcHeadMorphAnimEnabled = true,
     npcHeadLookAtEnabled = true,

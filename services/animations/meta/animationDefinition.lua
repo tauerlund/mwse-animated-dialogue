@@ -1,0 +1,4 @@
+---@meta
+---@class animationDefinition
+---@field public file string
+---@field public group string

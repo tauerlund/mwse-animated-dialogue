@@ -48,6 +48,10 @@ this.eventHandlers = nil
 ---@type baseAnimationConfiguration
 this.animationConfiguration = nil
 
+---@private
+---@type infoGetTextEventData
+this.pendingInfo = nil
+
 ---@public
 ---@param services serviceCollection
 ---@return boolean,string|nil
@@ -89,32 +93,44 @@ function this.onDialogueStarted(e)
     this.npc = e.npc
     this.animationConfiguration = configuration
 
-    this.applyAnimation(configuration.idle, true)
+    if this.pendingInfo then
+        this.onInfoGetText(this.pendingInfo)
+        this.pendingInfo = nil
+    end
 end
 
 ---@private
----@param _ infoGetTextEventData
-function this.onInfoGetText(_)
+---@param e infoGetTextEventData
+function this.onInfoGetText(e)
     if not this.npc then
+        this.pendingInfo = e
+        return
+    end
+
+    if not this.settings.npcTalkAnimEnabled then
         return
     end
 
     local talk = this.animationConfiguration.talk
-    if not talk or #talk == 0 then
+    local override = this.animationResolver.tryResolve(e.info.id)
+
+    local animation =
+        override and override.animation or
+        talk and table.choice(talk)
+
+    if not animation then
         return
     end
-
-    local animation = table.choice(talk)
 
     this.applyAnimation(animation, false)
 end
 
 ---@private
 function this.onDialogueEnded()
-    this.animationResolver.reset()
     this.resetTracks()
     this.npc = nil
     this.npcPoseBlender.reset()
+    this.pendingInfo = nil
 end
 
 ---@private

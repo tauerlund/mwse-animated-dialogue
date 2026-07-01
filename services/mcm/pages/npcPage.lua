@@ -31,6 +31,15 @@ function this.initialize(template, services)
     })
 
     page:createOnOffButton({
+        label = translations.get(keys.npcTalkAnimEnabled),
+        description = translations.get(keys.npcTalkAnimEnabledDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "npcTalkAnimEnabled",
+            table = services.settings
+        }),
+    })
+
+    page:createOnOffButton({
         label = translations.get(keys.npcHeadMorphAnimEnabled),
         description = translations.get(keys.npcHeadMorphAnimEnabledDescription),
         variable = mwse.mcm.createTableVariable({

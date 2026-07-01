@@ -17,6 +17,8 @@ this.region         = REGION
 ---@type mwseLogger
 this.logger         = mwse.Logger.new()
 
+local ERROR_MARKER  = "marker_error"
+
 ---@public
 ---@return track
 function this.create()
@@ -40,8 +42,8 @@ function this.bind(params)
     local track = params.track
 
     local source = tes3.loadMesh(params.file, true)
-    if not source then
-        this.logger:error("Could not load animation mesh '%s'", params.file)
+    if not source or this.isErrorMarker(source) then
+        this.logger:error("Could not load animation mesh '%s' (file missing or failed to load)", params.file)
         return 0
     end
 
@@ -89,6 +91,13 @@ function this.reset(track)
     track.restCount = 0
     track.phase     = 0
     track.source    = nil
+end
+
+---@private
+---@param node niNode
+---@return boolean
+function this.isErrorMarker(node)
+    return node.name ~= nil and node.name:lower() == ERROR_MARKER
 end
 
 ---@private
@@ -208,6 +217,7 @@ function this.bindController(track, node, controller, liveBone)
     controller.animTimingType = 1
     controller.frequency      = 1
     controller.phase          = 0
+    controller.cycleType      = ni.animCycleType.clamp
     controller.active         = true
 
     liveBone:prependController(controller)

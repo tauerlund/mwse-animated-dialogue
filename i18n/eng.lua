@@ -11,6 +11,9 @@ return {
     [keys.npcPage] = "NPCs",
     [keys.npcAnimEnabled] = "Enable NPC Animations",
     [keys.npcAnimEnabledDescription] = "Enables or disables NPC body animations during dialogue.",
+    [keys.npcTalkAnimEnabled] = "Enable NPC Talk Animations",
+    [keys.npcTalkAnimEnabledDescription] =
+    "Enables or disables NPC talking gesture animations played while responding during dialogue. Requires NPC animations to be enabled.",
     [keys.npcTurnEnabled] = "Enable NPC Turning",
     [keys.npcTurnEnabledDescription] = "Enables or disables the NPC turning to face the player when dialogue starts.",
     [keys.npcHeadMorphAnimEnabled] = "Enable Head Morph Animations",
