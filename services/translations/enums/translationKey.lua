@@ -78,6 +78,13 @@ local this = {
     debugModeEnabledDescription = "debugModeEnabledDescription",
     debugPauseKey = "debugPauseKey",
     debugPauseKeyDescription = "debugPauseKeyDescription",
+    debugStepKey = "debugStepKey",
+    debugStepKeyDescription = "debugStepKeyDescription",
+    debugHudTitle = "debugHudTitle",
+    debugHudPause = "debugHudPause",
+    debugHudStep = "debugHudStep",
+    debugHudStatusRunning = "debugHudStatusRunning",
+    debugHudStatusPaused = "debugHudStatusPaused",
 }
 
 return this

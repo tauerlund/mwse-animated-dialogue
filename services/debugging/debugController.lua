@@ -22,6 +22,14 @@ this.guiBuilder = nil
 this.debugSliderPanel = nil
 
 ---@private
+---@type translations
+this.translations = nil
+
+---@private
+---@type translationKey
+this.translationKey = nil
+
+---@private
 this.dialogueActive = false
 
 ---@private
@@ -52,6 +60,8 @@ function this.initialize(services)
     this.settings = services.settings
     this.guiBuilder = services.guiBuilder
     this.debugSliderPanel = services.debuggingSliderPanel
+    this.translations = services.translations
+    this.translationKey = services.enums.translationKey
 
     local events = this.events
 
@@ -156,13 +166,20 @@ function this.showDebugHud()
         :withPadding({ all = 8 })
         :build()
 
+    local translations = this.translations
+    local keys = this.translationKey
+
     this.guiBuilder.createLabel({ parent = content })
-        :withText("Debugging Mode")
+        :withText(translations.get(keys.debugHudTitle))
         :withColor(tes3ui.getPalette(tes3.palette.headerColor))
         :build()
 
     this.guiBuilder.createLabel({ parent = content })
-        :withText(string.format("Pause / Unpause: %s", this.getPauseKeyName()))
+        :withText(translations.get(keys.debugHudPause, { key = this.getKeyName(this.settings.debugPauseKey) }))
+        :build()
+
+    this.guiBuilder.createLabel({ parent = content })
+        :withText(translations.get(keys.debugHudStep, { key = this.getKeyName(this.settings.debugStepKey) }))
         :build()
 
     this.statusLabel = this.guiBuilder.createLabel({ parent = content })
@@ -178,11 +195,14 @@ function this.updateStatusLabel()
         return
     end
 
+    local translations = this.translations
+    local keys = this.translationKey
+
     if this.paused then
-        this.statusLabel.text = "Status: Paused"
+        this.statusLabel.text = translations.get(keys.debugHudStatusPaused)
         this.statusLabel.color = tes3ui.getPalette(tes3.palette.healthColor)
     else
-        this.statusLabel.text = "Status: Running"
+        this.statusLabel.text = translations.get(keys.debugHudStatusRunning)
         this.statusLabel.color = tes3ui.getPalette(tes3.palette.normalColor)
     end
 
@@ -192,9 +212,10 @@ function this.updateStatusLabel()
 end
 
 ---@private
+---@param bind mwseKeyCombo
 ---@return string
-function this.getPauseKeyName()
-    return mwse.mcm.getKeyComboName(this.settings.debugPauseKey) or "Unbound"
+function this.getKeyName(bind)
+    return mwse.mcm.getKeyComboName(bind) or "Unbound"
 end
 
 ---@private
@@ -219,10 +240,19 @@ function this.onKeyDown(e)
         return
     end
 
-    if not this.matchesPauseKey(e) then
+    if this.matchesKey(e, this.settings.debugPauseKey) then
+        this.togglePause()
         return
     end
 
+    if this.matchesKey(e, this.settings.debugStepKey) then
+        this.stepFrame()
+        return
+    end
+end
+
+---@private
+function this.togglePause()
     if this.paused then
         event.trigger(this.events.gameUnpaused)
     else
@@ -230,11 +260,29 @@ function this.onKeyDown(e)
     end
 end
 
+--- Advances the frozen scene by a single frame: resumes everyone, then re-pauses
+--- after one enterFrame. The re-pause tick registers at a low priority so it runs
+--- after every service's enterFrame handler, giving them exactly one update.
+---@private
+function this.stepFrame()
+    if not this.paused then
+        return
+    end
+
+    event.trigger(this.events.gameUnpaused)
+    event.register(tes3.event.enterFrame, this.onStepFrame, { priority = -100, doOnce = true })
+end
+
+---@private
+function this.onStepFrame()
+    event.trigger(this.events.gamePaused)
+end
+
 ---@private
 ---@param e keyDownEventData
+---@param bind mwseKeyCombo|nil
 ---@return boolean
-function this.matchesPauseKey(e)
-    local bind = this.settings.debugPauseKey
+function this.matchesKey(e, bind)
     if not bind then
         return false
     end

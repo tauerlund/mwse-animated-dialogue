@@ -24,6 +24,13 @@ function this.initialize(template, services)
         allowCombinations = true,
         variable = mwse.mcm.createTableVariable { id = "debugPauseKey", table = services.settings }
     }
+
+    page:createKeyBinder {
+        label = translations.get(keys.debugStepKey),
+        description = translations.get(keys.debugStepKeyDescription),
+        allowCombinations = true,
+        variable = mwse.mcm.createTableVariable { id = "debugStepKey", table = services.settings }
+    }
 end
 
 return this

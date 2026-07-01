@@ -103,4 +103,12 @@ return {
     [keys.debugPauseKey] = "Pause / Unpause Key",
     [keys.debugPauseKeyDescription] =
     "While debugging mode is on, this key freezes and unfreezes the dialogue scene (NPC animation, particles, lights, and weather) so prop transforms can be tuned against a still pose. Only active during dialogue.",
+    [keys.debugStepKey] = "Step Frame Key",
+    [keys.debugStepKeyDescription] =
+    "While the scene is paused, this key advances it by a single frame. Hold to step continuously. Only active during dialogue.",
+    [keys.debugHudTitle] = "Debugging Mode",
+    [keys.debugHudPause] = "Pause / Unpause: %{key}",
+    [keys.debugHudStep] = "Step Frame: %{key}",
+    [keys.debugHudStatusRunning] = "Status: Running",
+    [keys.debugHudStatusPaused] = "Status: Paused",
 }

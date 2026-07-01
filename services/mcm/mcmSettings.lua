@@ -40,6 +40,7 @@ this.defaults = {
     swayFrequency = 0.1,
     debuggingEnabled = false,
     debugPauseKey = { keyCode = tes3.scanCode.p },
+    debugStepKey = { keyCode = tes3.scanCode.o },
     logLevel = mwse.logLevel.info,
 }
 
