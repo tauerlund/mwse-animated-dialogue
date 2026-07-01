@@ -22,6 +22,9 @@ return {
     [keys.npcHeadLookAtEnabled] = "Enable Head Look-At",
     [keys.npcHeadLookAtEnabledDescription] =
     "Enables or disables the NPC's head turning to look at the camera during dialogue.",
+    [keys.propsEnabled] = "Enable Props",
+    [keys.propsEnabledDescription] =
+    "Enables or disables NPCs holding props during dialogue (when configured)",
     [keys.positionCategory] = "Position",
     [keys.rotationCategory] = "Rotation",
     [keys.timingCategory] = "Timing",

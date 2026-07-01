@@ -1,0 +1,7 @@
+---@meta
+---@class propDefinition
+---@field public file string
+---@field public attachTo string
+---@field public spawnAfter? number
+---@field public despawnAfter? number
+---@field public transform? transformOverride

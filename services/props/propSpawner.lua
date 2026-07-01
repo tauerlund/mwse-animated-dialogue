@@ -1,0 +1,249 @@
+---@class propSpawner : initializedService
+local this = {}
+
+---@private
+---@type eventRegistrar
+this.eventRegistrar = nil
+
+---@private
+---@type settings
+this.settings = nil
+
+---@private
+---@type animationResolver
+this.animationResolver = nil
+
+---@private
+---@type nifLoader
+this.nifLoader = nil
+
+---@private
+---@type mwseLogger
+this.logger = mwse.Logger.new()
+
+---@private
+---@type eventHandlerGroups
+this.eventHandlers = {
+    lifetime = {},
+    prop = {}
+}
+
+---@private
+---@type tes3reference|nil
+this.npc = nil
+
+---@private
+---@type infoGetTextEventData|nil
+this.pendingInfo = nil
+
+---@private
+---@type propDefinition|nil
+this.definition = nil
+
+---@private
+---@type niNode|nil
+this.node = nil
+
+---@private
+---@type niNode|nil
+this.bone = nil
+
+---@private
+---@type number
+this.elapsed = 0
+
+---@private
+this.paused = false
+
+---@public
+---@param services serviceCollection
+---@return boolean, string|nil
+function this.initialize(services)
+    this.eventRegistrar    = services.eventRegistrar
+    this.settings          = services.settings
+    this.animationResolver = services.animationResolver
+    this.nifLoader         = services.nifLoader
+
+    local events           = services.enums.events
+
+    this.eventHandlers     = {
+        lifetime = {
+            [events.dialogueStarted] = this.onDialogueStarted,
+            [events.dialogueEnded]   = this.onDialogueEnded,
+            [events.gamePaused]      = this.onGamePaused,
+            [events.gameUnpaused]    = this.onGameUnpaused,
+            [tes3.event.infoGetText] = this.onInfoGetText,
+        },
+        prop = {
+            [tes3.event.enterFrame] = this.onEnterFrame,
+        }
+    }
+
+    this.eventRegistrar.register(this.eventHandlers.lifetime)
+
+    return true, nil
+end
+
+function this.uninitialize()
+    this.eventRegistrar.unregister(this.eventHandlers.lifetime)
+end
+
+---@private
+---@param e dialogueStartedEventData
+function this.onDialogueStarted(e)
+    this.npc = e.npc
+
+    if this.pendingInfo then
+        this.onInfoGetText(this.pendingInfo)
+        this.pendingInfo = nil
+    end
+end
+
+---@private
+function this.onDialogueEnded()
+    this.despawn()
+    this.npc = nil
+    this.pendingInfo = nil
+    this.paused = false
+end
+
+---@private
+function this.onGamePaused()
+    this.paused = true
+end
+
+---@private
+function this.onGameUnpaused()
+    this.paused = false
+end
+
+---@private
+---@param e infoGetTextEventData
+function this.onInfoGetText(e)
+    if not this.settings.propsEnabled then
+        return
+    end
+
+    if not this.npc then
+        this.pendingInfo = e
+        return
+    end
+
+    local override = this.animationResolver.resolveOverride(e.info.id)
+    local prop = override and override.prop
+    if not prop then
+        return
+    end
+
+    this.spawn(prop)
+end
+
+---@private
+---@param prop propDefinition
+function this.spawn(prop)
+    this.despawn()
+
+    this.definition = prop
+    this.elapsed    = 0
+
+    this.eventRegistrar.register(this.eventHandlers.prop)
+end
+
+---@private
+function this.despawn()
+    if this.node and this.bone then
+        this.bone:detachChild(this.node)
+        this.bone:update({ children = true })
+    end
+
+    this.node       = nil
+    this.bone       = nil
+    this.definition = nil
+    this.elapsed    = 0
+
+    this.eventRegistrar.unregister(this.eventHandlers.prop)
+end
+
+---@private
+---@param e enterFrameEventData
+function this.onEnterFrame(e)
+    if this.paused or not this.definition then
+        return
+    end
+
+    this.elapsed = this.elapsed + e.delta
+
+    if not this.node and this.elapsed >= (this.definition.spawnAfter or 0) then
+        this.attach(this.definition)
+    end
+
+    local despawnAfter = this.definition.despawnAfter
+    if despawnAfter and this.elapsed >= despawnAfter then
+        this.despawn()
+    end
+end
+
+---@private
+---@param prop propDefinition
+function this.attach(prop)
+    local sceneNode = this.npc and this.npc.sceneNode
+    if not sceneNode then
+        return
+    end
+
+    local bone = sceneNode:getObjectByName(prop.attachTo) --[[@as niNode|nil]]
+    if not bone then
+        this.logger:error("No bone '%s' on NPC for prop '%s'", prop.attachTo, prop.file)
+        this.definition = nil
+        return
+    end
+
+    local node = this.nifLoader.load(prop.file)
+    if not node then
+        this.logger:error("Could not load prop mesh '%s' (file missing or failed to load)", prop.file)
+        this.definition = nil
+        return
+    end
+
+    this.applyTransform(node, prop.transform)
+
+    bone:attachChild(node)
+    bone:update({ children = true })
+    node:updateProperties()
+    node:updateEffects()
+
+    this.node = node
+    this.bone = bone
+end
+
+---@private
+---@param node niNode
+---@param transform transformOverride|nil
+function this.applyTransform(node, transform)
+    if not transform then
+        return
+    end
+
+    local translation = transform.translation
+    if translation then
+        local current    = node.translation
+        node.translation = tes3vector3.new(
+            translation.x or current.x,
+            translation.y or current.y,
+            translation.z or current.z
+        )
+    end
+
+    local rotation = transform.rotation
+    if rotation then
+        local matrix = tes3matrix33.identity()
+        matrix:fromEulerXYZ(rotation.x or 0, rotation.y or 0, rotation.z or 0)
+        node.rotation = matrix
+    end
+
+    if transform.scale then
+        node.scale = transform.scale
+    end
+end
+
+return this

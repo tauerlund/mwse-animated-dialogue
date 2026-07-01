@@ -1,0 +1,5 @@
+---@meta
+---@class transformOverride
+---@field public translation? { x: number?, y: number?, z: number? }
+---@field public rotation? { x: number?, y: number?, z: number? }
+---@field public scale? number

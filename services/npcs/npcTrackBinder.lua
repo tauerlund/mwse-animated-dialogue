@@ -1,4 +1,4 @@
----@class npcTrackBinder : service
+---@class npcTrackBinder : initializedService
 local this          = {}
 
 local LEFT_ARM_ROOT = "Bip01 L Clavicle"
@@ -14,10 +14,21 @@ local REGION        = {
 this.region         = REGION
 
 ---@private
+---@type nifLoader
+this.nifLoader      = nil
+
+---@private
 ---@type mwseLogger
 this.logger         = mwse.Logger.new()
 
-local ERROR_MARKER  = "marker_error"
+---@public
+---@param services serviceCollection
+---@return boolean, string|nil
+function this.initialize(services)
+    this.nifLoader = services.nifLoader
+
+    return true, nil
+end
 
 ---@public
 ---@return track
@@ -41,13 +52,11 @@ end
 function this.bind(params)
     local track = params.track
 
-    local source = tes3.loadMesh(params.file, true)
-    if not source or this.isErrorMarker(source) then
+    local source = this.nifLoader.load(params.file)
+    if not source then
         this.logger:error("Could not load animation mesh '%s' (file missing or failed to load)", params.file)
         return 0
     end
-
-    source = source:clone() --[[@as niNode]]
 
     local start, stop = this.resolveTimings(source, params.group)
     if not start or not stop then
@@ -91,13 +100,6 @@ function this.reset(track)
     track.restCount = 0
     track.phase     = 0
     track.source    = nil
-end
-
----@private
----@param node niNode
----@return boolean
-function this.isErrorMarker(node)
-    return node.name ~= nil and node.name:lower() == ERROR_MARKER
 end
 
 ---@private

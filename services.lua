@@ -5,6 +5,8 @@ local this = {
 
     fileLoader = require("tauer.animated-dialogue.services.files.fileLoader"),
 
+    nifLoader = require("tauer.animated-dialogue.services.nif.nifLoader"),
+
     animationValidator = require(
         "tauer.animated-dialogue.services.animations.animationValidator"),
     animationFilterer = require(
@@ -47,6 +49,8 @@ local this = {
     ruleLoader = require("tauer.animated-dialogue.services.rules.ruleLoader"),
 
     arrays = require("tauer.animated-dialogue.services.arrays.arrays"),
+
+    propSpawner = require("tauer.animated-dialogue.services.props.propSpawner"),
 
     ---@class enums
     enums = {

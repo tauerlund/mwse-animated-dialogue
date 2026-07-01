@@ -36,6 +36,7 @@ function this.initializeMod(_)
 		services.renderingController,
 		services.npcController,
 		services.npcTurnAnimator,
+		services.npcTrackBinder,
 		services.npcControllersAnimator,
 		services.npcHeadMorphAnimator,
 		services.npcHeadLookAtAnimator,
@@ -47,6 +48,7 @@ function this.initializeMod(_)
 		services.weatherSkyController,
 		services.particleController,
 		services.lightController,
+		services.propSpawner,
 	}
 
 	this.initializer.initialize(services, initializedServices)

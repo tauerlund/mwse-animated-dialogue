@@ -57,6 +57,15 @@ function this.initialize(template, services)
         }),
     })
 
+    page:createOnOffButton({
+        label = translations.get(keys.propsEnabled),
+        description = translations.get(keys.propsEnabledDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "propsEnabled",
+            table = services.settings
+        }),
+    })
+
     local timingCategory = page:createCategory({
         label = translations.get(keys.timingCategory)
     })

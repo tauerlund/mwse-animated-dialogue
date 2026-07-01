@@ -16,6 +16,7 @@ this.defaults = {
     npcTurnEnabled = true,
     npcHeadMorphAnimEnabled = true,
     npcHeadLookAtEnabled = true,
+    propsEnabled = true,
     lightEnabled = true,
     particlesEnabled = true,
     effectsMode = this.effectModes.activeCells,
