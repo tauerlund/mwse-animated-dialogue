@@ -2,6 +2,9 @@
 local this = {}
 
 ---@private
+this.logger = mwse.Logger.new()
+
+---@private
 this.basePath = "data files\\mwse\\config"
 
 ---@private
@@ -95,8 +98,14 @@ function this.loadOverrideConfigurations()
     for _, file in ipairs(files) do
         local id = this.removeExtension(file)
         local path = string.format("%s\\%s", this.overrideAnimationsPath, id)
-        local configuration = mwse.loadConfig(path) --[[@as overrideAnimationConfiguration]]
-        this.overrideAnimationConfigurations[configuration.dialogueId] = configuration
+        local configurations = mwse.loadConfig(path) --[[@as overrideAnimationConfigurationFile]]
+        for _, configuration in ipairs(configurations) do
+            if this.overrideAnimationConfigurations[configuration.dialogueId] then
+                this.logger:warn("Duplicate override for dialogueId '%s'; overwriting previous entry", configuration.dialogueId)
+            end
+
+            this.overrideAnimationConfigurations[configuration.dialogueId] = configuration
+        end
     end
 end
 
