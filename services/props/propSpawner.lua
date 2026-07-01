@@ -197,6 +197,8 @@ function this.attach(prop)
         this.definition = nil
         return
     end
+    this.bone = bone
+
 
     local node = this.nifLoader.load(prop.file)
     if not node then
@@ -204,6 +206,7 @@ function this.attach(prop)
         this.definition = nil
         return
     end
+    this.node = node
 
     this.applyTransform(node, prop.transform)
 
@@ -211,9 +214,6 @@ function this.attach(prop)
     bone:update({ children = true })
     node:updateProperties()
     node:updateEffects()
-
-    this.node = node
-    this.bone = bone
 end
 
 ---@private
