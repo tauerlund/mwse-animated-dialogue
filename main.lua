@@ -49,6 +49,8 @@ function this.initializeMod(_)
 		services.particleController,
 		services.lightController,
 		services.propSpawner,
+		services.debuggingSliderPanel,
+		services.debugController,
 	}
 
 	this.initializer.initialize(services, initializedServices)

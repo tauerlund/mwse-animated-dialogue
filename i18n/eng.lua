@@ -96,4 +96,11 @@ return {
     [keys.swayFrequency] = "Frequency",
     [keys.swayFrequencyDescription] =
     "How fast the camera sways, in cycles per second. Lower values give a slow, breathing-like motion.",
+    [keys.debuggingPage] = "Debugging",
+    [keys.debugModeEnabled] = "Debugging Mode",
+    [keys.debugModeEnabledDescription] =
+    "Development tool. Opens live translation, rotation, and scale sliders on each prop spawned during dialogue so its transform can be tuned and copied as JSON, and enables the pause key below. Leave off during normal play.",
+    [keys.debugPauseKey] = "Pause / Unpause Key",
+    [keys.debugPauseKeyDescription] =
+    "While debugging mode is on, this key freezes and unfreezes the dialogue scene (NPC animation, particles, lights, and weather) so prop transforms can be tuned against a still pose. Only active during dialogue.",
 }

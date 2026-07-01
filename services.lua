@@ -52,6 +52,11 @@ local this = {
 
     propSpawner = require("tauer.animated-dialogue.services.props.propSpawner"),
 
+    guiBuilder = require("tauer.animated-dialogue.services.gui.guiBuilder"),
+
+    debuggingSliderPanel = require("tauer.animated-dialogue.services.debugging.debugSliderPanel"),
+    debugController = require("tauer.animated-dialogue.services.debugging.debugController"),
+
     ---@class enums
     enums = {
         events = require("tauer.animated-dialogue.services.events.enums.events"),

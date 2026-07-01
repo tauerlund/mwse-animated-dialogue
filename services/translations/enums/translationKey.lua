@@ -73,6 +73,11 @@ local this = {
     swayAmplitudeDescription = "swayAmplitudeDescription",
     swayFrequency = "swayFrequency",
     swayFrequencyDescription = "swayFrequencyDescription",
+    debuggingPage = "debuggingPage",
+    debugModeEnabled = "debugModeEnabled",
+    debugModeEnabledDescription = "debugModeEnabledDescription",
+    debugPauseKey = "debugPauseKey",
+    debugPauseKeyDescription = "debugPauseKeyDescription",
 }
 
 return this

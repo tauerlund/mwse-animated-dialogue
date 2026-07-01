@@ -5,6 +5,8 @@ local this = {
 	gamePaused = "tauer.animatedDialogue.gamePaused",
 	gameUnpaused = "tauer.animatedDialogue.gameUnpaused",
 	settingsUpdated = "tauer.animatedDialogue.settingsUpdated",
+	propSpawned = "tauer.animatedDialogue.propSpawned",
+	propDespawned = "tauer.animatedDialogue.propDespawned",
 }
 
 return this

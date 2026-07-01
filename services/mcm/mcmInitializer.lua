@@ -9,6 +9,7 @@ this.pages = {
 	require("tauer.animated-dialogue.services.mcm.pages.npcPage"),
 	require("tauer.animated-dialogue.services.mcm.pages.effectsPage"),
 	require("tauer.animated-dialogue.services.mcm.pages.weatherPage"),
+	require("tauer.animated-dialogue.services.mcm.pages.debuggingPage"),
 }
 
 ---@private

@@ -91,6 +91,7 @@ function this.onDialogueStarted(_)
         table.insert(this.animators, this.cameraSwayAnimator)
     end
 
+    this.paused = false
     this.eventRegistrar.register(this.eventHandlers.dialogue)
 end
 

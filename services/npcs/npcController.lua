@@ -95,6 +95,7 @@ function this.onDialogueStarted(_)
         table.insert(this.animators, this.npcHeadLookAtAnimator)
     end
 
+    this.paused = false
     this.eventRegistrar.register(this.eventHandlers.dialogue)
 end
 

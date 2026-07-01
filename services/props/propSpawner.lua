@@ -18,6 +18,10 @@ this.animationResolver = nil
 this.nifLoader = nil
 
 ---@private
+---@type events
+this.events = nil
+
+---@private
 ---@type mwseLogger
 this.logger = mwse.Logger.new()
 
@@ -63,8 +67,9 @@ function this.initialize(services)
     this.settings          = services.settings
     this.animationResolver = services.animationResolver
     this.nifLoader         = services.nifLoader
+    this.events            = services.enums.events
 
-    local events           = services.enums.events
+    local events           = this.events
 
     this.eventHandlers     = {
         lifetime = {
@@ -151,6 +156,8 @@ end
 
 ---@private
 function this.despawn()
+    local hadProp = this.node ~= nil
+
     if this.node and this.bone then
         this.bone:detachChild(this.node)
         this.bone:update({ children = true })
@@ -162,6 +169,10 @@ function this.despawn()
     this.elapsed    = 0
 
     this.eventRegistrar.unregister(this.eventHandlers.prop)
+
+    if hadProp then
+        event.trigger(this.events.propDespawned)
+    end
 end
 
 ---@private
@@ -213,6 +224,10 @@ function this.attach(prop)
     bone:update({ children = true })
     node:updateProperties()
     node:updateEffects()
+
+    ---@type propSpawnedEventData
+    local eventData = { node = node }
+    event.trigger(this.events.propSpawned, eventData)
 end
 
 ---@private

@@ -1,0 +1,3 @@
+---@meta
+---@class propSpawnedEventData
+---@field public node niNode
