@@ -18,8 +18,8 @@ this.configuration = nil
 this.baseConfigurations = nil
 
 ---@private
----@type { [string]: talkAnimationConfiguration }
-this.talkConfigurations = nil
+---@type { [string]: overrideAnimationConfiguration }
+this.overrideConfigurations = nil
 
 ---@private
 this.logger = mwse.Logger.new()
@@ -34,7 +34,7 @@ function this.initialize(services)
     local animationLoader = services.animationLoader
 
     this.baseConfigurations = animationLoader.getBaseConfigurations()
-    this.talkConfigurations = animationLoader.getTalkConfigurations()
+    this.overrideConfigurations = animationLoader.getOverrideConfigurations()
 
     return true, nil
 end
@@ -49,7 +49,7 @@ end
 ---@public
 ---@param npc tes3reference
 ---@return baseAnimationConfiguration|nil
-function this.resolve(npc)
+function this.resolveBase(npc)
     local configuration = this.resolveBaseConfiguration(npc)
     if not configuration or not configuration.idle then
         return nil
@@ -60,9 +60,9 @@ end
 
 ---@public
 ---@param dialogueId string
----@return talkAnimationConfiguration|nil
-function this.tryResolve(dialogueId)
-    return this.talkConfigurations[dialogueId]
+---@return overrideAnimationConfiguration|nil
+function this.resolveOverride(dialogueId)
+    return this.overrideConfigurations[dialogueId]
 end
 
 ---@private

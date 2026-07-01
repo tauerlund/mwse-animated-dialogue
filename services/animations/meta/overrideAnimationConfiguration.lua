@@ -1,5 +1,5 @@
 ---@meta
----@class talkAnimationConfiguration
+---@class overrideAnimationConfiguration
 ---@field public dialogueId string
 ---@field public animation animationDefinition
 ---@field public prop? propDefinition

@@ -14,15 +14,15 @@ this.fileTypes = {
 this.baseAnimationsPath = "animated-dialogue\\animations\\base"
 
 ---@private
-this.talkAnimationsPath = "animated-dialogue\\animations\\talk"
+this.overrideAnimationsPath = "animated-dialogue\\animations\\override"
 
 ---@private
 ---@type baseAnimationConfiguration[]
 this.baseAnimationConfigurations = {}
 
 ---@private
----@type { [string]: talkAnimationConfiguration }
-this.talkAnimationConfigurations = {}
+---@type { [string]: overrideAnimationConfiguration }
+this.overrideAnimationConfigurations = {}
 
 ---@public
 ---@param services serviceCollection
@@ -32,7 +32,7 @@ function this.initialize(services)
     this.validator = services.animationValidator
 
     this.loadBaseConfigurations()
-    this.loadTalkConfigurations()
+    this.loadOverrideConfigurations()
 
     if table.empty(this.baseAnimationConfigurations) then
         return false, "no valid base animation configurations found"
@@ -48,15 +48,15 @@ function this.getBaseConfigurations()
 end
 
 ---@public
----@return { [string]: talkAnimationConfiguration}
-function this.getTalkConfigurations()
-    return this.talkAnimationConfigurations
+---@return { [string]: overrideAnimationConfiguration}
+function this.getOverrideConfigurations()
+    return this.overrideAnimationConfigurations
 end
 
 ---@public
 function this.uninitialize()
     this.baseAnimationConfigurations = {}
-    this.talkAnimationConfigurations = {}
+    this.overrideAnimationConfigurations = {}
 end
 
 ---@private
@@ -82,9 +82,9 @@ function this.loadBaseConfigurations()
 end
 
 ---@private
-function this.loadTalkConfigurations()
+function this.loadOverrideConfigurations()
     local files = this.fileLoader.loadAll({
-        directory = string.format("%s\\%s", this.basePath, this.talkAnimationsPath),
+        directory = string.format("%s\\%s", this.basePath, this.overrideAnimationsPath),
         fileType = this.fileTypes.json
     })
 
@@ -94,9 +94,9 @@ function this.loadTalkConfigurations()
 
     for _, file in ipairs(files) do
         local id = this.removeExtension(file)
-        local path = string.format("%s\\%s", this.talkAnimationsPath, id)
-        local configuration = mwse.loadConfig(path) --[[@as talkAnimationConfiguration]]
-        this.talkAnimationConfigurations[configuration.dialogueId] = configuration
+        local path = string.format("%s\\%s", this.overrideAnimationsPath, id)
+        local configuration = mwse.loadConfig(path) --[[@as overrideAnimationConfiguration]]
+        this.overrideAnimationConfigurations[configuration.dialogueId] = configuration
     end
 end
 

@@ -85,7 +85,7 @@ end
 ---@private
 ---@param e dialogueStartedEventData
 function this.onDialogueStarted(e)
-    local configuration = this.animationResolver.resolve(e.npc)
+    local configuration = this.animationResolver.resolveBase(e.npc)
     if not configuration then
         return
     end
@@ -96,6 +96,10 @@ function this.onDialogueStarted(e)
     if this.pendingInfo then
         this.onInfoGetText(this.pendingInfo)
         this.pendingInfo = nil
+    end
+
+    if not this.settings.npcTalkAnimEnabled then
+        this.applyAnimation(configuration.idle, true)
     end
 end
 
@@ -112,7 +116,7 @@ function this.onInfoGetText(e)
     end
 
     local talk = this.animationConfiguration.talk
-    local override = this.animationResolver.tryResolve(e.info.id)
+    local override = this.animationResolver.resolveOverride(e.info.id)
 
     local animation =
         override and override.animation or
