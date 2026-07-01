@@ -199,7 +199,6 @@ function this.attach(prop)
     end
     this.bone = bone
 
-
     local node = this.nifLoader.load(prop.file)
     if not node then
         this.logger:error("Could not load prop mesh '%s' (file missing or failed to load)", prop.file)
