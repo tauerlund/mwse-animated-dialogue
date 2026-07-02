@@ -37,7 +37,7 @@ this.eventHandlers = {
 this.npc = nil
 
 ---@private
----@type infoGetTextEventData|nil
+---@type dialogueInfoEventData|nil
 this.pendingInfo = nil
 
 ---@private
@@ -77,7 +77,7 @@ function this.initialize(services)
             [events.dialogueEnded]   = this.onDialogueEnded,
             [events.gamePaused]      = this.onGamePaused,
             [events.gameUnpaused]    = this.onGameUnpaused,
-            [tes3.event.infoGetText] = this.onInfoGetText,
+            [events.dialogueInfo]    = this.onDialogueInfo,
         },
         prop = {
             [tes3.event.enterFrame] = this.onEnterFrame,
@@ -98,10 +98,11 @@ end
 function this.onDialogueStarted(e)
     this.npc = e.npc
 
-    if this.pendingInfo then
-        this.onInfoGetText(this.pendingInfo)
-        this.pendingInfo = nil
+    if this.pendingInfo and this.pendingInfo.npc == e.npc then
+        this.onDialogueInfo(this.pendingInfo)
     end
+
+    this.pendingInfo = nil
 end
 
 ---@private
@@ -123,8 +124,8 @@ function this.onGameUnpaused()
 end
 
 ---@private
----@param e infoGetTextEventData
-function this.onInfoGetText(e)
+---@param e dialogueInfoEventData
+function this.onDialogueInfo(e)
     if not this.settings.propsEnabled then
         return
     end

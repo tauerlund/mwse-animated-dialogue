@@ -57,7 +57,7 @@ this.eventHandlers = nil
 this.animationConfiguration = nil
 
 ---@private
----@type infoGetTextEventData
+---@type dialogueInfoEventData|nil
 this.pendingInfo = nil
 
 ---@public
@@ -78,7 +78,7 @@ function this.initialize(services)
     this.eventHandlers     = {
         [events.dialogueStarted] = this.onDialogueStarted,
         [events.dialogueEnded]   = this.onDialogueEnded,
-        [tes3.event.infoGetText] = this.onInfoGetText,
+        [events.dialogueInfo]    = this.onDialogueInfo,
     }
 
     this.eventRegistrar.register(this.eventHandlers)
@@ -104,15 +104,16 @@ function this.onDialogueStarted(e)
 
     this.applyAnimation(configuration.idle, true)
 
-    if this.pendingInfo then
-        this.onInfoGetText(this.pendingInfo)
-        this.pendingInfo = nil
+    if this.pendingInfo and this.pendingInfo.npc == e.npc then
+        this.onDialogueInfo(this.pendingInfo)
     end
+
+    this.pendingInfo = nil
 end
 
 ---@private
----@param e infoGetTextEventData
-function this.onInfoGetText(e)
+---@param e dialogueInfoEventData
+function this.onDialogueInfo(e)
     if not this.npc then
         this.pendingInfo = e
         return
