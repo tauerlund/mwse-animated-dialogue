@@ -151,10 +151,11 @@ function this.showDebugHud()
     end
 
     local menu = this.guiBuilder.createMenu({
-        id = "AnimatedDialogue:DebugHud",
-        fixedFrame = true,
-        modal = false,
-    })
+            id = "AnimatedDialogue:DebugHud",
+            fixedFrame = true,
+            dragFrame = false,
+            modal = false,
+        })
         :withFlowDirection(tes3.flowDirection.topToBottom)
         :withAutoSize()
         :withPositionAlign({ x = 0.5, y = 0.04 })
