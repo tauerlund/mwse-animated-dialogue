@@ -11,9 +11,7 @@ function this.isMet(configuration, npc)
         return true
     end
 
-    return sex == "female"
-        and npc.baseObject.female
-        or not npc.baseObject.female
+    return (sex == "female") == (npc.baseObject.female == true)
 end
 
 return this
