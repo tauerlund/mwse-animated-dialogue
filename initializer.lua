@@ -78,7 +78,8 @@ end
 ---@private
 ---@param initializedServices initializedService[]
 function this.uninitializeServices(initializedServices)
-    for _, service in ipairs(initializedServices) do
+    for i = #initializedServices, 1, -1 do
+        local service = initializedServices[i]
         if service.initialized and service.uninitialize then
             service.uninitialize()
             service.initialized = false
