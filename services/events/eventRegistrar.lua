@@ -12,12 +12,8 @@ this.logger = mwse.Logger.new()
 ---@see event.register.options
 function this.register(handlers)
     for evt, entry in pairs(handlers) do
-        if type(entry) == "table" and type(entry[1]) == "table" then
-            for _, subEntry in ipairs(entry) do
-                this.registerSingle(evt, subEntry)
-            end
-        else
-            this.registerSingle(evt, entry)
+        for _, subEntry in ipairs(this.normalize(entry)) do
+            this.registerSingle(evt, subEntry)
         end
     end
 end
@@ -38,12 +34,8 @@ end
 ---@see event.unregister
 function this.unregister(handlers)
     for evt, entry in pairs(handlers) do
-        if type(entry) == "table" and type(entry[1]) == "table" then
-            for _, subEntry in ipairs(entry) do
-                this.unregisterSingle(evt, subEntry)
-            end
-        else
-            this.unregisterSingle(evt, entry)
+        for _, subEntry in ipairs(this.normalize(entry)) do
+            this.unregisterSingle(evt, subEntry)
         end
     end
 end
@@ -56,6 +48,45 @@ function this.unregisterSingle(evt, entry)
             event.unregister(evt, handler, options)
         end
     end
+end
+
+---Flattens an event entry into a list of sub-entries, each a callback or callbackWithOptions.
+---Accepts a bare function, a single { handler, options } pair, a plain list of bare functions
+---({ fn1, fn2 }), or an array of { handler, options } sub-entries ({ { fn1 }, { fn2, opts } }).
+---@private
+---@param entry callback|callbackWithOptions|callback[]|callbackWithOptions[]
+---@return (callback|callbackWithOptions)[]
+function this.normalize(entry)
+    if type(entry) ~= "table" then
+        return { entry }
+    end
+
+    if this.isFunctionList(entry) then
+        return entry
+    end
+
+    if type(entry[1]) == "table" then
+        return entry
+    end
+
+    return { entry }
+end
+
+---@private
+---@param entry table
+---@return boolean isFunctionList true when entry is a non-empty list of only functions
+function this.isFunctionList(entry)
+    if #entry == 0 then
+        return false
+    end
+
+    for _, value in ipairs(entry) do
+        if type(value) ~= "function" then
+            return false
+        end
+    end
+
+    return true
 end
 
 ---@private
