@@ -1,6 +1,6 @@
 ---@meta
 ---@class overrideAnimationConfiguration
----@field public dialogueId string
+---@field public dialogueIds string[]
 ---@field public animation animationDefinition
 ---@field public prop? propDefinition
 

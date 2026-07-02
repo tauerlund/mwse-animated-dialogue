@@ -100,11 +100,13 @@ function this.loadOverrideConfigurations()
         local path = string.format("%s\\%s", this.overrideAnimationsPath, id)
         local configurations = mwse.loadConfig(path) --[[@as overrideAnimationConfigurationFile]]
         for _, configuration in ipairs(configurations) do
-            if this.overrideAnimationConfigurations[configuration.dialogueId] then
-                this.logger:warn("Duplicate override for dialogueId '%s'; overwriting previous entry", configuration.dialogueId)
-            end
+            for _, dialogueId in ipairs(configuration.dialogueIds) do
+                if this.overrideAnimationConfigurations[dialogueId] then
+                    this.logger:warn("Duplicate override for dialogueId '%s'; overwriting previous entry", dialogueId)
+                end
 
-            this.overrideAnimationConfigurations[configuration.dialogueId] = configuration
+                this.overrideAnimationConfigurations[dialogueId] = configuration
+            end
         end
     end
 end
