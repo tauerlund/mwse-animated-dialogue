@@ -232,7 +232,14 @@ end
 ---@return boolean
 function this.isHoldingTorch()
     local mobile = this.npc.mobile
-    return mobile ~= nil and mobile.torchSlot ~= nil and mobile.torchSlot.object ~= nil
+    if not mobile then
+        return false
+    end
+
+    return tes3.getEquippedItem({
+        actor = mobile --[[@as tes3mobileActor]],
+        objectType = tes3.objectType.light,
+    }) ~= nil
 end
 
 ---@private

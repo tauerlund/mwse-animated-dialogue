@@ -30,14 +30,19 @@ function this.weightedChoice(items, weightSelector)
 	end
 
 	local roll = math.random() * total
+	local last = nil
 	for _, item in ipairs(items) do
-		roll = roll - math.max(0, weightSelector(item))
-		if roll <= 0 then
-			return item
+		local weight = math.max(0, weightSelector(item))
+		if weight > 0 then
+			last = item
+			roll = roll - weight
+			if roll <= 0 then
+				return item
+			end
 		end
 	end
 
-	return items[#items]
+	return last
 end
 
 return this

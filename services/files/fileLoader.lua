@@ -24,7 +24,7 @@ function this.loadAll(param)
     end
 
     if table.empty(files) then
-        this.logger:error("Found no files at %s", directory)
+        this.logger:warn("Found no files at %s", directory)
         return nil
     end
 

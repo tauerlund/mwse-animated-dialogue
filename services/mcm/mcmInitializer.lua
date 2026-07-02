@@ -13,9 +13,6 @@ this.pages = {
 }
 
 ---@private
---this.headerImagePath = "textures\\tauer\\modern-lockpicking\\logo.tga"
-
----@private
 ---@type mcmSettings
 this.mcmSettings = nil
 
