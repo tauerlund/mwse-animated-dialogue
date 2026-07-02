@@ -7,6 +7,8 @@ local this = {
 	settingsUpdated = "tauer.animatedDialogue.settingsUpdated",
 	propSpawned = "tauer.animatedDialogue.propSpawned",
 	propDespawned = "tauer.animatedDialogue.propDespawned",
+	animationStarted = "tauer.animatedDialogue.animationStarted",
+	animationEnded = "tauer.animatedDialogue.animationEnded",
 }
 
 return this

@@ -33,6 +33,9 @@ this.currentEulerX = nil
 this.currentEulerZ = nil
 
 ---@private
+this.overridden = false
+
+---@private
 this.eventHandlers = nil
 
 ---@public
@@ -44,8 +47,10 @@ function this.initialize(services)
 
     local events        = services.enums.events
     this.eventHandlers  = {
-        [events.dialogueStarted] = this.onDialogueStarted,
-        [events.dialogueEnded]   = this.onDialogueEnded,
+        [events.dialogueStarted]  = this.onDialogueStarted,
+        [events.dialogueEnded]    = this.onDialogueEnded,
+        [events.animationStarted] = this.onAnimationStarted,
+        [events.animationEnded]   = this.onAnimationEnded,
     }
 
     this.eventRegistrar.register(this.eventHandlers)
@@ -62,6 +67,7 @@ end
 ---@param event dialogueStartedEventData
 function this.onDialogueStarted(event)
     this.npc = event.npc
+    this.overridden = false
 end
 
 ---@private
@@ -69,11 +75,33 @@ function this.onDialogueEnded()
     this.npc = nil
     this.currentEulerX = nil
     this.currentEulerZ = nil
+    this.overridden = false
+end
+
+---@private
+---@param event animationEventData
+function this.onAnimationStarted(event)
+    this.overridden = event.animation.overrideLookAt == true
+end
+
+---@private
+function this.onAnimationEnded()
+    if not this.overridden then
+        return
+    end
+
+    this.overridden = false
+    this.currentEulerX = nil
+    this.currentEulerZ = nil
 end
 
 ---@public
 ---@param delta number
 function this.update(delta)
+    if this.overridden then
+        return
+    end
+
     local animationData = this.npc.animationData
     if not animationData then
         return
@@ -96,8 +124,8 @@ function this.update(delta)
     local invertedParentWorldRotation, _ = node.parent.worldTransform.rotation:copy():invert()
     local updatedLocalRotation           = invertedParentWorldRotation * updatedWorldRotation
 
-    local originalEuler, _ = node.rotation:toEulerXYZ()
-    local updatedEuler, _  = updatedLocalRotation:toEulerXYZ()
+    local originalEuler, _               = node.rotation:toEulerXYZ()
+    local updatedEuler, _                = updatedLocalRotation:toEulerXYZ()
 
     if this.currentEulerX == nil then
         this.currentEulerX = originalEuler.x

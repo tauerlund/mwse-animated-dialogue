@@ -22,8 +22,16 @@ this.animationResolver = nil
 this.npcTrackBinder = nil
 
 ---@private
+---@type events
+this.events = nil
+
+---@private
 ---@type tes3reference
 this.npc = nil
+
+---@private
+---@type animationDefinition|nil
+this.activeAnimation = nil
 
 ---@private
 ---@type mwseLogger
@@ -61,11 +69,12 @@ function this.initialize(services)
     this.npcPoseBlender    = services.npcPoseBlender
     this.animationResolver = services.animationResolver
     this.npcTrackBinder    = services.npcTrackBinder
+    this.events            = services.enums.events
 
     this.bodyTrack         = this.npcTrackBinder.create()
     this.torchTrack        = this.npcTrackBinder.create()
 
-    local events           = services.enums.events
+    local events           = this.events
     this.eventHandlers     = {
         [events.dialogueStarted] = this.onDialogueStarted,
         [events.dialogueEnded]   = this.onDialogueEnded,
@@ -132,9 +141,28 @@ end
 ---@private
 function this.onDialogueEnded()
     this.resetTracks()
+    this.setActiveAnimation(nil)
     this.npc = nil
     this.npcPoseBlender.reset()
     this.pendingInfo = nil
+end
+
+---@private
+---@param animation animationDefinition|nil
+function this.setActiveAnimation(animation)
+    if this.activeAnimation then
+        ---@type animationEventData
+        local eventData = { animation = this.activeAnimation }
+        event.trigger(this.events.animationEnded, eventData)
+    end
+
+    this.activeAnimation = animation
+
+    if animation then
+        ---@type animationEventData
+        local eventData = { animation = animation }
+        event.trigger(this.events.animationStarted, eventData)
+    end
 end
 
 ---@private
@@ -166,9 +194,12 @@ function this.applyAnimation(animation, loop)
 
     if count == 0 then
         this.resetTracks()
+        this.setActiveAnimation(nil)
         this.npc = nil
         return
     end
+
+    this.setActiveAnimation(animation)
 
     if holdingTorch then
         this.applyTorchArm(animationData.actorNode)
@@ -186,6 +217,12 @@ function this.applyTorchArm(actorNode)
         region    = this.npcTrackBinder.region.leftArm,
         loop      = true,
     })
+end
+
+---@private
+---@return boolean
+function this.overridesLookAt()
+    return this.activeAnimation ~= nil and this.activeAnimation.overrideLookAt == true
 end
 
 ---@private
@@ -258,10 +295,12 @@ function this.update(delta)
         this.npcPoseBlender.update(animationData.actorNode, delta)
     end
 
-    animationData.headNode:update({
-        controllers = true,
-        time        = 0
-    })
+    if not this.overridesLookAt() then
+        animationData.headNode:update({
+            controllers = true,
+            time        = 0
+        })
+    end
 
     this.advanceTrack(this.torchTrack, delta)
     this.advanceTrack(this.bodyTrack, delta)

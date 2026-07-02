@@ -1,0 +1,3 @@
+---@meta
+---@class animationEventData
+---@field public animation animationDefinition

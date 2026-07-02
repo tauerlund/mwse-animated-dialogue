@@ -2,3 +2,4 @@
 ---@class animationDefinition
 ---@field public file string
 ---@field public group string
+---@field public overrideLookAt? boolean
