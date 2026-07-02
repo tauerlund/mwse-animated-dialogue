@@ -84,6 +84,7 @@ function this.onDialogueStarted(e)
         return
     end
 
+    this.controllers = {}
     this.paused = false
 
     local resolve = this.resolveParticlesStrategies[this.settings.effectsMode]
