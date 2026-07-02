@@ -28,11 +28,15 @@ this.settings = nil
 this.npc = nil
 
 ---@private
----@type niNode[]
-this.morphNodes = {}
+---@type nodeResolver
+this.nodeResolver = nil
 
 ---@private
-this.collected = false
+---@type niTimeController[]
+this.morphers = {}
+
+---@private
+this.resolved = false
 
 ---@private
 this.eventHandlers = nil
@@ -43,6 +47,7 @@ this.eventHandlers = nil
 function this.initialize(services)
     this.eventRegistrar = services.eventRegistrar
     this.settings       = services.settings
+    this.nodeResolver   = services.nodeResolver
 
     local events        = services.enums.events
     this.eventHandlers  = {
@@ -64,16 +69,16 @@ end
 ---@param event dialogueStartedEventData
 function this.onDialogueStarted(event)
     this.npc = event.npc
-    this.collected = false
-    this.morphNodes = {}
+    this.resolved = false
+    this.morphers = {}
     this.startBlinkTimer()
 end
 
 ---@private
 function this.onDialogueEnded()
     this.npc = nil
-    this.collected = false
-    this.morphNodes = {}
+    this.resolved = false
+    this.morphers = {}
 end
 
 ---@public
@@ -84,42 +89,23 @@ function this.update(delta)
         return
     end
 
-    if not this.collected then
-        this.resolveMorphNodes(animationData.headNode)
-        this.collected = true
+    if not this.resolved then
+        this.morphers = this.nodeResolver.resolveControllers(
+            animationData.headNode, ni.type.NiGeomMorpherController)
+        this.resolved = true
     end
 
     local phase = animationData.lipsyncLevel ~= -1
         and this.getTalkPhase(animationData)
         or this.getBlinkPhase(animationData, delta)
 
-    for i = 1, #this.morphNodes do
-        this.morphNodes[i]:update({
-            controllers = true,
-            time        = phase
-        })
-    end
-end
-
----@private
----@param node niNode
-function this.resolveMorphNodes(node)
-    if not node then
-        return
-    end
-
-    local controller = node.controller
-    while controller do
-        if controller:isOfType(ni.type.NiGeomMorpherController) then
-            this.morphNodes[#this.morphNodes + 1] = node
-            break
-        end
-        controller = controller.nextController
-    end
-
-    if node.children then
-        for i = 1, #node.children do
-            this.resolveMorphNodes(node.children[i] --[[@as niNode]])
+    for i = 1, #this.morphers do
+        local target = this.morphers[i].target --[[@as niNode]]
+        if target then
+            target:update({
+                controllers = true,
+                time        = phase
+            })
         end
     end
 end

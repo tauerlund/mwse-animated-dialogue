@@ -112,9 +112,20 @@ function this.resolveTimings(source, group)
 
     local result      = {}
 
-    this.collectTimings(source, startMarker, stopMarker, result)
+    this.resolveTimingMarkers(source, startMarker, stopMarker, result)
 
     return result.start, result.stop
+end
+
+---@private
+---@param source niNode
+---@param startMarker string
+---@param stopMarker string
+---@param result { start: number?, stop: number? }
+function this.resolveTimingMarkers(source, startMarker, stopMarker, result)
+    for node in source:traverse() do
+        this.readNodeMarkers(node --[[@as niNode]], startMarker, stopMarker, result)
+    end
 end
 
 ---@private
@@ -122,30 +133,29 @@ end
 ---@param startMarker string
 ---@param stopMarker string
 ---@param result { start: number?, stop: number? }
-function this.collectTimings(node, startMarker, stopMarker, result)
-    if not node then
-        return
-    end
-
+function this.readNodeMarkers(node, startMarker, stopMarker, result)
     local extra = node.extraData
     while extra do
         if extra.keys then
-            for i = 1, #extra.keys do
-                local key = extra.keys[i]
-                local marker = key.text:lower():trim()
-                if marker == startMarker then
-                    result.start = key.time
-                elseif marker == stopMarker then
-                    result.stop = key.time
-                end
-            end
+            this.readMarkerKeys(extra.keys, startMarker, stopMarker, result)
         end
         extra = extra.next
     end
+end
 
-    if node.children then
-        for i = 1, #node.children do
-            this.collectTimings(node.children[i] --[[@as niNode]], startMarker, stopMarker, result)
+---@private
+---@param keys niTextKey[]
+---@param startMarker string
+---@param stopMarker string
+---@param result { start: number?, stop: number? }
+function this.readMarkerKeys(keys, startMarker, stopMarker, result)
+    for i = 1, #keys do
+        local key = keys[i]
+        local marker = key.text:lower():trim()
+        if marker == startMarker then
+            result.start = key.time
+        elseif marker == stopMarker then
+            result.stop = key.time
         end
     end
 end
@@ -251,28 +261,11 @@ end
 function this.buildBoneMap(actorNode)
     local map = {}
 
-    this.collectBones(actorNode, map)
+    for bone in actorNode:traverse({ prefix = BONE_PREFIX }) do
+        map[bone.name] = bone --[[@as niNode]]
+    end
 
     return map
-end
-
----@private
----@param node niNode
----@param map table<string, niNode>
-function this.collectBones(node, map)
-    if not node then
-        return
-    end
-
-    if node.name and node.name:sub(1, #BONE_PREFIX) == BONE_PREFIX then
-        map[node.name] = node
-    end
-
-    if node.children then
-        for i = 1, #node.children do
-            this.collectBones(node.children[i] --[[@as niNode]], map)
-        end
-    end
 end
 
 return this

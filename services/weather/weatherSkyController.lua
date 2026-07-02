@@ -72,16 +72,8 @@ function this.resolveCloudShapes(node)
         return
     end
 
-    if node:isOfType(ni.type.NiTriShape) then
-        table.insert(this.cloudShapes, node)
-    end
-
-    if not node.children then
-        return
-    end
-
-    for _, child in ipairs(node.children) do
-        this.resolveCloudShapes(child --[[@as niNode]])
+    for shape in node:traverse({ type = ni.type.NiTriShape }) do
+        this.cloudShapes[#this.cloudShapes + 1] = shape --[[@as niTriShape]]
     end
 end
 

@@ -6,6 +6,7 @@ local this = {
     fileLoader = require("tauer.animated-dialogue.services.files.fileLoader"),
 
     nifLoader = require("tauer.animated-dialogue.services.nif.nifLoader"),
+    nodeResolver = require("tauer.animated-dialogue.services.nodes.nodeResolver"),
 
     animationValidator = require(
         "tauer.animated-dialogue.services.animations.animationValidator"),

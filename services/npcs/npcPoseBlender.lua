@@ -41,16 +41,12 @@ function this.capture(rootNode, duration)
         return
     end
 
-    local children = rootNode.children
-    if not children then
-        return
-    end
-
-    for i = 1, #children do
-        local child = children[i]
-        if child then
-            this.captureNode(child --[[@as niNode]])
-        end
+    for node in rootNode:traverse({ prefix = this.bonePrefix }) do
+        local index              = this.count + 1
+        this.count               = index
+        this.nodes[index]        = node --[[@as niNode]]
+        this.rotations[index]    = node.rotation:toQuaternion()
+        this.translations[index] = node.translation:copy()
     end
 end
 
@@ -100,31 +96,6 @@ function this.reset()
     end
 
     this.count = 0
-end
-
----@private
----@param node niNode
-function this.captureNode(node)
-    local name = node.name
-    if name and name:sub(1, #this.bonePrefix) == this.bonePrefix then
-        local index              = this.count + 1
-        this.count               = index
-        this.nodes[index]        = node
-        this.rotations[index]    = node.rotation:toQuaternion()
-        this.translations[index] = node.translation:copy()
-    end
-
-    local children = node.children
-    if not children then
-        return
-    end
-
-    for i = 1, #children do
-        local child = children[i]
-        if child then
-            this.captureNode(child --[[@as niNode]])
-        end
-    end
 end
 
 return this
