@@ -102,13 +102,11 @@ function this.onDialogueStarted(e)
     this.npc = e.npc
     this.animationConfiguration = configuration
 
+    this.applyAnimation(configuration.idle, true)
+
     if this.pendingInfo then
         this.onInfoGetText(this.pendingInfo)
         this.pendingInfo = nil
-    end
-
-    if not this.settings.npcTalkAnimEnabled then
-        this.applyAnimation(configuration.idle, true)
     end
 end
 
