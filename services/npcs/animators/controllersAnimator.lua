@@ -94,6 +94,10 @@ end
 ---@private
 ---@param e dialogueStartedEventData
 function this.onDialogueStarted(e)
+    if not this.settings.npcAnimEnabled then
+        return
+    end
+
     local configuration = this.animationResolver.resolveBase(e.npc)
     if not configuration then
         return
