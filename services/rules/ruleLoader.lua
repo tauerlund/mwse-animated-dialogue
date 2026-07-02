@@ -53,7 +53,7 @@ end
 ---@param directory string
 ---@return rule
 function this.loadRule(fileName, directory)
-	local ruleName = fileName:gsub(".lua", "")
+	local ruleName = fileName:gsub("%.lua$", "")
 	local basePath = string.format("tauer.animated-dialogue.%s", directory:gsub("\\", "."))
 
 	---@type rule

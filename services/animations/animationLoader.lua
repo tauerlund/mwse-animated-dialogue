@@ -115,7 +115,7 @@ end
 ---@param file string
 ---@return string
 function this.removeExtension(file)
-    return (file:gsub(this.fileTypes.json, ""))
+    return (file:gsub("%.json$", ""))
 end
 
 return this
