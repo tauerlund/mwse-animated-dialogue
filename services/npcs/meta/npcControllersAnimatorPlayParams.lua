@@ -1,0 +1,5 @@
+---@meta
+---@class npcControllersAnimator.play.param
+---@field public npc tes3reference
+---@field public animation animationDefinition
+---@field public revertTo animationDefinition|nil

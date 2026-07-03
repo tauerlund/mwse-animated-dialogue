@@ -2,20 +2,12 @@
 local this = {}
 
 ---@private
----@type eventRegistrar
-this.eventRegistrar = nil
-
----@private
 ---@type settings
 this.settings = nil
 
 ---@private
 ---@type npcPoseBlender
 this.npcPoseBlender = nil
-
----@private
----@type animationResolver
-this.animationResolver = nil
 
 ---@private
 ---@type npcTrackBinder
@@ -34,8 +26,8 @@ this.npc = nil
 this.activeAnimation = nil
 
 ---@private
----@type mwseLogger
-this.logger = mwse.Logger.new()
+---@type animationDefinition|nil
+this.revertTo = nil
 
 ---@private
 ---@type track
@@ -49,110 +41,41 @@ this.torchTrack = nil
 ---@type animationDefinition
 this.torchArmAnimation = { file = "tauer\\ad\\torch.nif", group = "idle9" }
 
----@private
-this.eventHandlers = nil
-
----@private
----@type baseAnimationConfiguration
-this.animationConfiguration = nil
-
----@private
----@type dialogueInfoEventData|nil
-this.pendingInfo = nil
-
 ---@public
 ---@param services serviceCollection
 ---@return boolean,string|nil
 function this.initialize(services)
-    this.eventRegistrar    = services.eventRegistrar
-    this.settings          = services.settings
-    this.npcPoseBlender    = services.npcPoseBlender
-    this.animationResolver = services.animationResolver
-    this.npcTrackBinder    = services.npcTrackBinder
-    this.events            = services.enums.events
+    this.settings       = services.settings
+    this.npcPoseBlender = services.npcPoseBlender
+    this.npcTrackBinder = services.npcTrackBinder
+    this.events         = services.enums.events
 
-    this.bodyTrack         = this.npcTrackBinder.create()
-    this.torchTrack        = this.npcTrackBinder.create()
-
-    local events           = this.events
-    this.eventHandlers     = {
-        [events.dialogueStarted] = this.onDialogueStarted,
-        [events.dialogueEnded]   = this.onDialogueEnded,
-        [events.dialogueInfo]    = this.onDialogueInfo,
-    }
-
-    this.eventRegistrar.register(this.eventHandlers)
+    this.bodyTrack      = this.npcTrackBinder.create()
+    this.torchTrack     = this.npcTrackBinder.create()
 
     return true, nil
 end
 
 ---@public
-function this.uninitialize()
-    this.eventRegistrar.unregister(this.eventHandlers)
+---@param params npcControllersAnimator.play.param
+function this.play(params)
+    if not params.npc.animationData then
+        return
+    end
+
+    this.npc = params.npc
+    this.revertTo = params.revertTo
+
+    this.applyAnimation(params.animation, params.revertTo == nil)
 end
 
----@private
----@param e dialogueStartedEventData
-function this.onDialogueStarted(e)
-    if not this.settings.npcAnimEnabled then
-        return
-    end
-
-    local configuration = this.animationResolver.resolveBase(e.npc)
-    if not configuration then
-        return
-    end
-
-    this.npc = e.npc
-    this.animationConfiguration = configuration
-
-    this.applyAnimation(configuration.idle, true)
-
-    if this.pendingInfo and this.pendingInfo.npc == e.npc then
-        this.onDialogueInfo(this.pendingInfo)
-    end
-
-    this.pendingInfo = nil
-end
-
----@private
----@param e dialogueInfoEventData
-function this.onDialogueInfo(e)
-    if not this.npc then
-        this.pendingInfo = e
-        return
-    end
-
-    if not this.settings.npcTalkAnimEnabled then
-        return
-    end
-
-    if not this.animationConfiguration then
-        return
-    end
-
-    local talk = this.animationConfiguration.talk
-    local override = this.animationResolver.resolveOverride(e.info.id)
-
-    local animation =
-        override and override.animation or
-        talk and table.choice(talk)
-
-    if not animation then
-        return
-    end
-
-    this.applyAnimation(animation, false)
-end
-
----@private
-function this.onDialogueEnded()
+---@public
+function this.stop()
     this.resetTracks()
     this.setActiveAnimation(nil)
     this.npc = nil
-    this.animationConfiguration = nil
+    this.revertTo = nil
     this.npcPoseBlender.reset()
-    this.pendingInfo = nil
 end
 
 ---@private
@@ -171,26 +94,6 @@ function this.setActiveAnimation(animation)
         local eventData = { animation = animation }
         event.trigger(this.events.animationStarted, eventData)
     end
-end
-
---- Debug-only entry point: force a specific clip onto a given NPC, bypassing
---- resolution/filtering so any config can be previewed on any actor. Always
---- loops so it holds for inspection and needs no revert-to-idle config.
----@public
----@param npc tes3reference
----@param animation animationDefinition
-function this.playPreview(npc, animation)
-    if not this.settings.npcAnimEnabled then
-        this.logger:warn("Cannot preview '%s': NPC animations are disabled", animation.file)
-        return
-    end
-
-    if not npc.animationData then
-        return
-    end
-
-    this.npc = npc
-    this.applyAnimation(animation, true)
 end
 
 ---@private
@@ -224,6 +127,7 @@ function this.applyAnimation(animation, loop)
         this.resetTracks()
         this.setActiveAnimation(nil)
         this.npc = nil
+        this.revertTo = nil
         return
     end
 
@@ -305,7 +209,7 @@ function this.advanceTrack(track, delta)
     if track.looping then
         track.phase = track.start
     else
-        this.applyAnimation(this.animationConfiguration.idle, true)
+        this.applyAnimation(this.revertTo, true)
     end
 end
 

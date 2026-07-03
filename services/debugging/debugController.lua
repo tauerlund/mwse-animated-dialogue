@@ -261,7 +261,10 @@ function this.buildPreviewControls(content)
                     return
                 end
 
-                this.npcControllersAnimator.playPreview(this.currentNpc, entry.animation)
+                this.npcControllersAnimator.play({
+                    npc       = this.currentNpc,
+                    animation = entry.animation,
+                })
             end)
     end
 

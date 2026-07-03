@@ -14,6 +14,8 @@ local this = {
         "tauer.animated-dialogue.services.animations.animationFilterer"),
     animationLoader = require("tauer.animated-dialogue.services.animations.animationLoader"),
     animationResolver = require("tauer.animated-dialogue.services.animations.animationResolver"),
+    animationOrchestrator = require(
+        "tauer.animated-dialogue.services.animations.animationOrchestrator"),
 
     dialogueController = require("tauer.animated-dialogue.services.dialogue.dialogueController"),
 

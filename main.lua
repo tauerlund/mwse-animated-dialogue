@@ -38,6 +38,7 @@ function this.initializeMod(_)
 		services.npcTurnAnimator,
 		services.npcTrackBinder,
 		services.npcControllersAnimator,
+		services.animationOrchestrator,
 		services.npcHeadMorphAnimator,
 		services.npcHeadLookAtAnimator,
 		services.cameraController,
