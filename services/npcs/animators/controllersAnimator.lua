@@ -127,6 +127,10 @@ function this.onDialogueInfo(e)
         return
     end
 
+    if not this.animationConfiguration then
+        return
+    end
+
     local talk = this.animationConfiguration.talk
     local override = this.animationResolver.resolveOverride(e.info.id)
 
@@ -146,6 +150,7 @@ function this.onDialogueEnded()
     this.resetTracks()
     this.setActiveAnimation(nil)
     this.npc = nil
+    this.animationConfiguration = nil
     this.npcPoseBlender.reset()
     this.pendingInfo = nil
 end
@@ -166,6 +171,26 @@ function this.setActiveAnimation(animation)
         local eventData = { animation = animation }
         event.trigger(this.events.animationStarted, eventData)
     end
+end
+
+--- Debug-only entry point: force a specific clip onto a given NPC, bypassing
+--- resolution/filtering so any config can be previewed on any actor. Always
+--- loops so it holds for inspection and needs no revert-to-idle config.
+---@public
+---@param npc tes3reference
+---@param animation animationDefinition
+function this.playPreview(npc, animation)
+    if not this.settings.npcAnimEnabled then
+        this.logger:warn("Cannot preview '%s': NPC animations are disabled", animation.file)
+        return
+    end
+
+    if not npc.animationData then
+        return
+    end
+
+    this.npc = npc
+    this.applyAnimation(animation, true)
 end
 
 ---@private

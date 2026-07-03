@@ -92,6 +92,16 @@ function this.createButton(parameters)
 end
 
 ---@public
+---@param parameters createParameters
+---@return guiBuilder
+function this.createTextSelect(parameters)
+	local element = parameters.parent:createTextSelect({
+		id = parameters.id,
+	})
+	return this.create(element)
+end
+
+---@public
 ---@param text string
 ---@return guiBuilder
 function this:withText(text)
