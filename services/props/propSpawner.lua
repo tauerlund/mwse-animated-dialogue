@@ -135,6 +135,8 @@ function this.onDialogueInfo(e)
         return
     end
 
+    this.despawn()
+
     local override = this.animationResolver.resolveOverride(e.info.id)
     local prop = override and override.prop
     if not prop then
@@ -147,8 +149,6 @@ end
 ---@private
 ---@param prop propDefinition
 function this.spawn(prop)
-    this.despawn()
-
     this.definition = prop
     this.elapsed    = 0
 
