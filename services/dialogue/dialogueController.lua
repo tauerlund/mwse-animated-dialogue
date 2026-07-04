@@ -185,7 +185,7 @@ end
 ---@param reference tes3reference
 ---@return boolean
 function this.isNpc(reference)
-    return reference.object.objectType == tes3.objectType.actor
+    return reference.object.objectType == tes3.objectType.npc
 end
 
 return this
