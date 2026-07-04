@@ -1,4 +1,4 @@
----@class npcPoseBlender : service
+---@class actorPoseBlender : service
 local this = {}
 
 ---@private

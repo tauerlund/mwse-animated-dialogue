@@ -58,20 +58,20 @@ end
 ---@private
 ---@param event dialogueStartedEventData
 function this.onDialogueStarted(event)
-    local npc            = event.npc
+    local actor          = event.actor
     local playerPosition = tes3.player.position
-    local npcForward     = tes3vector3.new(playerPosition.x - npc.position.x, playerPosition.y - npc.position.y, 0)
+    local actorForward   = tes3vector3.new(playerPosition.x - actor.position.x, playerPosition.y - actor.position.y, 0)
         :normalized()
-    local npcRight       = this.worldUp:cross(npcForward)
-    if npcRight:length() < 0.001 then
-        npcRight = tes3vector3.new(1, 0, 0)
+    local actorRight     = this.worldUp:cross(actorForward)
+    if actorRight:length() < 0.001 then
+        actorRight = tes3vector3.new(1, 0, 0)
     else
-        npcRight = npcRight:normalized()
+        actorRight = actorRight:normalized()
     end
 
     this.originalRotation        = tes3.worldController.worldCamera.cameraRoot.rotation:toQuaternion()
-    this.targetRotation          = this.computeTargetRotation(npcForward, npcRight)
-    this.targetDisplacement      = this.computeTargetDisplacement(npc, npcForward, npcRight)
+    this.targetRotation          = this.computeTargetRotation(actorForward, actorRight)
+    this.targetDisplacement      = this.computeTargetDisplacement(actor, actorForward, actorRight)
     this.cameraRootLocalPosition = tes3.worldController.worldCamera.cameraRoot.translation:copy()
 end
 
@@ -102,12 +102,12 @@ function this.update(cameraWrapper, skyWrapper, animationProgress, _)
 end
 
 ---@private
----@param npcForward tes3vector3
----@param npcRight tes3vector3
+---@param actorForward tes3vector3
+---@param actorRight tes3vector3
 ---@return niQuaternion
-function this.computeTargetRotation(npcForward, npcRight)
+function this.computeTargetRotation(actorForward, actorRight)
     local settings      = this.settings
-    local lookDirection = -npcForward
+    local lookDirection = -actorForward
     local right         = lookDirection:cross(this.worldUp)
 
     if settings.yawOffset ~= 0 then
@@ -116,13 +116,13 @@ function this.computeTargetRotation(npcForward, npcRight)
     end
 
     if settings.pitchOffset ~= 0 then
-        lookDirection = this.rotateAroundAxis(lookDirection, npcRight, settings.pitchOffset)
-        right = this.rotateAroundAxis(right, npcRight, settings.pitchOffset)
+        lookDirection = this.rotateAroundAxis(lookDirection, actorRight, settings.pitchOffset)
+        right = this.rotateAroundAxis(right, actorRight, settings.pitchOffset)
     end
 
     if settings.rollOffset ~= 0 then
-        lookDirection = this.rotateAroundAxis(lookDirection, npcForward, settings.rollOffset)
-        right = this.rotateAroundAxis(right, npcForward, settings.rollOffset)
+        lookDirection = this.rotateAroundAxis(lookDirection, actorForward, settings.rollOffset)
+        right = this.rotateAroundAxis(right, actorForward, settings.rollOffset)
     end
 
     local up = right:cross(lookDirection):normalized()
@@ -135,12 +135,12 @@ function this.computeTargetRotation(npcForward, npcRight)
 end
 
 ---@private
----@param npc tes3reference
----@param npcForward tes3vector3
----@param npcRight tes3vector3
+---@param actor tes3reference
+---@param actorForward tes3vector3
+---@param actorRight tes3vector3
 ---@return tes3vector3
-function this.computeTargetDisplacement(npc, npcForward, npcRight)
-    local animationData = npc.animationData
+function this.computeTargetDisplacement(actor, actorForward, actorRight)
+    local animationData = actor.animationData
     if not animationData or not animationData.headNode then
         return tes3vector3.new(0, 0, 0)
     end
@@ -150,8 +150,8 @@ function this.computeTargetDisplacement(npc, npcForward, npcRight)
     local cameraPosition = tes3.getCameraPosition()
 
     local targetPosition = headPosition
-        + npcForward * settings.distance
-        + npcRight * settings.horizontalOffset
+        + actorForward * settings.distance
+        + actorRight * settings.horizontalOffset
         + this.worldUp * settings.verticalOffset
 
     return targetPosition - cameraPosition

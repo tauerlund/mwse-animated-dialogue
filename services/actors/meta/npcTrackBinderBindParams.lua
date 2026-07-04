@@ -1,5 +1,5 @@
 ---@meta
----@class npcTrackBinder.bind.param
+---@class actorTrackBinder.bind.param
 ---@field public track track
 ---@field public actorNode niNode
 ---@field public file string

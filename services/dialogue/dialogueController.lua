@@ -78,7 +78,7 @@ function this.onMenuDialogActivated(e)
 
     ---@type dialogueStartedEventData
     local eventData = {
-        npc = reference
+        actor = reference
     }
     event.trigger(this.events.dialogueStarted, eventData)
 
@@ -105,19 +105,19 @@ function this.onInfoGetText(e)
     end
 
     -- The greeting's info is retrieved before the service actor is established
-    -- (i.e. before MenuDialog's dialogueStarted). Buffer it until the npc is
+    -- (i.e. before MenuDialog's dialogueStarted). Buffer it until the actor is
     -- known, then flush it in onMenuDialogActivated.
     this.pendingInfo = e.info
 end
 
 ---@private
 ---@param info tes3dialogueInfo
----@param npc tes3reference
-function this.emitDialogueInfo(info, npc)
+---@param actor tes3reference
+function this.emitDialogueInfo(info, actor)
     ---@type dialogueInfoEventData
     local eventData = {
-        info = info,
-        npc  = npc
+        info  = info,
+        actor = actor
     }
     event.trigger(this.events.dialogueInfo, eventData)
 end

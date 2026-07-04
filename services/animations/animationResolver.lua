@@ -47,10 +47,10 @@ function this.dependencies(services)
 end
 
 ---@public
----@param npc tes3reference
+---@param actor tes3reference
 ---@return baseAnimationConfiguration|nil
-function this.resolveBase(npc)
-    local configuration = this.resolveBaseConfiguration(npc)
+function this.resolveBase(actor)
+    local configuration = this.resolveBaseConfiguration(actor)
     if not configuration or not configuration.idle then
         return nil
     end
@@ -66,10 +66,10 @@ function this.resolveOverride(dialogueId)
 end
 
 ---@private
----@param npc tes3reference
+---@param actor tes3reference
 ---@return baseAnimationConfiguration|nil
-function this.resolveBaseConfiguration(npc)
-    local filtered = this.animationFilterer.filter(this.baseConfigurations, npc)
+function this.resolveBaseConfiguration(actor)
+    local filtered = this.animationFilterer.filter(this.baseConfigurations, actor)
     if #filtered == 0 then
         this.logger:error("Could not resolve base animation")
         return nil

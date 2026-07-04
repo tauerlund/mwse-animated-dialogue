@@ -66,7 +66,7 @@ function this.initialize(template, services)
         label = translations.get(keys.effectsMode),
         description = translations.get(keys.effectsModeDescription),
         options = {
-            { text = translations.get(keys.effectsModeNpc),         value = effectModes.npc },
+            { text = translations.get(keys.effectsModeActor),       value = effectModes.actor },
             { text = translations.get(keys.effectsModeCurrentCell), value = effectModes.currentCell },
             { text = translations.get(keys.effectsModeActiveCells), value = effectModes.activeCells },
         },

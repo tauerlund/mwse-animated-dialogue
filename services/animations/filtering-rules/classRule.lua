@@ -13,15 +13,15 @@ end
 
 ---@public
 ---@param configuration baseAnimationConfiguration
----@param npc tes3reference
+---@param actor tes3reference
 ---@return boolean
-function this.isMet(configuration, npc)
+function this.isMet(configuration, actor)
     local classes = configuration.conditions and configuration.conditions.class
     if not classes then
         return true
     end
 
-    return this.arrays.contains(classes, npc.baseObject.class.id)
+    return this.arrays.contains(classes, actor.baseObject.class.id)
 end
 
 return this

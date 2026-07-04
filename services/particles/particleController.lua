@@ -33,7 +33,7 @@ this.paused = false
 this.controllers = {}
 
 ---@private
----@type { [string]: fun(npc: tes3reference) }
+---@type { [string]: fun(actor: tes3reference) }
 this.resolveParticlesStrategies = nil
 
 ---@public
@@ -62,7 +62,7 @@ function this.initialize(services)
     local effectModes               = services.enums.effectModes
 
     this.resolveParticlesStrategies = {
-        [effectModes.npc] = this.resolveNpcParticles,
+        [effectModes.actor] = this.resolveNpcParticles,
         [effectModes.currentCell] = this.resolveCurrentCellParticles,
         [effectModes.activeCells] = this.resolveActiveCellsParticles
     }
@@ -89,7 +89,7 @@ function this.onDialogueStarted(e)
 
     local resolve = this.resolveParticlesStrategies[this.settings.effectsMode]
     if resolve then
-        resolve(e.npc)
+        resolve(e.actor)
     end
 
     if #this.controllers == 0 then
@@ -126,34 +126,34 @@ function this.onEnterFrame(e)
 end
 
 ---@private
----@param npc tes3reference
-function this.resolveNpcParticles(npc)
-    this.controllers = this.particleResolver.resolve(npc.sceneNode --[[@as niNode]])
+---@param actor tes3reference
+function this.resolveNpcParticles(actor)
+    this.controllers = this.particleResolver.resolve(actor.sceneNode --[[@as niNode]])
 end
 
 ---@private
----@param npc tes3reference
-function this.resolveCurrentCellParticles(npc)
-    this.resolveCellParticles(npc, npc.cell)
+---@param actor tes3reference
+function this.resolveCurrentCellParticles(actor)
+    this.resolveCellParticles(actor, actor.cell)
 end
 
 ---@private
----@param npc tes3reference
-function this.resolveActiveCellsParticles(npc)
+---@param actor tes3reference
+function this.resolveActiveCellsParticles(actor)
     for _, cell in ipairs(tes3.getActiveCells()) do
-        this.resolveCellParticles(npc, cell)
+        this.resolveCellParticles(actor, cell)
     end
 end
 
 ---@private
----@param npc tes3reference
+---@param actor tes3reference
 ---@param cell tes3cell?
-function this.resolveCellParticles(npc, cell)
+function this.resolveCellParticles(actor, cell)
     if not cell then
         return
     end
 
-    local origin = npc.position
+    local origin = actor.position
     local maxDist = this.settings.effectsCellDistance
 
     for ref in cell:iterateReferences(nil, false) do

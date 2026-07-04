@@ -1,5 +1,5 @@
 --- Decides which clip plays when: resolves configurations off the dialogue
---- events and drives the playback engine (`npcControllersAnimator`) through
+--- events and drives the playback engine (`actorControllersAnimator`) through
 --- synchronous `play`/`stop` calls.
 ---@class animationOrchestrator : initializedService
 local this = {}
@@ -17,12 +17,12 @@ this.settings = nil
 this.animationResolver = nil
 
 ---@private
----@type npcControllersAnimator
-this.npcControllersAnimator = nil
+---@type actorControllersAnimator
+this.actorControllersAnimator = nil
 
 ---@private
 ---@type tes3reference
-this.npc = nil
+this.actor = nil
 
 ---@private
 ---@type baseAnimationConfiguration
@@ -40,14 +40,14 @@ this.eventHandlers = nil
 ---@param services serviceCollection
 ---@return boolean,string|nil
 function this.initialize(services)
-    this.eventRegistrar         = services.eventRegistrar
-    this.settings               = services.settings
-    this.animationResolver      = services.animationResolver
-    this.npcControllersAnimator = services.npcControllersAnimator
+    this.eventRegistrar           = services.eventRegistrar
+    this.settings                 = services.settings
+    this.animationResolver        = services.animationResolver
+    this.actorControllersAnimator = services.actorControllersAnimator
 
-    local events                = services.enums.events
+    local events                  = services.enums.events
 
-    this.eventHandlers          = {
+    this.eventHandlers            = {
         [events.dialogueStarted] = this.onDialogueStarted,
         [events.dialogueEnded]   = this.onDialogueEnded,
         [events.dialogueInfo]    = this.onDialogueInfo,
@@ -66,24 +66,24 @@ end
 ---@private
 ---@param e dialogueStartedEventData
 function this.onDialogueStarted(e)
-    if not this.settings.npcAnimEnabled then
+    if not this.settings.actorAnimEnabled then
         return
     end
 
-    local configuration = this.animationResolver.resolveBase(e.npc)
+    local configuration = this.animationResolver.resolveBase(e.actor)
     if not configuration then
         return
     end
 
-    this.npc = e.npc
+    this.actor = e.actor
     this.animationConfiguration = configuration
 
-    this.npcControllersAnimator.play({
-        npc       = e.npc,
+    this.actorControllersAnimator.play({
+        actor     = e.actor,
         animation = configuration.idle,
     })
 
-    if this.pendingInfo and this.pendingInfo.npc == e.npc then
+    if this.pendingInfo and this.pendingInfo.actor == e.actor then
         this.onDialogueInfo(this.pendingInfo)
     end
 
@@ -93,12 +93,12 @@ end
 ---@private
 ---@param e dialogueInfoEventData
 function this.onDialogueInfo(e)
-    if not this.npc then
+    if not this.actor then
         this.pendingInfo = e
         return
     end
 
-    if not this.settings.npcTalkAnimEnabled then
+    if not this.settings.actorTalkAnimEnabled then
         return
     end
 
@@ -117,8 +117,8 @@ function this.onDialogueInfo(e)
         return
     end
 
-    this.npcControllersAnimator.play({
-        npc       = this.npc,
+    this.actorControllersAnimator.play({
+        actor     = this.actor,
         animation = animation,
         revertTo  = this.animationConfiguration.idle,
     })
@@ -126,8 +126,8 @@ end
 
 ---@private
 function this.onDialogueEnded()
-    this.npcControllersAnimator.stop()
-    this.npc = nil
+    this.actorControllersAnimator.stop()
+    this.actor = nil
     this.animationConfiguration = nil
     this.pendingInfo = nil
 end

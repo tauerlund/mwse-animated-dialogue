@@ -1,4 +1,4 @@
----@class npcPage : mcmPage
+---@class actorPage : mcmPage
 local this = {}
 
 ---@public
@@ -9,50 +9,50 @@ function this.initialize(template, services)
     local keys = services.enums.translationKey
 
     local page = template:createSideBarPage({
-        label = translations.get(keys.npcPage)
+        label = translations.get(keys.actorPage)
     })
 
     page:createOnOffButton({
-        label = translations.get(keys.npcTurnEnabled),
-        description = translations.get(keys.npcTurnEnabledDescription),
+        label = translations.get(keys.actorTurnEnabled),
+        description = translations.get(keys.actorTurnEnabledDescription),
         variable = mwse.mcm.createTableVariable({
-            id = "npcTurnEnabled",
+            id = "actorTurnEnabled",
             table = services.settings
         }),
     })
 
     page:createOnOffButton({
-        label = translations.get(keys.npcAnimEnabled),
-        description = translations.get(keys.npcAnimEnabledDescription),
+        label = translations.get(keys.actorAnimEnabled),
+        description = translations.get(keys.actorAnimEnabledDescription),
         variable = mwse.mcm.createTableVariable({
-            id = "npcAnimEnabled",
+            id = "actorAnimEnabled",
             table = services.settings
         }),
     })
 
     page:createOnOffButton({
-        label = translations.get(keys.npcTalkAnimEnabled),
-        description = translations.get(keys.npcTalkAnimEnabledDescription),
+        label = translations.get(keys.actorTalkAnimEnabled),
+        description = translations.get(keys.actorTalkAnimEnabledDescription),
         variable = mwse.mcm.createTableVariable({
-            id = "npcTalkAnimEnabled",
+            id = "actorTalkAnimEnabled",
             table = services.settings
         }),
     })
 
     page:createOnOffButton({
-        label = translations.get(keys.npcHeadMorphAnimEnabled),
-        description = translations.get(keys.npcHeadMorphAnimEnabledDescription),
+        label = translations.get(keys.actorHeadMorphAnimEnabled),
+        description = translations.get(keys.actorHeadMorphAnimEnabledDescription),
         variable = mwse.mcm.createTableVariable({
-            id = "npcHeadMorphAnimEnabled",
+            id = "actorHeadMorphAnimEnabled",
             table = services.settings
         }),
     })
 
     page:createOnOffButton({
-        label = translations.get(keys.npcHeadLookAtEnabled),
-        description = translations.get(keys.npcHeadLookAtEnabledDescription),
+        label = translations.get(keys.actorHeadLookAtEnabled),
+        description = translations.get(keys.actorHeadLookAtEnabledDescription),
         variable = mwse.mcm.createTableVariable({
-            id = "npcHeadLookAtEnabled",
+            id = "actorHeadLookAtEnabled",
             table = services.settings
         }),
     })

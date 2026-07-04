@@ -49,7 +49,7 @@ this.flickerModes = {
 this.smoothedTicks = 0
 
 ---@private
----@type { [string]: fun(npc: tes3reference) }
+---@type { [string]: fun(actor: tes3reference) }
 this.resolveLightsStrategies = nil
 
 ---@public
@@ -76,7 +76,7 @@ function this.initialize(services)
     local effectModes            = services.enums.effectModes
 
     this.resolveLightsStrategies = {
-        [effectModes.npc] = this.resolveNpcLights,
+        [effectModes.actor] = this.resolveNpcLights,
         [effectModes.currentCell] = this.resolveCurrentCellLights,
         [effectModes.activeCells] = this.resolveActiveCellsLights
     }
@@ -104,7 +104,7 @@ function this.onDialogueStarted(e)
 
     local resolve = this.resolveLightsStrategies[this.settings.effectsMode]
     if resolve then
-        resolve(e.npc)
+        resolve(e.actor)
     end
 
     if #this.lights == 0 then
@@ -167,43 +167,43 @@ function this.update(delta)
 end
 
 ---@private
----@param npc tes3reference
-function this.resolveNpcLights(npc)
-    local mobile = npc.mobile
+---@param actor tes3reference
+function this.resolveNpcLights(actor)
+    local mobile = actor.mobile
     local source = mobile and mobile.torchSlot and mobile.torchSlot.object --[[@as tes3light]]
-    this.tryAddLight(npc, source)
+    this.tryAddLight(actor, source)
 end
 
 ---@private
----@param npc tes3reference
-function this.resolveCurrentCellLights(npc)
-    this.resolveCellLights(npc, npc.cell)
+---@param actor tes3reference
+function this.resolveCurrentCellLights(actor)
+    this.resolveCellLights(actor, actor.cell)
 end
 
 ---@private
----@param npc tes3reference
-function this.resolveActiveCellsLights(npc)
+---@param actor tes3reference
+function this.resolveActiveCellsLights(actor)
     for _, cell in ipairs(tes3.getActiveCells()) do
-        this.resolveCellLights(npc, cell)
+        this.resolveCellLights(actor, cell)
     end
 end
 
 ---@private
----@param npc tes3reference
+---@param actor tes3reference
 ---@param cell tes3cell?
-function this.resolveCellLights(npc, cell)
+function this.resolveCellLights(actor, cell)
     if not cell then
         return
     end
 
-    local origin = npc.position
+    local origin = actor.position
     local maxDist = this.settings.effectsCellDistance
 
     for ref in cell:iterateReferences(tes3.objectType.light, false) do
         this.tryAddLight(ref, ref.object --[[@as tes3light]], origin, maxDist)
     end
 
-    for ref in cell:iterateReferences({ tes3.objectType.npc, tes3.objectType.creature }, false) do
+    for ref in cell:iterateReferences({ tes3.objectType.actor, tes3.objectType.creature }, false) do
         local mobile = ref.mobile
         local torch = mobile and mobile.torchSlot and mobile.torchSlot.object --[[@as tes3light]]
         if torch then

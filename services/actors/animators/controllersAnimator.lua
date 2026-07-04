@@ -1,4 +1,4 @@
----@class npcControllersAnimator : initializedService, npcAnimator
+---@class actorControllersAnimator : initializedService, actorAnimator
 local this = {}
 
 ---@private
@@ -6,12 +6,12 @@ local this = {}
 this.settings = nil
 
 ---@private
----@type npcPoseBlender
-this.npcPoseBlender = nil
+---@type actorPoseBlender
+this.actorPoseBlender = nil
 
 ---@private
----@type npcTrackBinder
-this.npcTrackBinder = nil
+---@type actorTrackBinder
+this.actorTrackBinder = nil
 
 ---@private
 ---@type events
@@ -19,7 +19,7 @@ this.events = nil
 
 ---@private
 ---@type tes3reference
-this.npc = nil
+this.actor = nil
 
 ---@private
 ---@type animationDefinition|nil
@@ -45,25 +45,25 @@ this.torchArmAnimation = { file = "tauer\\ad\\torch.nif", group = "idle9" }
 ---@param services serviceCollection
 ---@return boolean,string|nil
 function this.initialize(services)
-    this.settings       = services.settings
-    this.npcPoseBlender = services.npcPoseBlender
-    this.npcTrackBinder = services.npcTrackBinder
-    this.events         = services.enums.events
+    this.settings         = services.settings
+    this.actorPoseBlender = services.actorPoseBlender
+    this.actorTrackBinder = services.actorTrackBinder
+    this.events           = services.enums.events
 
-    this.bodyTrack      = this.npcTrackBinder.create()
-    this.torchTrack     = this.npcTrackBinder.create()
+    this.bodyTrack        = this.actorTrackBinder.create()
+    this.torchTrack       = this.actorTrackBinder.create()
 
     return true, nil
 end
 
 ---@public
----@param params npcControllersAnimator.play.param
+---@param params actorControllersAnimator.play.param
 function this.play(params)
-    if not params.npc.animationData then
+    if not params.actor.animationData then
         return
     end
 
-    this.npc = params.npc
+    this.actor = params.actor
     this.revertTo = params.revertTo
 
     this.applyAnimation(params.animation, params.revertTo == nil)
@@ -73,9 +73,9 @@ end
 function this.stop()
     this.resetTracks()
     this.setActiveAnimation(nil)
-    this.npc = nil
+    this.actor = nil
     this.revertTo = nil
-    this.npcPoseBlender.reset()
+    this.actorPoseBlender.reset()
 end
 
 ---@private
@@ -100,21 +100,21 @@ end
 ---@param animation animationDefinition
 ---@param loop boolean
 function this.applyAnimation(animation, loop)
-    local animationData = this.npc.animationData
+    local animationData = this.actor.animationData
     if not animationData then
         return
     end
 
     this.resetTracks()
-    this.npcPoseBlender.capture(animationData.actorNode, this.settings.transitionDuration)
+    this.actorPoseBlender.capture(animationData.actorNode, this.settings.transitionDuration)
 
     local holdingTorch = this.isHoldingTorch()
 
     local region       = holdingTorch and
-        this.npcTrackBinder.region.body or
-        this.npcTrackBinder.region.all
+        this.actorTrackBinder.region.body or
+        this.actorTrackBinder.region.all
 
-    local count        = this.npcTrackBinder.bind({
+    local count        = this.actorTrackBinder.bind({
         track     = this.bodyTrack,
         actorNode = animationData.actorNode,
         file      = animation.file,
@@ -126,7 +126,7 @@ function this.applyAnimation(animation, loop)
     if count == 0 then
         this.resetTracks()
         this.setActiveAnimation(nil)
-        this.npc = nil
+        this.actor = nil
         this.revertTo = nil
         return
     end
@@ -141,12 +141,12 @@ end
 ---@private
 ---@param actorNode niNode
 function this.applyTorchArm(actorNode)
-    this.npcTrackBinder.bind({
+    this.actorTrackBinder.bind({
         track     = this.torchTrack,
         actorNode = actorNode,
         file      = this.torchArmAnimation.file,
         group     = this.torchArmAnimation.group,
-        region    = this.npcTrackBinder.region.leftArm,
+        region    = this.actorTrackBinder.region.leftArm,
         loop      = true,
     })
 end
@@ -160,7 +160,7 @@ end
 ---@private
 ---@return boolean
 function this.isHoldingTorch()
-    local mobile = this.npc.mobile
+    local mobile = this.actor.mobile
     if not mobile then
         return false
     end
@@ -173,8 +173,8 @@ end
 
 ---@private
 function this.resetTracks()
-    this.npcTrackBinder.reset(this.bodyTrack)
-    this.npcTrackBinder.reset(this.torchTrack)
+    this.actorTrackBinder.reset(this.bodyTrack)
+    this.actorTrackBinder.reset(this.torchTrack)
 end
 
 ---@private
@@ -216,11 +216,11 @@ end
 ---@public
 ---@param delta number
 function this.update(delta)
-    if not this.npc then
+    if not this.actor then
         return
     end
 
-    local animationData = this.npc.animationData
+    local animationData = this.actor.animationData
     if not animationData then
         return
     end
@@ -230,8 +230,8 @@ function this.update(delta)
 
     animationData.actorNode:update({ children = true })
 
-    if this.npcPoseBlender.isActive() then
-        this.npcPoseBlender.update(animationData.actorNode, delta)
+    if this.actorPoseBlender.isActive() then
+        this.actorPoseBlender.update(animationData.actorNode, delta)
     end
 
     if not this.overridesLookAt() then

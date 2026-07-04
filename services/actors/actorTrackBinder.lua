@@ -1,4 +1,4 @@
----@class npcTrackBinder : initializedService
+---@class actorTrackBinder : initializedService
 local this          = {}
 
 local LEFT_ARM_ROOT = "Bip01 L Clavicle"
@@ -47,7 +47,7 @@ function this.create()
 end
 
 ---@public
----@param params npcTrackBinder.bind.param
+---@param params actorTrackBinder.bind.param
 ---@return integer count
 function this.bind(params)
     local track = params.track

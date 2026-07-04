@@ -1,4 +1,4 @@
----@class npcHeadMorphAnimator : initializedService, npcAnimator
+---@class actorHeadMorphAnimator : initializedService, actorAnimator
 local this = {}
 
 ---@private
@@ -25,7 +25,7 @@ this.settings = nil
 
 ---@private
 ---@type tes3reference
-this.npc = nil
+this.actor = nil
 
 ---@private
 ---@type nodeResolver
@@ -68,7 +68,7 @@ end
 ---@private
 ---@param event dialogueStartedEventData
 function this.onDialogueStarted(event)
-    this.npc = event.npc
+    this.actor = event.actor
     this.resolved = false
     this.morphers = {}
     this.startBlinkTimer()
@@ -76,7 +76,7 @@ end
 
 ---@private
 function this.onDialogueEnded()
-    this.npc = nil
+    this.actor = nil
     this.resolved = false
     this.morphers = {}
 end
@@ -84,7 +84,7 @@ end
 ---@public
 ---@param delta number
 function this.update(delta)
-    local animationData = this.npc.animationData
+    local animationData = this.actor.animationData
     if not animationData then
         return
     end
