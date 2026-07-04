@@ -34,7 +34,7 @@ this.eventHandlers = {
 
 ---@private
 ---@type tes3reference|nil
-this.npc = nil
+this.actor = nil
 
 ---@private
 ---@type dialogueInfoEventData|nil
@@ -96,9 +96,9 @@ end
 ---@private
 ---@param e dialogueStartedEventData
 function this.onDialogueStarted(e)
-    this.npc = e.npc
+    this.actor = e.actor
 
-    if this.pendingInfo and this.pendingInfo.npc == e.npc then
+    if this.pendingInfo and this.pendingInfo.actor == e.actor then
         this.onDialogueInfo(this.pendingInfo)
     end
 
@@ -108,7 +108,7 @@ end
 ---@private
 function this.onDialogueEnded()
     this.despawn()
-    this.npc = nil
+    this.actor = nil
     this.pendingInfo = nil
     this.paused = false
 end
@@ -130,7 +130,7 @@ function this.onDialogueInfo(e)
         return
     end
 
-    if not this.npc then
+    if not this.actor then
         this.pendingInfo = e
         return
     end
@@ -198,7 +198,7 @@ end
 ---@private
 ---@param prop propDefinition
 function this.attach(prop)
-    local sceneNode = this.npc and this.npc.sceneNode
+    local sceneNode = this.actor and this.actor.sceneNode
     if not sceneNode then
         return
     end

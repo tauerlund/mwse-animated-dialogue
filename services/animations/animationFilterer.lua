@@ -25,15 +25,15 @@ end
 
 ---@public
 ---@param configurations baseAnimationConfiguration[]
----@param npc tes3reference
+---@param actor tes3reference
 ---@return baseAnimationConfiguration[]
-function this.filter(configurations, npc)
+function this.filter(configurations, actor)
     ---@type baseAnimationConfiguration[]
     local filtered = {}
 
     for i = 1, #configurations do
         local configuration = configurations[i]
-        if this.valid(configuration, npc) then
+        if this.valid(configuration, actor) then
             filtered[#filtered + 1] = configuration
         end
     end
@@ -43,15 +43,15 @@ end
 
 ---@private
 ---@param configuration baseAnimationConfiguration
----@param npc tes3reference
+---@param actor tes3reference
 ---@return boolean
-function this.valid(configuration, npc)
+function this.valid(configuration, actor)
     for i = 1, #this.rules do
         local rule = this.rules[i]
-        if not rule.isMet(configuration, npc) then
+        if not rule.isMet(configuration, actor) then
             this.logger:debug("Animation '%s' not valid for '%s' because '%s' was violated",
                 configuration.id,
-                npc.baseObject.id,
+                actor.baseObject.id,
                 rule.name)
 
             return false

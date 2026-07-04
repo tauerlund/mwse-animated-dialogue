@@ -62,16 +62,16 @@ end
 ---@private
 ---@param event dialogueStartedEventData
 function this.onDialogueStarted(event)
-    local npc            = event.npc
+    local actor          = event.actor
     local playerPosition = tes3.player.position
-    local npcForward     = tes3vector3.new(playerPosition.x - npc.position.x, playerPosition.y - npc.position.y, 0)
+    local actorForward   = tes3vector3.new(playerPosition.x - actor.position.x, playerPosition.y - actor.position.y, 0)
         :normalized()
 
-    local npcRight       = this.worldUp:cross(npcForward)
-    if npcRight:length() < 0.001 then
+    local actorRight     = this.worldUp:cross(actorForward)
+    if actorRight:length() < 0.001 then
         this.swayAxis = tes3vector3.new(1, 0, 0)
     else
-        this.swayAxis = npcRight:normalized()
+        this.swayAxis = actorRight:normalized()
     end
 
     this.cameraRootLocalPosition = tes3.worldController.worldCamera.cameraRoot.translation:copy()

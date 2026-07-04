@@ -26,8 +26,8 @@ this.debugSliderPanel = nil
 this.animationLoader = nil
 
 ---@private
----@type npcControllersAnimator
-this.npcControllersAnimator = nil
+---@type actorControllersAnimator
+this.actorControllersAnimator = nil
 
 ---@private
 ---@type translations
@@ -81,7 +81,7 @@ function this.initialize(services)
     this.guiBuilder = services.guiBuilder
     this.debugSliderPanel = services.debuggingSliderPanel
     this.animationLoader = services.animationLoader
-    this.npcControllersAnimator = services.npcControllersAnimator
+    this.actorControllersAnimator = services.actorControllersAnimator
     this.translations = services.translations
     this.translationKey = services.enums.translationKey
 
@@ -112,7 +112,7 @@ end
 function this.onDialogueStarted(e)
     this.dialogueActive = true
     this.paused = false
-    this.currentNpc = e.npc
+    this.currentNpc = e.actor
 
     if this.settings.debuggingEnabled then
         this.showDebugHud()
@@ -246,7 +246,7 @@ end
 function this.buildPreviewControls(content)
     this.previewDropdowns = {}
 
-    if not this.settings.npcAnimEnabled then
+    if not this.settings.actorAnimEnabled then
         return
     end
 
@@ -261,8 +261,8 @@ function this.buildPreviewControls(content)
                     return
                 end
 
-                this.npcControllersAnimator.play({
-                    npc       = this.currentNpc,
+                this.actorControllersAnimator.play({
+                    actor     = this.currentNpc,
                     animation = entry.animation,
                 })
             end)
@@ -466,7 +466,7 @@ end
 function this.triggerDialogueInfo(dialogueId)
     local eventData = {
         info = { id = dialogueId },
-        npc = this.currentNpc,
+        actor = this.currentNpc,
     }
 
     event.trigger(this.events.dialogueInfo, eventData)

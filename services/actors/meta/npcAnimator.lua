@@ -1,3 +1,3 @@
 ---@meta
----@class npcAnimator
+---@class actorAnimator
 ---@field public update fun(delta:number)

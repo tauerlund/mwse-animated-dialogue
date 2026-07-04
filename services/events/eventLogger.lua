@@ -39,7 +39,7 @@ end
 ---@private
 ---@param e dialogueStartedEventData
 function this.onDialogueStarted(e)
-    this.logger:info("Dialogue started with '%s'", e.npc.baseObject.id)
+    this.logger:info("Dialogue started with '%s'", e.actor.baseObject.id)
 end
 
 ---@private

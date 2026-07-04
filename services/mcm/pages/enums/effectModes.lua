@@ -1,6 +1,6 @@
 ---@class effectModes
 local this = {
-    npc = "npc",
+    actor = "actor",
     currentCell = "currentCell",
     activeCells = "activeCells",
 }

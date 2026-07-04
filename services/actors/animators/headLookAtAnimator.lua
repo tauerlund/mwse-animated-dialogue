@@ -1,4 +1,4 @@
----@class npcHeadLookAtAnimator : initializedService, npcAnimator
+---@class actorHeadLookAtAnimator : initializedService, actorAnimator
 local this = {}
 
 ---@private
@@ -11,7 +11,7 @@ this.settings = nil
 
 ---@private
 ---@type tes3reference
-this.npc = nil
+this.actor = nil
 
 ---@private
 this.axisSafeLength = 1e-5
@@ -66,13 +66,13 @@ end
 ---@private
 ---@param event dialogueStartedEventData
 function this.onDialogueStarted(event)
-    this.npc = event.npc
+    this.actor = event.actor
     this.overridden = false
 end
 
 ---@private
 function this.onDialogueEnded()
-    this.npc = nil
+    this.actor = nil
     this.currentEulerX = nil
     this.currentEulerZ = nil
     this.overridden = false
@@ -102,7 +102,7 @@ function this.update(delta)
         return
     end
 
-    local animationData = this.npc.animationData
+    local animationData = this.actor.animationData
     if not animationData then
         return
     end

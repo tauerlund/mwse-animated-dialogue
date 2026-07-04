@@ -3,15 +3,15 @@ local this = {}
 
 ---@public
 ---@param configuration baseAnimationConfiguration
----@param npc tes3reference
+---@param actor tes3reference
 ---@return boolean
-function this.isMet(configuration, npc)
+function this.isMet(configuration, actor)
     local sex = configuration.conditions and configuration.conditions.sex
     if not sex then
         return true
     end
 
-    return (sex == "female") == (npc.baseObject.female == true)
+    return (sex == "female") == (actor.baseObject.female == true)
 end
 
 return this

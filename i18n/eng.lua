@@ -8,19 +8,19 @@ return {
     [keys.cameraPage] = "Camera",
     [keys.cameraEnabled] = "Enable Camera Animation",
     [keys.cameraEnabledDescription] = "Enables or disables the camera animation during dialogue.",
-    [keys.npcPage] = "NPCs",
-    [keys.npcAnimEnabled] = "Enable NPC Animations",
-    [keys.npcAnimEnabledDescription] = "Enables or disables NPC body animations during dialogue.",
-    [keys.npcTalkAnimEnabled] = "Enable NPC Talk Animations",
-    [keys.npcTalkAnimEnabledDescription] =
+    [keys.actorPage] = "NPCs",
+    [keys.actorAnimEnabled] = "Enable NPC Animations",
+    [keys.actorAnimEnabledDescription] = "Enables or disables NPC body animations during dialogue.",
+    [keys.actorTalkAnimEnabled] = "Enable NPC Talk Animations",
+    [keys.actorTalkAnimEnabledDescription] =
     "Enables or disables NPC talking gesture animations played while responding during dialogue. Requires NPC animations to be enabled.",
-    [keys.npcTurnEnabled] = "Enable NPC Turning",
-    [keys.npcTurnEnabledDescription] = "Enables or disables the NPC turning to face the player when dialogue starts.",
-    [keys.npcHeadMorphAnimEnabled] = "Enable Head Morph Animations",
-    [keys.npcHeadMorphAnimEnabledDescription] =
+    [keys.actorTurnEnabled] = "Enable NPC Turning",
+    [keys.actorTurnEnabledDescription] = "Enables or disables the NPC turning to face the player when dialogue starts.",
+    [keys.actorHeadMorphAnimEnabled] = "Enable Head Morph Animations",
+    [keys.actorHeadMorphAnimEnabledDescription] =
     "Enables or disables NPC head morph animations during dialogue. This includes blinking and lip syncing (for voiced dialogue).",
-    [keys.npcHeadLookAtEnabled] = "Enable Head Look-At",
-    [keys.npcHeadLookAtEnabledDescription] =
+    [keys.actorHeadLookAtEnabled] = "Enable Head Look-At",
+    [keys.actorHeadLookAtEnabledDescription] =
     "Enables or disables the NPC's head turning to look at the camera during dialogue.",
     [keys.propsEnabled] = "Enable Props",
     [keys.propsEnabledDescription] =

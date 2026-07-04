@@ -29,7 +29,7 @@ this.animationTime = 0
 
 ---@private
 ---@type tes3reference|nil
-this.npc = nil
+this.actor = nil
 
 ---@private
 this.paused = false
@@ -83,7 +83,7 @@ function this.onDialogueStarted(e)
     mge.render.pauseRenderingInMenus = false
 
     if this.depthOfField and this.settings.dofEnabled then
-        this.npc = e.npc
+        this.actor = e.actor
         this.depthOfField["focal_length"] = 0
         this.depthOfField.enabled = true
         this.animationTime = 0
@@ -107,7 +107,7 @@ function this.onDialogueEnded()
     mge.render.pauseRenderingInMenus = this.pauseRenderingInMenus
 
     this.eventRegistrar.unregister(this.eventHandlers.dialogue)
-    this.npc = nil
+    this.actor = nil
 
     if this.depthOfField then
         this.depthOfField.enabled = false
@@ -132,12 +132,12 @@ function this.onEnterFrame(e)
 
     this.depthOfField["focal_length"] = t * settings.dofStrength
 
-    local animData = this.npc.animationData
-    local npcPos = animData and animData.headNode
+    local animData = this.actor.animationData
+    local actorPos = animData and animData.headNode
         and animData.headNode.worldTransform.translation
-        or this.npc.position
+        or this.actor.position
 
-    this.depthOfField["focus_distance"] = (tes3.getCameraPosition() - npcPos):length() * 0.0142
+    this.depthOfField["focus_distance"] = (tes3.getCameraPosition() - actorPos):length() * 0.0142
 
     if this.animationTime >= settings.animationDuration then
         this.eventRegistrar.unregister(this.eventHandlers.dialogue)

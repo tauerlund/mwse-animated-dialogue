@@ -1,4 +1,4 @@
----@class npcTurnAnimator : initializedService, npcAnimator
+---@class actorTurnAnimator : initializedService, actorAnimator
 local this = {}
 
 ---@private
@@ -11,7 +11,7 @@ this.settings = nil
 
 ---@private
 ---@type tes3reference
-this.npc = nil
+this.actor = nil
 
 ---@private
 ---@type number
@@ -54,20 +54,20 @@ end
 ---@private
 ---@param event dialogueStartedEventData
 function this.onDialogueStarted(event)
-    this.npc             = event.npc
+    this.actor           = event.actor
     this.turnTime        = 0
-    this.originalYaw     = event.npc.orientation.z
+    this.originalYaw     = event.actor.orientation.z
 
     local playerPosition = tes3.player.position
-    local deltaX         = playerPosition.x - event.npc.position.x
-    local deltaY         = playerPosition.y - event.npc.position.y
+    local deltaX         = playerPosition.x - event.actor.position.x
+    local deltaY         = playerPosition.y - event.actor.position.y
 
     this.targetYaw       = math.atan2(deltaX, deltaY)
 end
 
 ---@private
 function this.onDialogueEnded()
-    this.npc         = nil
+    this.actor       = nil
     this.originalYaw = nil
     this.targetYaw   = nil
 end
@@ -75,19 +75,19 @@ end
 ---@public
 ---@param delta number
 function this.update(delta)
-    local duration       = this.settings.turnDuration
-    this.turnTime        = math.min(this.turnTime + delta, duration)
+    local duration = this.settings.turnDuration
+    this.turnTime  = math.min(this.turnTime + delta, duration)
 
-    local progress       = 1
+    local progress = 1
     if duration > 0 then
         progress = math.ease.smoothstep(this.turnTime / duration)
     end
 
-    local yaw            = this.lerpAngle(this.originalYaw, this.targetYaw, progress)
-    local orientation    = this.npc.orientation:copy()
+    local yaw              = this.lerpAngle(this.originalYaw, this.targetYaw, progress)
+    local orientation      = this.actor.orientation:copy()
 
-    orientation.z        = yaw
-    this.npc.orientation = orientation
+    orientation.z          = yaw
+    this.actor.orientation = orientation
 end
 
 ---@private

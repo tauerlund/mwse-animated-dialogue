@@ -1,4 +1,4 @@
----@class npcController : initializedService
+---@class actorController : initializedService
 local this = {}
 
 ---@private
@@ -17,24 +17,24 @@ this.eventHandlers = {
 }
 
 ---@private
----@type npcAnimator[]
+---@type actorAnimator[]
 this.animators = {}
 
 ---@private
----@type npcTurnAnimator
-this.npcTurnAnimator = nil
+---@type actorTurnAnimator
+this.actorTurnAnimator = nil
 
 ---@private
----@type npcControllersAnimator
-this.npcControllersAnimator = nil
+---@type actorControllersAnimator
+this.actorControllersAnimator = nil
 
 ---@private
----@type npcHeadMorphAnimator
-this.npcHeadMorphAnimator = nil
+---@type actorHeadMorphAnimator
+this.actorHeadMorphAnimator = nil
 
 ---@private
----@type npcHeadLookAtAnimator
-this.npcHeadLookAtAnimator = nil
+---@type actorHeadLookAtAnimator
+this.actorHeadLookAtAnimator = nil
 
 ---@private
 this.paused = false
@@ -43,16 +43,16 @@ this.paused = false
 ---@param services serviceCollection
 ---@return boolean,string|nil
 function this.initialize(services)
-    this.eventRegistrar         = services.eventRegistrar
-    this.settings               = services.settings
-    this.npcTurnAnimator        = services.npcTurnAnimator
-    this.npcControllersAnimator = services.npcControllersAnimator
-    this.npcHeadMorphAnimator   = services.npcHeadMorphAnimator
-    this.npcHeadLookAtAnimator  = services.npcHeadLookAtAnimator
+    this.eventRegistrar           = services.eventRegistrar
+    this.settings                 = services.settings
+    this.actorTurnAnimator        = services.actorTurnAnimator
+    this.actorControllersAnimator = services.actorControllersAnimator
+    this.actorHeadMorphAnimator   = services.actorHeadMorphAnimator
+    this.actorHeadLookAtAnimator  = services.actorHeadLookAtAnimator
 
-    local events                = services.enums.events
+    local events                  = services.enums.events
 
-    this.eventHandlers          = {
+    this.eventHandlers            = {
         lifetime = {
             [events.dialogueStarted] = this.onDialogueStarted,
             [events.dialogueEnded]   = this.onDialogueEnded,
@@ -79,20 +79,20 @@ end
 function this.onDialogueStarted(_)
     this.animators = {}
 
-    if this.settings.npcTurnEnabled then
-        table.insert(this.animators, this.npcTurnAnimator)
+    if this.settings.actorTurnEnabled then
+        table.insert(this.animators, this.actorTurnAnimator)
     end
 
-    if this.settings.npcAnimEnabled then
-        table.insert(this.animators, this.npcControllersAnimator)
+    if this.settings.actorAnimEnabled then
+        table.insert(this.animators, this.actorControllersAnimator)
     end
 
-    if this.settings.npcHeadMorphAnimEnabled then
-        table.insert(this.animators, this.npcHeadMorphAnimator)
+    if this.settings.actorHeadMorphAnimEnabled then
+        table.insert(this.animators, this.actorHeadMorphAnimator)
     end
 
-    if this.settings.npcHeadLookAtEnabled then
-        table.insert(this.animators, this.npcHeadLookAtAnimator)
+    if this.settings.actorHeadLookAtEnabled then
+        table.insert(this.animators, this.actorHeadLookAtAnimator)
     end
 
     this.paused = false
