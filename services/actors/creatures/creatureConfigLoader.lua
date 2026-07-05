@@ -11,7 +11,7 @@ this.logger = mwse.Logger.new()
 this.basePath = "data files\\mwse\\config"
 
 ---@private
-this.creaturesPath = "animated-dialogue\\creatures"
+this.creaturesPath = "animated-dialogue\\animations\\creatures"
 
 ---@private
 this.fileType = ".json"

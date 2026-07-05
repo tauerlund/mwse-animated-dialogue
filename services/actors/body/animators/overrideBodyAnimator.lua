@@ -1,7 +1,3 @@
---- Body strategy for NPCs that already play their OWN custom animation (e.g. the
---- performers added by Animated Morrowind). The current clip IS the intended
---- loop, so we drive its current upper-body group window untouched, keeping the
---- whole skeleton ticking while the engine's pass is frozen (bodySkeletonTicker).
 ---@class overrideBodyAnimator : initializedService, bodyAnimator
 local this = {}
 
@@ -52,7 +48,7 @@ end
 ---@param reference tes3reference
 function this.begin(reference)
     local start, stop = this.resolveNativeWindow(reference)
-    if not start then
+    if not start or not stop then
         return
     end
 
@@ -73,7 +69,7 @@ function this.resolveNativeWindow(reference)
     end
 
     local group          = animationData.currentAnimGroups[tes3.animationBodySection.upper + 1]
-    local animationGroup  = animationData.animationGroups[group + 1]
+    local animationGroup = animationData.animationGroups[group + 1]
     if not animationGroup then
         return nil
     end

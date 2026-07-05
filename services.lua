@@ -39,7 +39,7 @@ local this = {
     bodyAnimatorSelector = require("tauer.animated-dialogue.services.actors.body.bodyAnimatorSelector"),
 
     creatureConfigLoader = require("tauer.animated-dialogue.services.actors.creatures.creatureConfigLoader"),
-    creatureResolver = require("tauer.animated-dialogue.services.actors.creatures.creatureResolver"),
+    creatureAnimationResolver = require("tauer.animated-dialogue.services.actors.creatures.creatureAnimationResolver"),
 
     cameraController = require("tauer.animated-dialogue.services.camera.cameraController"),
     cameraStartAnimator = require("tauer.animated-dialogue.services.camera.animators.startAnimator"),

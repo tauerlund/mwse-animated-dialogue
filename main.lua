@@ -38,7 +38,7 @@ function this.initializeMod(_)
 		services.actorTurnAnimator,
 		services.actorTrackBinder,
 		services.creatureConfigLoader,
-		services.creatureResolver,
+		services.creatureAnimationResolver,
 		services.clipBodyAnimator,
 		services.creatureBodyAnimator,
 		services.overrideBodyAnimator,

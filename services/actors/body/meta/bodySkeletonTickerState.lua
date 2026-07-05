@@ -4,3 +4,4 @@
 ---@field start number
 ---@field stop number
 ---@field phase number
+---@field pins { node: niNode, translation: tes3vector3 }[]

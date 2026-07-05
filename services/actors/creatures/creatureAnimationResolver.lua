@@ -1,19 +1,5 @@
---- Picks the idle animation to force on a creature during dialogue. Creatures
---- play randomized ambient idles, so - unlike custom-override NPCs, whose current
---- clip is the intended loop - we can't drive "current"; we resolve a neutral
---- idle and force it (see creatureBodyAnimator).
----
---- Resolution is an explicit per-creature config (creatureConfigLoader) or,
---- failing that, a heuristic: the longest non-travelling loop among the
---- creature's OWN idle groups (its override layer, not inherited base_anim idles).
----@class creatureResolver : initializedService
+---@class creatureAnimationResolver : initializedService
 local this = {}
-
----@class creatureResolver.drive
----@field group number a tes3.animationGroup value
----@field start number loop window start time
----@field stop number loop window stop time
----@field layer number the animGroupLayerIndices layer the group came from
 
 ---@private
 this.logger = mwse.Logger.new()
@@ -22,12 +8,9 @@ this.logger = mwse.Logger.new()
 ---@type creatureConfigLoader
 this.creatureConfigLoader = nil
 
---- The actor's own (override) animation layer; inherited base_anim idles sit on
---- a different layer.
 ---@private
 this.overrideLayer = 0
 
---- Root travel over a cycle above which a group is locomotion, not an idle.
 ---@private
 this.maxIdleTravel = 1.0
 
@@ -63,7 +46,7 @@ end
 
 ---@public
 ---@param reference tes3reference
----@return creatureResolver.drive|nil
+---@return creatureAnimationResolver.drive|nil
 function this.resolve(reference)
     local animationData = reference.animationData
     if not animationData then
@@ -77,7 +60,7 @@ end
 ---@private
 ---@param reference tes3reference
 ---@param animationData tes3animationData
----@return creatureResolver.drive|nil
+---@return creatureAnimationResolver.drive|nil
 function this.resolveConfigured(reference, animationData)
     local name = this.creatureConfigLoader.getConfigurations()[reference.baseObject.id]
     if not name then
@@ -102,7 +85,7 @@ end
 ---@private
 ---@param reference tes3reference
 ---@param animationData tes3animationData
----@return creatureResolver.drive|nil
+---@return creatureAnimationResolver.drive|nil
 function this.resolveHeuristic(reference, animationData)
     local candidates = {}
     for i = 1, #this.idleGroups do
@@ -123,11 +106,9 @@ function this.resolveHeuristic(reference, animationData)
     return best
 end
 
---- Restrict to the creature's OWN (override-layer) idles when it has any, so we
---- never fall back onto inherited base_anim idles (the Vivec case).
 ---@private
----@param candidates creatureResolver.drive[]
----@return creatureResolver.drive[]
+---@param candidates creatureAnimationResolver.drive[]
+---@return creatureAnimationResolver.drive[]
 function this.preferOwn(candidates)
     local own = {}
     for _, drive in ipairs(candidates) do
@@ -139,13 +120,11 @@ function this.preferOwn(candidates)
     return (#own > 0) and own or candidates
 end
 
---- Builds the drive for a group, or nil if the creature lacks it / its window is
---- degenerate. No idle/travel filtering - the heuristic caller decides that.
 ---@private
 ---@param reference tes3reference
 ---@param animationData tes3animationData
 ---@param group number
----@return creatureResolver.drive|nil
+---@return creatureAnimationResolver.drive|nil
 function this.evaluate(reference, animationData, group)
     if not animationData.animationGroups[group + 1] then
         return nil
@@ -164,8 +143,6 @@ function this.evaluate(reference, animationData, group)
     }
 end
 
---- The group's loop window: the `Loop Start`/`Loop Stop` text markers, else
---- `Start`/`Stop`, else the positional group window.
 ---@private
 ---@param reference tes3reference
 ---@param animationData tes3animationData

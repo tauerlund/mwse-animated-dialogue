@@ -1,6 +1,3 @@
---- Body strategy for creatures. Creatures play randomized ambient idles, so we
---- resolve a neutral idle (creatureResolver), force it onto the actor, then keep
---- the whole skeleton ticking over its loop window (bodySkeletonTicker).
 ---@class creatureBodyAnimator : initializedService, bodyAnimator
 local this = {}
 
@@ -9,8 +6,8 @@ local this = {}
 this.settings = nil
 
 ---@private
----@type creatureResolver
-this.creatureResolver = nil
+---@type creatureAnimationResolver
+this.creatureAnimationResolver = nil
 
 ---@private
 ---@type bodySkeletonTicker
@@ -27,11 +24,11 @@ this.logger = mwse.Logger.new()
 ---@param services serviceCollection
 ---@return boolean,string|nil
 function this.initialize(services)
-    this.settings           = services.settings
-    this.creatureResolver   = services.creatureResolver
-    this.bodySkeletonTicker = services.bodySkeletonTicker
+    this.settings                  = services.settings
+    this.creatureAnimationResolver = services.creatureAnimationResolver
+    this.bodySkeletonTicker        = services.bodySkeletonTicker
 
-    this.ticker             = this.bodySkeletonTicker.create()
+    this.ticker                    = this.bodySkeletonTicker.create()
 
     return true, nil
 end
@@ -40,7 +37,7 @@ end
 ---@param services serviceCollection
 ---@return initializedService[]
 function this.dependencies(services)
-    return { services.creatureResolver }
+    return { services.creatureAnimationResolver }
 end
 
 ---@public
@@ -58,7 +55,7 @@ function this.begin(reference)
         return
     end
 
-    local drive = this.creatureResolver.resolve(reference)
+    local drive = this.creatureAnimationResolver.resolve(reference)
     if not drive then
         this.logger:warn("No usable idle group for creature '%s'; skipping", reference.object.id)
         return

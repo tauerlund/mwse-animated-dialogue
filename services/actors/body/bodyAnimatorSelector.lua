@@ -1,9 +1,3 @@
---- Picks the single body-animation strategy for a dialogue actor by asking each
---- candidate's handles() in priority order (creature, then custom-override NPC,
---- then ordinary clip NPC). Passive (no events); shared by actorController (which
---- pumps the result each frame) and animationOrchestrator (which decides what it
---- plays). handles() folds in each strategy's MCM toggle, so both consumers and
---- the fall-through (e.g. override toggled off -> ordinary clip) always agree.
 ---@class bodyAnimatorSelector : initializedService
 local this = {}
 

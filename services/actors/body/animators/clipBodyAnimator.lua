@@ -1,6 +1,3 @@
---- Body strategy for ordinary NPCs: drives context-resolved dialogue clips via
---- the controller-rebind mechanism (track binding, pose blending, torch-arm,
---- one-shot talk clips reverting to idle). Decided/driven by animationOrchestrator.
 ---@class clipBodyAnimator : initializedService, bodyAnimator
 local this = {}
 
@@ -76,8 +73,6 @@ function this.handles(reference)
         and this.settings.actorAnimEnabled
 end
 
---- Resolves and plays this NPC's dialogue idle. The looping idle is held until a
---- talk clip replaces it (onDialogueInfo) or the dialogue ends (stop).
 ---@public
 ---@param reference tes3reference
 function this.begin(reference)
@@ -94,9 +89,6 @@ function this.begin(reference)
     })
 end
 
---- Plays a one-shot talk / dialogue-override clip reverting to the idle. A
---- spoken line drives this; if talk animations are off or nothing resolves, the
---- current idle keeps looping untouched.
 ---@public
 ---@param info tes3dialogueInfo
 function this.onDialogueInfo(info)
