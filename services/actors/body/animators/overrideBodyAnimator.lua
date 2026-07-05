@@ -51,22 +51,8 @@ end
 ---@public
 ---@param reference tes3reference
 function this.begin(reference)
-    local animationData = reference.animationData
-    if not animationData then
-        return
-    end
-
-    local group          = animationData.currentAnimGroups[tes3.animationBodySection.upper + 1]
-    local animationGroup  = animationData.animationGroups[group + 1]
-    if not animationGroup then
-        return
-    end
-
-    local actionTimings = animationGroup.actionTimings
-    local start         = actionTimings[1]
-    local stop          = actionTimings[#actionTimings]
-    if not start or not stop or stop <= start then
-        this.logger:warn("Native animation window invalid for '%s' (group %s); skipping", reference.object.id, group)
+    local start, stop = this.resolveNativeWindow(reference)
+    if not start then
         return
     end
 
@@ -75,6 +61,31 @@ function this.begin(reference)
         start = start,
         stop  = stop,
     })
+end
+
+---@private
+---@param reference tes3reference
+---@return number|nil start, number|nil stop
+function this.resolveNativeWindow(reference)
+    local animationData = reference.animationData
+    if not animationData then
+        return nil
+    end
+
+    local group          = animationData.currentAnimGroups[tes3.animationBodySection.upper + 1]
+    local animationGroup  = animationData.animationGroups[group + 1]
+    if not animationGroup then
+        return nil
+    end
+
+    local timings     = animationGroup.actionTimings
+    local start, stop = timings[1], timings[#timings]
+    if not start or not stop or stop <= start then
+        this.logger:warn("Native animation window invalid for '%s' (group %s); skipping", reference.object.id, group)
+        return nil
+    end
+
+    return start, stop
 end
 
 ---@public

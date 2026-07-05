@@ -141,12 +141,17 @@ end
 
 ---@public
 function this.stop()
+    this.clearPlayback()
+    this.animationConfiguration = nil
+    this.actorPoseBlender.reset()
+end
+
+---@private
+function this.clearPlayback()
     this.resetTracks()
     this.setActiveAnimation(nil)
     this.actor = nil
     this.revertTo = nil
-    this.animationConfiguration = nil
-    this.actorPoseBlender.reset()
 end
 
 ---@private
@@ -195,10 +200,7 @@ function this.applyAnimation(animation, loop)
     })
 
     if count == 0 then
-        this.resetTracks()
-        this.setActiveAnimation(nil)
-        this.actor = nil
-        this.revertTo = nil
+        this.clearPlayback()
         return
     end
 

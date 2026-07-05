@@ -109,55 +109,40 @@ end
 function this.resolveTimings(source, group)
     local startMarker = group:lower() .. ": start"
     local stopMarker  = group:lower() .. ": stop"
+    local start, stop
 
-    local result      = {}
-
-    this.resolveTimingMarkers(source, startMarker, stopMarker, result)
-
-    return result.start, result.stop
-end
-
----@private
----@param source niNode
----@param startMarker string
----@param stopMarker string
----@param result { start: number?, stop: number? }
-function this.resolveTimingMarkers(source, startMarker, stopMarker, result)
     for node in source:traverse() do
-        this.readNodeMarkers(node --[[@as niNode]], startMarker, stopMarker, result)
-    end
-end
-
----@private
----@param node niNode
----@param startMarker string
----@param stopMarker string
----@param result { start: number?, stop: number? }
-function this.readNodeMarkers(node, startMarker, stopMarker, result)
-    local extra = node.extraData
-    while extra do
-        if extra.keys then
-            this.readMarkerKeys(extra.keys, startMarker, stopMarker, result)
+        local extra = node.extraData
+        while extra do
+            if extra.keys then
+                start, stop = this.readMarkerKeys(extra.keys, startMarker, stopMarker, start, stop)
+            end
+            extra = extra.next
         end
-        extra = extra.next
     end
+
+    return start, stop
 end
 
 ---@private
 ---@param keys niTextKey[]
 ---@param startMarker string
 ---@param stopMarker string
----@param result { start: number?, stop: number? }
-function this.readMarkerKeys(keys, startMarker, stopMarker, result)
+---@param start number|nil
+---@param stop number|nil
+---@return number|nil start, number|nil stop
+function this.readMarkerKeys(keys, startMarker, stopMarker, start, stop)
     for i = 1, #keys do
         local key = keys[i]
         local marker = key.text:lower():trim()
         if marker == startMarker then
-            result.start = key.time
+            start = key.time
         elseif marker == stopMarker then
-            result.stop = key.time
+            stop = key.time
         end
     end
+
+    return start, stop
 end
 
 ---@private
