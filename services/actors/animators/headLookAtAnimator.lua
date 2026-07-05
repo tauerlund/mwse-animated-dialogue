@@ -107,6 +107,10 @@ function this.update(delta)
         return
     end
 
+    if not animationData.headNode then
+        return
+    end
+
     local node               = animationData.headNode
     local cameraPosition     = tes3.worldController.worldCamera.cameraRoot.worldTransform.translation
     local headWorldTransform = node.worldTransform

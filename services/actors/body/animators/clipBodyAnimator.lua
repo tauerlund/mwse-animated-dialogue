@@ -1,4 +1,7 @@
----@class actorControllersAnimator : initializedService, actorAnimator
+--- Body strategy for ordinary NPCs: drives context-resolved dialogue clips via
+--- the controller-rebind mechanism (track binding, pose blending, torch-arm,
+--- one-shot talk clips reverting to idle). Decided/driven by animationOrchestrator.
+---@class clipBodyAnimator : initializedService, bodyAnimator
 local this = {}
 
 ---@private
@@ -14,12 +17,20 @@ this.actorPoseBlender = nil
 this.actorTrackBinder = nil
 
 ---@private
+---@type animationResolver
+this.animationResolver = nil
+
+---@private
 ---@type events
 this.events = nil
 
 ---@private
 ---@type tes3reference
 this.actor = nil
+
+---@private
+---@type baseAnimationConfiguration|nil
+this.animationConfiguration = nil
 
 ---@private
 ---@type animationDefinition|nil
@@ -45,19 +56,78 @@ this.torchArmAnimation = { file = "tauer\\ad\\torch.nif", group = "idle9" }
 ---@param services serviceCollection
 ---@return boolean,string|nil
 function this.initialize(services)
-    this.settings         = services.settings
-    this.actorPoseBlender = services.actorPoseBlender
-    this.actorTrackBinder = services.actorTrackBinder
-    this.events           = services.enums.events
+    this.settings          = services.settings
+    this.actorPoseBlender  = services.actorPoseBlender
+    this.actorTrackBinder  = services.actorTrackBinder
+    this.animationResolver = services.animationResolver
+    this.events            = services.enums.events
 
-    this.bodyTrack        = this.actorTrackBinder.create()
-    this.torchTrack       = this.actorTrackBinder.create()
+    this.bodyTrack         = this.actorTrackBinder.create()
+    this.torchTrack        = this.actorTrackBinder.create()
 
     return true, nil
 end
 
 ---@public
----@param params actorControllersAnimator.play.param
+---@param reference tes3reference
+---@return boolean
+function this.handles(reference)
+    return reference.object.objectType == tes3.objectType.npc
+        and this.settings.actorAnimEnabled
+end
+
+--- Resolves and plays this NPC's dialogue idle. The looping idle is held until a
+--- talk clip replaces it (onDialogueInfo) or the dialogue ends (stop).
+---@public
+---@param reference tes3reference
+function this.begin(reference)
+    local configuration = this.animationResolver.resolveBase(reference)
+    if not configuration then
+        return
+    end
+
+    this.animationConfiguration = configuration
+
+    this.play({
+        actor     = reference,
+        animation = configuration.idle,
+    })
+end
+
+--- Plays a one-shot talk / dialogue-override clip reverting to the idle. A
+--- spoken line drives this; if talk animations are off or nothing resolves, the
+--- current idle keeps looping untouched.
+---@public
+---@param info tes3dialogueInfo
+function this.onDialogueInfo(info)
+    if not this.settings.actorTalkAnimEnabled then
+        return
+    end
+
+    if not this.animationConfiguration then
+        return
+    end
+
+    local talk = this.animationConfiguration.talk
+    local override = this.animationResolver.resolveOverride(info.id)
+
+    local animation =
+        override and override.animation or
+        talk and table.choice(talk)
+
+    if not animation then
+        return
+    end
+
+    this.play({
+        actor     = this.actor,
+        animation = animation,
+        revertTo  = this.animationConfiguration.idle,
+    })
+end
+
+---@public
+---@param params clipBodyAnimator.play.param
 function this.play(params)
     if not params.actor.animationData then
         return
@@ -75,6 +145,7 @@ function this.stop()
     this.setActiveAnimation(nil)
     this.actor = nil
     this.revertTo = nil
+    this.animationConfiguration = nil
     this.actorPoseBlender.reset()
 end
 

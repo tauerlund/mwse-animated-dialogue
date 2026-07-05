@@ -1,6 +1,10 @@
---- Decides which clip plays when: resolves configurations off the dialogue
---- events and drives the playback engine (`actorControllersAnimator`) through
---- synchronous `play`/`stop` calls.
+--- Routes the dialogue lifecycle to the actor's body-animation strategy: selects
+--- one (bodyAnimatorSelector) at dialogue start, then forwards begin / dialogue
+--- info / stop to it. It is strategy-agnostic - each strategy owns what it plays
+--- (ordinary NPCs resolve dialogue clips; the native creature / custom-override
+--- strategies self-resolve and ignore per-line info). The only cross-cutting
+--- concern kept here is buffering a dialogue info that arrives before the actor
+--- is established (the greeting case) and replaying it once begin has run.
 ---@class animationOrchestrator : initializedService
 local this = {}
 
@@ -9,24 +13,16 @@ local this = {}
 this.eventRegistrar = nil
 
 ---@private
----@type settings
-this.settings = nil
+---@type bodyAnimatorSelector
+this.bodyAnimatorSelector = nil
 
 ---@private
----@type animationResolver
-this.animationResolver = nil
-
----@private
----@type actorControllersAnimator
-this.actorControllersAnimator = nil
+---@type bodyAnimator|nil
+this.activeBodyAnimator = nil
 
 ---@private
 ---@type tes3reference
 this.actor = nil
-
----@private
----@type baseAnimationConfiguration
-this.animationConfiguration = nil
 
 ---@private
 ---@type dialogueInfoEventData|nil
@@ -40,14 +36,12 @@ this.eventHandlers = nil
 ---@param services serviceCollection
 ---@return boolean,string|nil
 function this.initialize(services)
-    this.eventRegistrar           = services.eventRegistrar
-    this.settings                 = services.settings
-    this.animationResolver        = services.animationResolver
-    this.actorControllersAnimator = services.actorControllersAnimator
+    this.eventRegistrar       = services.eventRegistrar
+    this.bodyAnimatorSelector = services.bodyAnimatorSelector
 
-    local events                  = services.enums.events
+    local events              = services.enums.events
 
-    this.eventHandlers            = {
+    this.eventHandlers        = {
         [events.dialogueStarted] = this.onDialogueStarted,
         [events.dialogueEnded]   = this.onDialogueEnded,
         [events.dialogueInfo]    = this.onDialogueInfo,
@@ -66,25 +60,17 @@ end
 ---@private
 ---@param e dialogueStartedEventData
 function this.onDialogueStarted(e)
-    if not this.settings.actorAnimEnabled then
-        return
-    end
-
-    local configuration = this.animationResolver.resolveBase(e.actor)
-    if not configuration then
+    this.activeBodyAnimator = this.bodyAnimatorSelector.resolve(e.actor)
+    if not this.activeBodyAnimator then
+        this.pendingInfo = nil
         return
     end
 
     this.actor = e.actor
-    this.animationConfiguration = configuration
-
-    this.actorControllersAnimator.play({
-        actor     = e.actor,
-        animation = configuration.idle,
-    })
+    this.activeBodyAnimator.begin(e.actor)
 
     if this.pendingInfo and this.pendingInfo.actor == e.actor then
-        this.onDialogueInfo(this.pendingInfo)
+        this.deliverInfo(this.pendingInfo.info)
     end
 
     this.pendingInfo = nil
@@ -98,37 +84,28 @@ function this.onDialogueInfo(e)
         return
     end
 
-    if not this.settings.actorTalkAnimEnabled then
-        return
+    this.deliverInfo(e.info)
+end
+
+--- Forwards a spoken line to the active strategy only if it reacts to lines.
+--- Native strategies (creature / custom-override) drive one continuous clip and
+--- omit the optional onDialogueInfo hook entirely.
+---@private
+---@param info tes3dialogueInfo
+function this.deliverInfo(info)
+    if this.activeBodyAnimator.onDialogueInfo then
+        this.activeBodyAnimator.onDialogueInfo(info)
     end
-
-    if not this.animationConfiguration then
-        return
-    end
-
-    local talk = this.animationConfiguration.talk
-    local override = this.animationResolver.resolveOverride(e.info.id)
-
-    local animation =
-        override and override.animation or
-        talk and table.choice(talk)
-
-    if not animation then
-        return
-    end
-
-    this.actorControllersAnimator.play({
-        actor     = this.actor,
-        animation = animation,
-        revertTo  = this.animationConfiguration.idle,
-    })
 end
 
 ---@private
 function this.onDialogueEnded()
-    this.actorControllersAnimator.stop()
+    if this.activeBodyAnimator then
+        this.activeBodyAnimator.stop()
+    end
+
+    this.activeBodyAnimator = nil
     this.actor = nil
-    this.animationConfiguration = nil
     this.pendingInfo = nil
 end
 

@@ -26,8 +26,8 @@ this.debugSliderPanel = nil
 this.animationLoader = nil
 
 ---@private
----@type actorControllersAnimator
-this.actorControllersAnimator = nil
+---@type clipBodyAnimator
+this.clipBodyAnimator = nil
 
 ---@private
 ---@type translations
@@ -81,7 +81,7 @@ function this.initialize(services)
     this.guiBuilder = services.guiBuilder
     this.debugSliderPanel = services.debuggingSliderPanel
     this.animationLoader = services.animationLoader
-    this.actorControllersAnimator = services.actorControllersAnimator
+    this.clipBodyAnimator = services.clipBodyAnimator
     this.translations = services.translations
     this.translationKey = services.enums.translationKey
 
@@ -261,7 +261,7 @@ function this.buildPreviewControls(content)
                     return
                 end
 
-                this.actorControllersAnimator.play({
+                this.clipBodyAnimator.play({
                     actor     = this.currentNpc,
                     animation = entry.animation,
                 })
@@ -457,7 +457,7 @@ function this.selectDropdown(dropdown, index)
 end
 
 --- Fires a synthetic dialogueInfo so overrides run through the real path,
---- driving both the override talk clip (controllersAnimator) and prop spawn
+--- driving both the override talk clip (clipBodyAnimator) and prop spawn
 --- (propSpawner) exactly as an in-game dialogue line would.
 --- The info is deliberately a partial stand-in for tes3dialogueInfo carrying
 --- only `id`; a consumer reading any other field will break on debug triggers.

@@ -21,12 +21,12 @@ this.eventHandlers = {
 this.animators = {}
 
 ---@private
----@type actorTurnAnimator
-this.actorTurnAnimator = nil
+---@type bodyAnimatorSelector
+this.bodyAnimatorSelector = nil
 
 ---@private
----@type actorControllersAnimator
-this.actorControllersAnimator = nil
+---@type actorTurnAnimator
+this.actorTurnAnimator = nil
 
 ---@private
 ---@type actorHeadMorphAnimator
@@ -43,12 +43,12 @@ this.paused = false
 ---@param services serviceCollection
 ---@return boolean,string|nil
 function this.initialize(services)
-    this.eventRegistrar           = services.eventRegistrar
-    this.settings                 = services.settings
-    this.actorTurnAnimator        = services.actorTurnAnimator
-    this.actorControllersAnimator = services.actorControllersAnimator
-    this.actorHeadMorphAnimator   = services.actorHeadMorphAnimator
-    this.actorHeadLookAtAnimator  = services.actorHeadLookAtAnimator
+    this.eventRegistrar          = services.eventRegistrar
+    this.settings                = services.settings
+    this.bodyAnimatorSelector    = services.bodyAnimatorSelector
+    this.actorTurnAnimator       = services.actorTurnAnimator
+    this.actorHeadMorphAnimator  = services.actorHeadMorphAnimator
+    this.actorHeadLookAtAnimator = services.actorHeadLookAtAnimator
 
     local events                  = services.enums.events
 
@@ -75,16 +75,17 @@ function this.uninitialize()
 end
 
 ---@private
----@param _ dialogueStartedEventData
-function this.onDialogueStarted(_)
+---@param e dialogueStartedEventData
+function this.onDialogueStarted(e)
     this.animators = {}
+
+    local body = this.bodyAnimatorSelector.resolve(e.actor)
+    if body then
+        table.insert(this.animators, body)
+    end
 
     if this.settings.actorTurnEnabled then
         table.insert(this.animators, this.actorTurnAnimator)
-    end
-
-    if this.settings.actorAnimEnabled then
-        table.insert(this.animators, this.actorControllersAnimator)
     end
 
     if this.settings.actorHeadMorphAnimEnabled then

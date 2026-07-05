@@ -1,0 +1,6 @@
+---@meta
+---@class bodySkeletonTicker.state
+---@field actor tes3reference|nil
+---@field start number
+---@field stop number
+---@field phase number

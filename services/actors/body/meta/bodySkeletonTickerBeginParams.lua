@@ -1,0 +1,5 @@
+---@meta
+---@class bodySkeletonTicker.begin.param
+---@field actor tes3reference
+---@field start number
+---@field stop number

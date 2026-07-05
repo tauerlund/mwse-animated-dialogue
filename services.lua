@@ -29,9 +29,17 @@ local this = {
     actorPoseBlender = require("tauer.animated-dialogue.services.actors.actorPoseBlender"),
     actorTrackBinder = require("tauer.animated-dialogue.services.actors.actorTrackBinder"),
     actorTurnAnimator = require("tauer.animated-dialogue.services.actors.animators.turnAnimator"),
-    actorControllersAnimator = require("tauer.animated-dialogue.services.actors.animators.controllersAnimator"),
     actorHeadMorphAnimator = require("tauer.animated-dialogue.services.actors.animators.headMorphAnimator"),
     actorHeadLookAtAnimator = require("tauer.animated-dialogue.services.actors.animators.headLookAtAnimator"),
+
+    bodySkeletonTicker = require("tauer.animated-dialogue.services.actors.body.bodySkeletonTicker"),
+    clipBodyAnimator = require("tauer.animated-dialogue.services.actors.body.animators.clipBodyAnimator"),
+    creatureBodyAnimator = require("tauer.animated-dialogue.services.actors.body.animators.creatureBodyAnimator"),
+    overrideBodyAnimator = require("tauer.animated-dialogue.services.actors.body.animators.overrideBodyAnimator"),
+    bodyAnimatorSelector = require("tauer.animated-dialogue.services.actors.body.bodyAnimatorSelector"),
+
+    creatureConfigLoader = require("tauer.animated-dialogue.services.actors.creatures.creatureConfigLoader"),
+    creatureResolver = require("tauer.animated-dialogue.services.actors.creatures.creatureResolver"),
 
     cameraController = require("tauer.animated-dialogue.services.camera.cameraController"),
     cameraStartAnimator = require("tauer.animated-dialogue.services.camera.animators.startAnimator"),

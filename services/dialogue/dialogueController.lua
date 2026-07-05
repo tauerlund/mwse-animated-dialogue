@@ -66,7 +66,7 @@ function this.onMenuDialogActivated(e)
         return
     end
 
-    local reference = this.resolveNpc()
+    local reference = this.resolveActor()
     if not reference then
         return
     end
@@ -98,7 +98,7 @@ function this.onInfoGetText(e)
         return
     end
 
-    local reference = this.resolveNpc()
+    local reference = this.resolveActor()
     if reference then
         this.emitDialogueInfo(e.info, reference)
         return
@@ -170,11 +170,11 @@ end
 
 ---@private
 ---@return tes3reference|nil
-function this.resolveNpc()
+function this.resolveActor()
     local serviceActor = tes3ui.getServiceActor()
 
     local reference = serviceActor and serviceActor.reference --[[@as tes3reference|nil]]
-    if not reference or not this.isNpc(reference) then
+    if not reference or not this.isActor(reference) then
         return nil
     end
 
@@ -184,8 +184,10 @@ end
 ---@private
 ---@param reference tes3reference
 ---@return boolean
-function this.isNpc(reference)
-    return reference.object.objectType == tes3.objectType.npc
+function this.isActor(reference)
+    local objectType = reference.object.objectType
+    return objectType == tes3.objectType.npc
+        or objectType == tes3.objectType.creature
 end
 
 return this

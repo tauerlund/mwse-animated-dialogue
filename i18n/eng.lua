@@ -11,6 +11,12 @@ return {
     [keys.actorPage] = "Actors",
     [keys.actorAnimEnabled] = "Enable Actor Animations",
     [keys.actorAnimEnabledDescription] = "Enables or disables actor body animations during dialogue.",
+    [keys.actorNativeAnimEnabled] = "Preserve Custom NPC Animations",
+    [keys.actorNativeAnimEnabledDescription] =
+    "For NPCs that already play their own custom animation (such as the performers added by Animated Morrowind), keeps that animation playing during dialogue instead of applying this mod's animations.",
+    [keys.creatureAnimEnabled] = "Animate Creatures",
+    [keys.creatureAnimEnabledDescription] =
+    "Keeps creatures animating during dialogue by playing a neutral idle, instead of freezing them. Creatures use their own animations; this mod's NPC body animations do not apply to them.",
     [keys.actorTalkAnimEnabled] = "Enable Actor Talk Animations",
     [keys.actorTalkAnimEnabledDescription] =
     "Enables or disables actor talking gesture animations played while responding during dialogue. Requires actor animations to be enabled.",

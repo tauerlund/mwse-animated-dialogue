@@ -1,0 +1,18 @@
+---@meta
+
+--- A swappable body-animation strategy for the dialogue actor. Exactly one is
+--- selected per dialogue (bodyAnimatorSelector), then the orchestrator forwards
+--- the dialogue lifecycle to it: `begin` starts driving the actor (ordinary NPCs
+--- resolve a dialogue idle; the native strategies self-resolve their window) and
+--- `stop` tears down. `update` ticks each frame.
+---
+--- `onDialogueInfo` is an OPTIONAL hook: a strategy that reacts to individual
+--- spoken lines (the clip strategy plays a talk / override clip) defines it; the
+--- native strategies, which drive one continuous clip, simply omit it. The
+--- orchestrator calls it only when present (as initializer.lua does for the
+--- optional `dependencies` / `uninitialize` service hooks).
+---@class bodyAnimator : actorAnimator
+---@field handles fun(reference: tes3reference): boolean
+---@field begin fun(reference: tes3reference)
+---@field onDialogueInfo? fun(info: tes3dialogueInfo)
+---@field stop fun()

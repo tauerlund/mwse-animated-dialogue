@@ -1,5 +1,5 @@
 ---@meta
----@class actorControllersAnimator.play.param
+---@class clipBodyAnimator.play.param
 ---@field public actor tes3reference
 ---@field public animation animationDefinition
 ---@field public revertTo animationDefinition|nil
