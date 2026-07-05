@@ -6,6 +6,10 @@ local this = {}
 this.settings = nil
 
 ---@private
+---@type actorPoseBlender
+this.actorPoseBlender = nil
+
+---@private
 ---@type bodySkeletonTicker
 this.bodySkeletonTicker = nil
 
@@ -21,6 +25,7 @@ this.logger = mwse.Logger.new()
 ---@return boolean,string|nil
 function this.initialize(services)
     this.settings           = services.settings
+    this.actorPoseBlender   = services.actorPoseBlender
     this.bodySkeletonTicker = services.bodySkeletonTicker
 
     this.ticker             = this.bodySkeletonTicker.create()
@@ -53,9 +58,11 @@ function this.begin(reference)
     end
 
     this.bodySkeletonTicker.begin(this.ticker, {
-        actor = reference,
-        start = start,
-        stop  = stop,
+        actor              = reference,
+        start              = start,
+        stop               = stop,
+        poseBlender        = this.actorPoseBlender,
+        transitionDuration = this.settings.transitionDuration,
     })
 end
 

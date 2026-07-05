@@ -3,3 +3,5 @@
 ---@field actor tes3reference
 ---@field start number
 ---@field stop number
+---@field poseBlender actorPoseBlender|nil
+---@field transitionDuration number|nil
