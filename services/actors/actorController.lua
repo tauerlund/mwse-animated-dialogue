@@ -84,7 +84,7 @@ function this.onDialogueStarted(e)
         table.insert(this.animators, body)
     end
 
-    if this.settings.actorTurnEnabled then
+    if this.settings.actorTurnEnabled and not (body and body.suppressesTurn) then
         table.insert(this.animators, this.actorTurnAnimator)
     end
 

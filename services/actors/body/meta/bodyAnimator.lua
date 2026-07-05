@@ -11,8 +11,15 @@
 --- native strategies, which drive one continuous clip, simply omit it. The
 --- orchestrator calls it only when present (as initializer.lua does for the
 --- optional `dependencies` / `uninitialize` service hooks).
+---
+--- `suppressesTurn` (optional) declares that the strategy owns the actor's body
+--- orientation, so actorController must NOT layer the turn-to-face-player
+--- animator on top of it. The native override strategy sets it: its clip is
+--- authored at a deliberate orientation (a scripted Animated Morrowind activity)
+--- that yawing toward the player would fight. Ordinary clips leave it nil.
 ---@class bodyAnimator : actorAnimator
 ---@field handles fun(reference: tes3reference): boolean
 ---@field begin fun(reference: tes3reference)
 ---@field onDialogueInfo? fun(info: tes3dialogueInfo)
 ---@field stop fun()
+---@field suppressesTurn? boolean

@@ -1,6 +1,10 @@
 ---@class overrideBodyAnimator : initializedService, bodyAnimator
 local this = {}
 
+--- The native clip is authored at a deliberate orientation; skip the turn animator.
+---@type boolean
+this.suppressesTurn = true
+
 ---@private
 ---@type settings
 this.settings = nil
