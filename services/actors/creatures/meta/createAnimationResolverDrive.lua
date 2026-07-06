@@ -1,0 +1,6 @@
+---@meta
+---@class creatureAnimationResolver.drive
+---@field group number a tes3.animationGroup value
+---@field start number loop window start time
+---@field stop number loop window stop time
+---@field layer number the animGroupLayerIndices layer the group came from

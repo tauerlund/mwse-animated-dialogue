@@ -89,6 +89,10 @@ function this.update(delta)
         return
     end
 
+    if not animationData.headNode then
+        return
+    end
+
     if not this.resolved then
         this.morphers = this.nodeResolver.resolveControllers(
             animationData.headNode, ni.type.NiGeomMorpherController)

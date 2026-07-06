@@ -31,6 +31,24 @@ function this.initialize(template, services)
     })
 
     page:createOnOffButton({
+        label = translations.get(keys.actorNativeAnimEnabled),
+        description = translations.get(keys.actorNativeAnimEnabledDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "actorNativeAnimEnabled",
+            table = services.settings
+        }),
+    })
+
+    page:createOnOffButton({
+        label = translations.get(keys.creatureAnimEnabled),
+        description = translations.get(keys.creatureAnimEnabledDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "creatureAnimEnabled",
+            table = services.settings
+        }),
+    })
+
+    page:createOnOffButton({
         label = translations.get(keys.actorTalkAnimEnabled),
         description = translations.get(keys.actorTalkAnimEnabledDescription),
         variable = mwse.mcm.createTableVariable({

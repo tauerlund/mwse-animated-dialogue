@@ -1,4 +1,4 @@
----@class actorControllersAnimator : initializedService, actorAnimator
+---@class clipBodyAnimator : initializedService, bodyAnimator
 local this = {}
 
 ---@private
@@ -14,12 +14,20 @@ this.actorPoseBlender = nil
 this.actorTrackBinder = nil
 
 ---@private
+---@type animationResolver
+this.animationResolver = nil
+
+---@private
 ---@type events
 this.events = nil
 
 ---@private
 ---@type tes3reference
 this.actor = nil
+
+---@private
+---@type baseAnimationConfiguration|nil
+this.animationConfiguration = nil
 
 ---@private
 ---@type animationDefinition|nil
@@ -45,19 +53,73 @@ this.torchArmAnimation = { file = "tauer\\ad\\torch.nif", group = "idle9" }
 ---@param services serviceCollection
 ---@return boolean,string|nil
 function this.initialize(services)
-    this.settings         = services.settings
-    this.actorPoseBlender = services.actorPoseBlender
-    this.actorTrackBinder = services.actorTrackBinder
-    this.events           = services.enums.events
+    this.settings          = services.settings
+    this.actorPoseBlender  = services.actorPoseBlender
+    this.actorTrackBinder  = services.actorTrackBinder
+    this.animationResolver = services.animationResolver
+    this.events            = services.enums.events
 
-    this.bodyTrack        = this.actorTrackBinder.create()
-    this.torchTrack       = this.actorTrackBinder.create()
+    this.bodyTrack         = this.actorTrackBinder.create()
+    this.torchTrack        = this.actorTrackBinder.create()
 
     return true, nil
 end
 
 ---@public
----@param params actorControllersAnimator.play.param
+---@param reference tes3reference
+---@return boolean
+function this.handles(reference)
+    return reference.object.objectType == tes3.objectType.npc
+        and this.settings.actorAnimEnabled
+end
+
+---@public
+---@param reference tes3reference
+function this.begin(reference)
+    local configuration = this.animationResolver.resolveBase(reference)
+    if not configuration then
+        return
+    end
+
+    this.animationConfiguration = configuration
+
+    this.play({
+        actor     = reference,
+        animation = configuration.idle,
+    })
+end
+
+---@public
+---@param info tes3dialogueInfo
+function this.onDialogueInfo(info)
+    if not this.settings.actorTalkAnimEnabled then
+        return
+    end
+
+    if not this.animationConfiguration then
+        return
+    end
+
+    local talk = this.animationConfiguration.talk
+    local override = this.animationResolver.resolveOverride(info.id)
+
+    local animation =
+        override and override.animation or
+        talk and table.choice(talk)
+
+    if not animation then
+        return
+    end
+
+    this.play({
+        actor     = this.actor,
+        animation = animation,
+        revertTo  = this.animationConfiguration.idle,
+    })
+end
+
+---@public
+---@param params clipBodyAnimator.play.param
 function this.play(params)
     if not params.actor.animationData then
         return
@@ -71,11 +133,17 @@ end
 
 ---@public
 function this.stop()
+    this.clearPlayback()
+    this.animationConfiguration = nil
+    this.actorPoseBlender.reset()
+end
+
+---@private
+function this.clearPlayback()
     this.resetTracks()
     this.setActiveAnimation(nil)
     this.actor = nil
     this.revertTo = nil
-    this.actorPoseBlender.reset()
 end
 
 ---@private
@@ -124,10 +192,7 @@ function this.applyAnimation(animation, loop)
     })
 
     if count == 0 then
-        this.resetTracks()
-        this.setActiveAnimation(nil)
-        this.actor = nil
-        this.revertTo = nil
+        this.clearPlayback()
         return
     end
 
