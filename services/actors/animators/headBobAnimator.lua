@@ -21,7 +21,7 @@ this.motionTuning = {
 }
 
 ---@private
-this.ownWriteEpsilon = 1e-4
+this.writeMatchTolerance = 1e-4
 
 ---@private
 this.twoPi = math.pi * 2
@@ -135,13 +135,13 @@ function this.reset()
     this.basePose.tracked = false
 
     for i = 1, #this.axes do
-        this.reseedAxis(this.axes[i])
+        this.randomizeAxis(this.axes[i])
     end
 end
 
 ---@private
 ---@param axis headBobAxis
-function this.reseedAxis(axis)
+function this.randomizeAxis(axis)
     axis.wave = {
         frequency1 = this.jitterFrequency(axis.frequency1),
         frequency2 = this.jitterFrequency(axis.frequency2),
@@ -307,8 +307,8 @@ function this.resolveBaseAngle(current, lastWritten, lastBase)
         return current
     end
 
-    local isOwnWrite = math.abs(current - lastWritten) < this.ownWriteEpsilon
-    if isOwnWrite then
+    local matchesLastWrite = math.abs(current - lastWritten) < this.writeMatchTolerance
+    if matchesLastWrite then
         return lastBase
     end
 
