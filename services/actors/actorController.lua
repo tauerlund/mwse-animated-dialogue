@@ -37,6 +37,10 @@ this.actorHeadMorphAnimator = nil
 this.actorHeadLookAtAnimator = nil
 
 ---@private
+---@type actorHeadBobAnimator
+this.actorHeadBobAnimator = nil
+
+---@private
 this.paused = false
 
 ---@public
@@ -49,6 +53,7 @@ function this.initialize(services)
     this.actorTurnAnimator       = services.actorTurnAnimator
     this.actorHeadMorphAnimator  = services.actorHeadMorphAnimator
     this.actorHeadLookAtAnimator = services.actorHeadLookAtAnimator
+    this.actorHeadBobAnimator    = services.actorHeadBobAnimator
 
     local events                  = services.enums.events
 
@@ -94,6 +99,10 @@ function this.onDialogueStarted(e)
 
     if this.settings.actorHeadLookAtEnabled then
         table.insert(this.animators, this.actorHeadLookAtAnimator)
+    end
+
+    if this.settings.actorHeadBobEnabled then
+        table.insert(this.animators, this.actorHeadBobAnimator)
     end
 
     this.paused = false

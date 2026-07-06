@@ -46,6 +46,7 @@ function this.initializeMod(_)
 		services.animationOrchestrator,
 		services.actorHeadMorphAnimator,
 		services.actorHeadLookAtAnimator,
+		services.actorHeadBobAnimator,
 		services.cameraController,
 		services.cameraStartAnimator,
 		services.cameraSwayAnimator,
