@@ -28,12 +28,37 @@ return {
     [keys.actorHeadLookAtEnabled] = "Enable Head Look-At",
     [keys.actorHeadLookAtEnabledDescription] =
     "Enables or disables the actor's head turning to look at the camera during dialogue.",
+    [keys.actorHeadBobEnabled] = "Enable Head Bob",
+    [keys.actorHeadBobEnabledDescription] =
+    "Enables or disables subtle procedural head movement while the actor is speaking a voiced line.",
+    [keys.actorHeadBobNodEnabled] = "Head Bob: Nodding",
+    [keys.actorHeadBobNodEnabledDescription] =
+    "Enables or disables the up-and-down nodding component of the head bob. Requires Head Bob to be enabled.",
+    [keys.actorHeadBobYawEnabled] = "Head Bob: Turning",
+    [keys.actorHeadBobYawEnabledDescription] =
+    "Enables or disables the side-to-side turning component of the head bob. Requires Head Bob to be enabled.",
+    [keys.actorHeadBobTiltEnabled] = "Head Bob: Tilting",
+    [keys.actorHeadBobTiltEnabledDescription] =
+    "Enables or disables the tilting (roll) component of the head bob. Requires Head Bob to be enabled.",
+    [keys.actorHeadBobAmount] = "Head Bob: Amount",
+    [keys.actorHeadBobAmountDescription] =
+    "Scales how far the head moves during the bob. 1.0 is the default; higher is more pronounced.",
+    [keys.actorHeadBobSpeed] = "Head Bob: Speed",
+    [keys.actorHeadBobSpeedDescription] =
+    "Scales how quickly the head bobs. 1.0 is the default; higher is faster.",
+    [keys.actorHeadBobRandomness] = "Head Bob: Randomness",
+    [keys.actorHeadBobRandomnessDescription] =
+    "How organic versus mechanical the motion feels. 0 is a steady rhythm; higher blends in more random wander.",
     [keys.propsEnabled] = "Enable Props",
     [keys.propsEnabledDescription] =
     "Enables or disables actors holding props during dialogue (when configured)",
     [keys.positionCategory] = "Position",
     [keys.rotationCategory] = "Rotation",
     [keys.timingCategory] = "Timing",
+    [keys.bodyCategory] = "Body",
+    [keys.headCategory] = "Head",
+    [keys.headBobCategory] = "Head Bob",
+    [keys.propsCategory] = "Props",
     [keys.distance] = "Distance",
     [keys.distanceDescription] =
     "The minimum distance the camera maintains from the actor's head during dialogue. If standing closer than this, the camera will pull back.",
