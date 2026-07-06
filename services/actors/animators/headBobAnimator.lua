@@ -1,105 +1,69 @@
 ---@class actorHeadBobAnimator : initializedService, actorAnimator
 local this = {}
 
--- Amplitude below which the bob is treated as off (head left untouched). Kept high enough to
--- trim the exponential envelope's invisible tail so the head settles promptly on release.
 ---@private
-this.amplitudeEpsilon = 5e-3
+this.speechTuning = {
+    loudnessThreshold = 0.02,
+    holdDuration = 0.2,
+    activityEaseRate = 8,
+    loudnessEaseRate = 1.5,
+    loudnessInfluence = 0.15,
+    minimumStrength = 5e-3,
+}
 
--- Two euler values within this are considered "the same write" (see resolveBase).
 ---@private
-this.changeEpsilon = 1e-4
+this.motionTuning = {
+    waveWeight1 = 0.6,
+    waveWeight2 = 0.4,
+    frequencyJitter = 0.12,
+    wanderDurationMin = 0.5,
+    wanderDurationMax = 1.4,
+}
 
--- Envelope eases bob amplitude up/down as speech starts/stops. On release the oscillation phase is
--- frozen (see update) so the head glides straight back to neutral instead of wiggling to a stop;
--- the release rate sets how gentle that glide is. Kept faster than attack so it still settles
--- promptly once the mouth goes quiet.
 ---@private
-this.envelopeAttackRate = 8
----@private
-this.envelopeReleaseRate = 8
+this.ownWriteEpsilon = 1e-4
 
--- lipsyncLevel loudness above which the mouth counts as active. It is 0.0 during silent parts of a
--- voice line (including the file's trailing silence) and -1 when not speaking, so gating on loudness
--- lets the head settle when the mouth stops instead of waiting out the trailing silence.
----@private
-this.activityThreshold = 0.02
-
--- Keep the bob alive this long after the mouth goes quiet, bridging short inter-word silences so it
--- does not stutter mid-sentence, while still settling promptly at the end of a line.
----@private
-this.holdDuration = 0.2
-
--- Smoothing applied to the raw (per-phoneme, noisy) lipsync level before it accents amplitude.
--- Deliberately slow so the accent is the line's overall energy, not syllable jitter.
----@private
-this.levelRate = 1.5
-
--- Fraction of amplitude that is constant while talking; the remainder is the smoothed lipsync
--- accent. High, so the bob is driven mostly by the steady envelope and only nudged by speech.
----@private
-this.baseIntensity = 0.85
-
--- Each axis blends two summed sines (a steady rhythm) with a slow value-noise wander (organic
--- non-periodicity), mixed by the Randomness setting. `f1`/`f2` are base frequencies (rad/s); at
--- each dialogue they are jittered and given random phases so no two conversations share a cadence.
--- The noise picks a fresh random target every noise segment and eases to it with smoothstep, so it
--- adds variety with no velocity kinks. `max` is the peak angle (radians) when sines/noise and
--- amplitude align. Frequencies scale with Speed, angles with Amount. Component→motion mapping
--- confirmed in-game: x = yaw (turn), y = tilt (roll), z = nod.
----@private
-this.sineWeight1 = 0.6
----@private
-this.sineWeight2 = 0.4
 ---@private
 this.twoPi = math.pi * 2
--- Per-dialogue frequency jitter (±fraction) and noise-segment duration range (phase-seconds).
+
 ---@private
-this.freqJitter = 0.12
+---@type headBobAxis
+this.yawAxis = { maxAngle = 0.11, frequency1 = 2.0, frequency2 = 3.6 }
+
 ---@private
-this.noiseMinDuration = 0.5
+---@type headBobAxis
+this.tiltAxis = { maxAngle = 0.075, frequency1 = 1.6, frequency2 = 2.9 }
+
 ---@private
-this.noiseMaxDuration = 1.4
+---@type headBobAxis
+this.nodAxis = { maxAngle = 0.13, frequency1 = 2.4, frequency2 = 4.3 }
+
 ---@private
-this.axes = {
-    { component = "x", max = 0.11,  settingKey = "actorHeadBobYawEnabled",  f1 = 2.0, f2 = 3.6 },
-    { component = "y", max = 0.075, settingKey = "actorHeadBobTiltEnabled", f1 = 1.6, f2 = 2.9 },
-    { component = "z", max = 0.13,  settingKey = "actorHeadBobNodEnabled",  f1 = 2.4, f2 = 4.3 },
-}
+this.axes = { this.yawAxis, this.tiltAxis, this.nodAxis }
 
 ---@private
 this.time = 0
 
 ---@private
-this.envelope = 0
+---@type headBobSpeech
+this.speech = {
+    activity = 0,
+    loudness = 0,
+    holdTimer = 0,
+    isTalking = false,
+}
 
 ---@private
-this.holdTimer = 0
-
--- True while speaking/holding (phase advances); false during release, freezing the phase so the
--- head eases straight to neutral.
----@private
-this.oscillating = false
-
----@private
-this.smoothedLevel = 0
-
--- Change-detection state: the euler values written last frame, the clean base they rode on,
--- and whether that state is valid this frame.
----@private
-this.writtenX = 0
----@private
-this.writtenY = 0
----@private
-this.writtenZ = 0
----@private
-this.baseX = 0
----@private
-this.baseY = 0
----@private
-this.baseZ = 0
----@private
-this.hasState = false
+---@type headBobBasePose
+this.basePose = {
+    tracked = false,
+    x = 0,
+    y = 0,
+    z = 0,
+    writtenX = 0,
+    writtenY = 0,
+    writtenZ = 0,
+}
 
 ---@private
 ---@type eventRegistrar
@@ -155,38 +119,59 @@ end
 ---@private
 function this.reset()
     this.time = 0
-    this.envelope = 0
-    this.holdTimer = 0
-    this.oscillating = false
-    this.smoothedLevel = 0
-    this.hasState = false
+
+    this.speech = {
+        activity = 0,
+        loudness = 0,
+        holdTimer = 0,
+        isTalking = false,
+    }
+
+    this.basePose.tracked = false
 
     for i = 1, #this.axes do
-        this.randomizeAxis(this.axes[i])
+        this.reseedAxis(this.axes[i])
     end
 end
 
--- Reseeds an axis's per-dialogue randomness: jittered frequencies, random sine phases, and a
--- fresh noise segment. Runs once per conversation so each feels distinct.
 ---@private
----@param axis table
-function this.randomizeAxis(axis)
-    axis.rf1 = axis.f1 * (1 + (math.random() * 2 - 1) * this.freqJitter)
-    axis.rf2 = axis.f2 * (1 + (math.random() * 2 - 1) * this.freqJitter)
-    axis.rp1 = math.random() * this.twoPi
-    axis.rp2 = math.random() * this.twoPi
+---@param axis headBobAxis
+function this.reseedAxis(axis)
+    axis.wave = {
+        frequency1 = this.jitterFrequency(axis.frequency1),
+        frequency2 = this.jitterFrequency(axis.frequency2),
+        phase1 = math.random() * this.twoPi,
+        phase2 = math.random() * this.twoPi,
+    }
 
-    axis.noiseFrom = math.random() * 2 - 1
-    axis.noiseTo = math.random() * 2 - 1
-    axis.noiseValue = axis.noiseFrom
-    axis.noiseElapsed = 0
-    axis.noiseDuration = this.randomNoiseDuration()
+    local start = this.randomSigned()
+    axis.wander = {
+        from = start,
+        to = this.randomSigned(),
+        value = start,
+        elapsed = 0,
+        duration = this.randomWanderDuration(),
+    }
+end
+
+---@private
+---@param frequency number
+---@return number
+function this.jitterFrequency(frequency)
+    return frequency * (1 + this.randomSigned() * this.motionTuning.frequencyJitter)
 end
 
 ---@private
 ---@return number
-function this.randomNoiseDuration()
-    return this.noiseMinDuration + math.random() * (this.noiseMaxDuration - this.noiseMinDuration)
+function this.randomSigned()
+    return math.random() * 2 - 1
+end
+
+---@private
+---@return number
+function this.randomWanderDuration()
+    local tuning = this.motionTuning
+    return tuning.wanderDurationMin + math.random() * (tuning.wanderDurationMax - tuning.wanderDurationMin)
 end
 
 ---@public
@@ -197,152 +182,165 @@ function this.update(delta)
         return
     end
 
-    local node = animationData.headNode
-    if not node then
+    local headNode = animationData.headNode
+    if not headNode then
         return
     end
 
-    local amplitude = this.updateAmplitude(animationData, delta)
-    if amplitude < this.amplitudeEpsilon then
-        this.hasState = false
+    local strength = this.updateStrength(animationData.lipsyncLevel, delta)
+    if strength < this.speechTuning.minimumStrength then
+        this.basePose.tracked = false
         return
     end
 
-    -- Advance the phase clock (not raw time, so Speed changes stay continuous) only while speaking;
-    -- freezing it during release locks the offset direction so the head eases straight to neutral.
-    if this.oscillating then
-        local phaseDelta = delta * this.settings.actorHeadBobSpeed
-        this.time = this.time + phaseDelta
-        this.advanceNoise(phaseDelta)
+    if this.speech.isTalking then
+        this.advanceTime(delta)
     end
 
-    local offsetX, offsetY, offsetZ = this.updateOffsets(amplitude)
-
-    local euler = node.rotation:toEulerXYZ()
-    local baseX = this.resolveBase(euler.x, this.writtenX, this.baseX)
-    local baseY = this.resolveBase(euler.y, this.writtenY, this.baseY)
-    local baseZ = this.resolveBase(euler.z, this.writtenZ, this.baseZ)
-
-    local x = baseX + offsetX
-    local y = baseY + offsetY
-    local z = baseZ + offsetZ
-
-    node.rotation:fromEulerXYZ(x, y, z)
-    node:update()
-
-    this.baseX, this.baseY, this.baseZ = baseX, baseY, baseZ
-    this.writtenX, this.writtenY, this.writtenZ = x, y, z
-    this.hasState = true
+    this.applyBob(headNode, strength)
 end
 
--- Derives the bob-free base for one axis. If the node still holds exactly what we wrote last
--- frame, nobody upstream touched it, so the clean base is unchanged; otherwise the current
--- value is a fresh upstream write (look-at aim, a clip keyframe, the rest pose) and becomes
--- the new base. This is what keeps an additive bob from compounding into drift.
+---@private
+---@param lipsyncLevel number
+---@param delta number
+---@return number
+function this.updateStrength(lipsyncLevel, delta)
+    local speech = this.speech
+    local tuning = this.speechTuning
+    local mouthActive = lipsyncLevel > tuning.loudnessThreshold
+
+    if mouthActive then
+        speech.holdTimer = tuning.holdDuration
+    else
+        speech.holdTimer = math.max(speech.holdTimer - delta, 0)
+    end
+
+    speech.isTalking = mouthActive or speech.holdTimer > 0
+
+    local activityTarget = speech.isTalking and 1 or 0
+    speech.activity = this.easeTowards(speech.activity, activityTarget, tuning.activityEaseRate, delta)
+
+    local loudnessTarget = mouthActive and math.clamp(lipsyncLevel, 0, 1) or 0
+    speech.loudness = this.easeTowards(speech.loudness, loudnessTarget, tuning.loudnessEaseRate, delta)
+
+    return speech.activity * (1 - tuning.loudnessInfluence + tuning.loudnessInfluence * speech.loudness)
+end
+
 ---@private
 ---@param current number
----@param written number
----@param base number
+---@param target number
+---@param rate number
+---@param delta number
 ---@return number
-function this.resolveBase(current, written, base)
-    if not this.hasState then
+function this.easeTowards(current, target, rate, delta)
+    return current + (target - current) * (1 - math.exp(-rate * delta))
+end
+
+---@private
+---@param delta number
+function this.advanceTime(delta)
+    local scaledDelta = delta * this.settings.actorHeadBobSpeed
+    this.time = this.time + scaledDelta
+    for i = 1, #this.axes do
+        local wander = this.axes[i].wander
+        if wander then
+            this.advanceWander(wander, scaledDelta)
+        end
+    end
+end
+
+---@private
+---@param wander headBobWander
+---@param scaledDelta number
+function this.advanceWander(wander, scaledDelta)
+    wander.elapsed = wander.elapsed + scaledDelta
+
+    while wander.elapsed >= wander.duration do
+        wander.elapsed = wander.elapsed - wander.duration
+        wander.from = wander.to
+        wander.to = this.randomSigned()
+        wander.duration = this.randomWanderDuration()
+    end
+
+    local progress = math.ease.smoothstep(wander.elapsed / wander.duration)
+    wander.value = wander.from + (wander.to - wander.from) * progress
+end
+
+---@private
+---@param headNode niNode
+---@param strength number
+function this.applyBob(headNode, strength)
+    local yaw, tilt, nod = this.calculateOffsets(strength)
+
+    local euler = headNode.rotation:toEulerXYZ()
+    local pose = this.basePose
+    local baseX = this.resolveBaseAngle(euler.x, pose.writtenX, pose.x)
+    local baseY = this.resolveBaseAngle(euler.y, pose.writtenY, pose.y)
+    local baseZ = this.resolveBaseAngle(euler.z, pose.writtenZ, pose.z)
+
+    local x = baseX + yaw
+    local y = baseY + tilt
+    local z = baseZ + nod
+
+    headNode.rotation:fromEulerXYZ(x, y, z)
+    headNode:update()
+
+    pose.x, pose.y, pose.z = baseX, baseY, baseZ
+    pose.writtenX, pose.writtenY, pose.writtenZ = x, y, z
+    pose.tracked = true
+end
+
+---@private
+---@param current number
+---@param lastWritten number
+---@param lastBase number
+---@return number
+function this.resolveBaseAngle(current, lastWritten, lastBase)
+    if not this.basePose.tracked then
         return current
     end
 
-    if math.abs(current - written) < this.changeEpsilon then
-        return base
+    local isOwnWrite = math.abs(current - lastWritten) < this.ownWriteEpsilon
+    if isOwnWrite then
+        return lastBase
     end
 
     return current
 end
 
 ---@private
----@param animationData tes3animationData
----@param delta number
----@return number
-function this.updateAmplitude(animationData, delta)
-    local level = animationData.lipsyncLevel
-
-    -- Active only while the mouth is actually loud; a hold bridges brief inter-word silences (both
-    -- read as level 0) so the bob keeps going mid-sentence but releases once speech truly stops.
-    local active = level > this.activityThreshold
-    if active then
-        this.holdTimer = this.holdDuration
-    else
-        this.holdTimer = math.max(this.holdTimer - delta, 0)
-    end
-
-    local envelopeTarget = (active or this.holdTimer > 0) and 1 or 0
-    this.oscillating = envelopeTarget > 0
-    local envelopeRate = envelopeTarget > this.envelope and this.envelopeAttackRate or this.envelopeReleaseRate
-    this.envelope = this.envelope + (envelopeTarget - this.envelope) * (1 - math.exp(-envelopeRate * delta))
-
-    local levelTarget = active and math.clamp(level, 0, 1) or 0
-    this.smoothedLevel = this.smoothedLevel +
-        (levelTarget - this.smoothedLevel) * (1 - math.exp(-this.levelRate * delta))
-
-    return this.envelope * (this.baseIntensity + (1 - this.baseIntensity) * this.smoothedLevel)
-end
-
----@private
----@param amplitude number
+---@param strength number
 ---@return number, number, number
-function this.updateOffsets(amplitude)
-    local offsetX, offsetY, offsetZ = 0, 0, 0
-    local amount = this.settings.actorHeadBobAmount
-    local randomness = math.clamp(this.settings.actorHeadBobRandomness, 0, 1)
+function this.calculateOffsets(strength)
+    local settings = this.settings
+    local scale = settings.actorHeadBobAmount * strength
+    local randomness = math.clamp(settings.actorHeadBobRandomness, 0, 1)
 
-    for i = 1, #this.axes do
-        local axis = this.axes[i]
+    local yaw = settings.actorHeadBobYawEnabled and this.axisOffset(this.yawAxis, randomness, scale) or 0
+    local tilt = settings.actorHeadBobTiltEnabled and this.axisOffset(this.tiltAxis, randomness, scale) or 0
+    local nod = settings.actorHeadBobNodEnabled and this.axisOffset(this.nodAxis, randomness, scale) or 0
 
-        if this.settings[axis.settingKey] then
-            local offset = this.axisValue(axis, randomness) * axis.max * amount * amplitude
-            if axis.component == "x" then
-                offsetX = offset
-            elseif axis.component == "y" then
-                offsetY = offset
-            else
-                offsetZ = offset
-            end
-        end
-    end
-
-    return offsetX, offsetY, offsetZ
+    return yaw, tilt, nod
 end
 
--- Advances every axis's value-noise: on segment end pick a new random target, then smoothstep
--- from the previous target toward it. Smoothstep gives zero velocity at both ends, so the wander
--- has no kinks. Runs on the phase clock so Speed scales it too.
 ---@private
----@param phaseDelta number
-function this.advanceNoise(phaseDelta)
-    for i = 1, #this.axes do
-        local axis = this.axes[i]
-        axis.noiseElapsed = axis.noiseElapsed + phaseDelta
-
-        while axis.noiseElapsed >= axis.noiseDuration do
-            axis.noiseElapsed = axis.noiseElapsed - axis.noiseDuration
-            axis.noiseFrom = axis.noiseTo
-            axis.noiseTo = math.random() * 2 - 1
-            axis.noiseDuration = this.randomNoiseDuration()
-        end
-
-        local t = math.ease.smoothstep(axis.noiseElapsed / axis.noiseDuration)
-        axis.noiseValue = axis.noiseFrom + (axis.noiseTo - axis.noiseFrom) * t
-    end
-end
-
--- Blends the steady summed-sine rhythm with the noise wander in [-1, 1]; `randomness` mixes
--- pure sine (0) toward pure noise (1).
----@private
----@param axis table
+---@param axis headBobAxis
 ---@param randomness number
+---@param scale number
 ---@return number
-function this.axisValue(axis, randomness)
-    local sine = this.sineWeight1 * math.sin(this.time * axis.rf1 + axis.rp1)
-        + this.sineWeight2 * math.sin(this.time * axis.rf2 + axis.rp2)
+function this.axisOffset(axis, randomness, scale)
+    local wave = axis.wave
+    if not wave then
+        return 0
+    end
 
-    return (1 - randomness) * sine + randomness * axis.noiseValue
+    local tuning = this.motionTuning
+    local steady = tuning.waveWeight1 * math.sin(this.time * wave.frequency1 + wave.phase1)
+        + tuning.waveWeight2 * math.sin(this.time * wave.frequency2 + wave.phase2)
+
+    local motion = (1 - randomness) * steady + randomness * axis.wander.value
+
+    return motion * axis.maxAngle * scale
 end
 
 return this
