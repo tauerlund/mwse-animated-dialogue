@@ -80,15 +80,20 @@ this.actor = nil
 ---@private
 this.eventHandlers = nil
 
+---@private
+---@type actorLipsyncController
+this.lipsyncController = nil
+
 ---@public
 ---@param services serviceCollection
 ---@return boolean,string|nil
 function this.initialize(services)
-    this.eventRegistrar = services.eventRegistrar
-    this.settings       = services.settings
+    this.eventRegistrar    = services.eventRegistrar
+    this.settings          = services.settings
+    this.lipsyncController = services.actorLipsyncController
 
-    local events        = services.enums.events
-    this.eventHandlers  = {
+    local events           = services.enums.events
+    this.eventHandlers     = {
         [events.dialogueStarted] = this.onDialogueStarted,
         [events.dialogueEnded]   = this.onDialogueEnded,
     }
@@ -187,7 +192,7 @@ function this.update(delta)
         return
     end
 
-    local strength = this.updateStrength(animationData.lipsyncLevel, delta)
+    local strength = this.updateStrength(animationData, delta)
     if strength < this.speechTuning.minimumStrength then
         this.basePose.tracked = false
         return
@@ -201,10 +206,12 @@ function this.update(delta)
 end
 
 ---@private
----@param lipsyncLevel number
+---@param data tes3animationData
 ---@param delta number
 ---@return number
-function this.updateStrength(lipsyncLevel, delta)
+function this.updateStrength(data, delta)
+    local lipsyncLevel = this.lipsyncController.getLipsyncLevel(data)
+
     local speech = this.speech
     local tuning = this.speechTuning
     local mouthActive = lipsyncLevel > tuning.loudnessThreshold

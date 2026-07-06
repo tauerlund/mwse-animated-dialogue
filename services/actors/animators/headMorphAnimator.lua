@@ -41,18 +41,24 @@ this.resolved = false
 ---@private
 this.eventHandlers = nil
 
+---@private
+---@type actorLipsyncController
+this.lipsyncController = nil
+
 ---@public
 ---@param services serviceCollection
 ---@return boolean,string|nil
 function this.initialize(services)
-    this.eventRegistrar = services.eventRegistrar
-    this.settings       = services.settings
-    this.nodeResolver   = services.nodeResolver
+    this.eventRegistrar    = services.eventRegistrar
+    this.settings          = services.settings
+    this.nodeResolver      = services.nodeResolver
+    this.lipsyncController = services.actorLipsyncController
 
-    local events        = services.enums.events
-    this.eventHandlers  = {
-        [events.dialogueStarted] = this.onDialogueStarted,
-        [events.dialogueEnded]   = this.onDialogueEnded,
+    local events           = services.enums.events
+    this.eventHandlers     = {
+        [events.dialogueStarted]      = this.onDialogueStarted,
+        [events.dialogueEnded]        = this.onDialogueEnded,
+        [tes3.event.bodyPartsUpdated] = this.onBodyPartsUpdated,
     }
 
     this.eventRegistrar.register(this.eventHandlers)
@@ -81,6 +87,17 @@ function this.onDialogueEnded()
     this.morphers = {}
 end
 
+---@private
+---@param event bodyPartsUpdatedEventData
+function this.onBodyPartsUpdated(event)
+    if event.reference ~= this.actor then
+        return
+    end
+
+    this.resolved = false
+    this.morphers = {}
+end
+
 ---@public
 ---@param delta number
 function this.update(delta)
@@ -95,11 +112,12 @@ function this.update(delta)
 
     if not this.resolved then
         this.morphers = this.nodeResolver.resolveControllers(
-            animationData.headNode, ni.type.NiGeomMorpherController)
+            animationData.headNode,
+            ni.type.NiGeomMorpherController)
         this.resolved = true
     end
 
-    local phase = animationData.lipsyncLevel ~= -1
+    local phase = this.lipsyncController.isActive(animationData)
         and this.getTalkPhase(animationData)
         or this.getBlinkPhase(animationData, delta)
 
@@ -120,9 +138,11 @@ end
 function this.getTalkPhase(animationData)
     this.stopBlinkTimer()
 
-    local level     = animationData.lipsyncLevel
+    local level     = this.lipsyncController.getLipsyncLevel(animationData)
+
     local startTime = animationData.talkMorphStartTime
     local endTime   = animationData.talkMorphEndTime
+
     local phase     = math.remap(level, 0, 1, startTime, endTime)
     return math.clamp(phase, startTime, endTime)
 end

@@ -41,6 +41,10 @@ this.actorHeadLookAtAnimator = nil
 this.actorHeadBobAnimator = nil
 
 ---@private
+---@type actorLipsyncController
+this.actorLipsyncController = nil
+
+---@private
 this.paused = false
 
 ---@public
@@ -54,10 +58,11 @@ function this.initialize(services)
     this.actorHeadMorphAnimator  = services.actorHeadMorphAnimator
     this.actorHeadLookAtAnimator = services.actorHeadLookAtAnimator
     this.actorHeadBobAnimator    = services.actorHeadBobAnimator
+    this.actorLipsyncController  = services.actorLipsyncController
 
-    local events                  = services.enums.events
+    local events                 = services.enums.events
 
-    this.eventHandlers            = {
+    this.eventHandlers           = {
         lifetime = {
             [events.dialogueStarted] = this.onDialogueStarted,
             [events.dialogueEnded]   = this.onDialogueEnded,
@@ -131,6 +136,8 @@ function this.onEnterFrame(e)
     if this.paused then
         return
     end
+
+    this.actorLipsyncController.update(e.delta)
 
     for i = 1, #this.animators do
         this.animators[i].update(e.delta)

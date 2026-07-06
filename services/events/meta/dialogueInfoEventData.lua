@@ -1,4 +1,5 @@
 ---@meta
 ---@class dialogueInfoEventData
 ---@field public info tes3dialogueInfo
+---@field public text string
 ---@field public actor tes3reference

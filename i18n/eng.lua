@@ -25,6 +25,15 @@ return {
     [keys.actorHeadMorphAnimEnabled] = "Enable Head Morph Animations",
     [keys.actorHeadMorphAnimEnabledDescription] =
     "Enables or disables actor head morph animations during dialogue. This includes blinking and lip syncing (for voiced dialogue).",
+    [keys.actorSimulatedVoiceEnabled] = "Simulate Voice",
+    [keys.actorSimulatedVoiceEnabledDescription] =
+    "For lines that have no voiceover, synthesizes mouth and head movement from the response text so lip sync and head bob still play. Automatically stands aside on lines that do have a voiceover, so it is safe to leave on with a voice mod installed. Requires head morph and/or head bob to be enabled.",
+    [keys.actorSimulatedVoiceSpeed] = "Simulate Voice: Speed",
+    [keys.actorSimulatedVoiceSpeedDescription] =
+    "Scales how quickly the simulated speech articulates. 1.0 is the default; higher shortens the words and pauses for faster, more clipped speech, lower slows it down.",
+    [keys.actorSimulatedVoiceMaxDuration] = "Simulate Voice: Max Duration",
+    [keys.actorSimulatedVoiceMaxDurationDescription] =
+    "The longest a simulated line will keep animating, in seconds. Longer responses are capped at this value so the mouth movement does not run on far past the point the player has read the line.",
     [keys.actorHeadLookAtEnabled] = "Enable Head Look-At",
     [keys.actorHeadLookAtEnabledDescription] =
     "Enables or disables the actor's head turning to look at the camera during dialogue.",

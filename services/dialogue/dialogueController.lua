@@ -26,7 +26,7 @@ this.spokenDialogueTypes = {
 }
 
 ---@private
----@type tes3dialogueInfo|nil
+---@type { info: tes3dialogueInfo, text: string }|nil
 this.pendingInfo = nil
 
 ---@public
@@ -83,7 +83,7 @@ function this.onMenuDialogActivated(e)
     event.trigger(this.events.dialogueStarted, eventData)
 
     if pendingInfo then
-        this.emitDialogueInfo(pendingInfo, reference)
+        this.emitDialogueInfo(pendingInfo.info, pendingInfo.text, reference)
     end
 end
 
@@ -98,25 +98,27 @@ function this.onInfoGetText(e)
         return
     end
 
+    local text = e:loadOriginalText()
+    e.text = text
+
     local reference = this.resolveActor()
     if reference then
-        this.emitDialogueInfo(e.info, reference)
+        this.emitDialogueInfo(e.info, text, reference)
         return
     end
 
-    -- The greeting's info is retrieved before the service actor is established
-    -- (i.e. before MenuDialog's dialogueStarted). Buffer it until the actor is
-    -- known, then flush it in onMenuDialogActivated.
-    this.pendingInfo = e.info
+    this.pendingInfo = { info = e.info, text = text }
 end
 
 ---@private
 ---@param info tes3dialogueInfo
+---@param text string
 ---@param actor tes3reference
-function this.emitDialogueInfo(info, actor)
+function this.emitDialogueInfo(info, text, actor)
     ---@type dialogueInfoEventData
     local eventData = {
         info  = info,
+        text  = text,
         actor = actor
     }
     event.trigger(this.events.dialogueInfo, eventData)

@@ -32,6 +32,7 @@ local this = {
     actorHeadMorphAnimator = require("tauer.animated-dialogue.services.actors.animators.headMorphAnimator"),
     actorHeadLookAtAnimator = require("tauer.animated-dialogue.services.actors.animators.headLookAtAnimator"),
     actorHeadBobAnimator = require("tauer.animated-dialogue.services.actors.animators.headBobAnimator"),
+    actorLipsyncController = require("tauer.animated-dialogue.services.actors.actorLipsyncController"),
 
     bodySkeletonTicker = require("tauer.animated-dialogue.services.actors.body.bodySkeletonTicker"),
     clipBodyAnimator = require("tauer.animated-dialogue.services.actors.body.animators.clipBodyAnimator"),

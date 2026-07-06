@@ -75,6 +75,43 @@ function this.initialize(template, services)
     })
 
     headCategory:createOnOffButton({
+        label = translations.get(keys.actorSimulatedVoiceEnabled),
+        description = translations.get(keys.actorSimulatedVoiceEnabledDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "actorSimulatedVoiceEnabled",
+            table = services.settings
+        }),
+    })
+
+    headCategory:createSlider({
+        label = translations.get(keys.actorSimulatedVoiceSpeed),
+        description = translations.get(keys.actorSimulatedVoiceSpeedDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "actorSimulatedVoiceSpeed",
+            table = services.settings
+        }),
+        min = 0.5,
+        max = 5,
+        step = 0.1,
+        jump = 0.5,
+        decimalPlaces = 1,
+    })
+
+    headCategory:createSlider({
+        label = translations.get(keys.actorSimulatedVoiceMaxDuration),
+        description = translations.get(keys.actorSimulatedVoiceMaxDurationDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "actorSimulatedVoiceMaxDuration",
+            table = services.settings
+        }),
+        min = 1,
+        max = 20,
+        step = 1,
+        jump = 5,
+        decimalPlaces = 0,
+    })
+
+    headCategory:createOnOffButton({
         label = translations.get(keys.actorHeadLookAtEnabled),
         description = translations.get(keys.actorHeadLookAtEnabledDescription),
         variable = mwse.mcm.createTableVariable({

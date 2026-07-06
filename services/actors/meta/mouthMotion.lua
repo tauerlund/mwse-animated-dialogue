@@ -1,0 +1,6 @@
+---@meta
+---@class mouthMotion
+---@field public frequency1 number
+---@field public frequency2 number
+---@field public phase1 number
+---@field public phase2 number
