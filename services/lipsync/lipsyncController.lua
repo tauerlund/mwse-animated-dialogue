@@ -1,4 +1,4 @@
----@class actorLipsyncController : initializedService
+---@class lipsyncController : initializedService
 local this = {}
 
 ---@private

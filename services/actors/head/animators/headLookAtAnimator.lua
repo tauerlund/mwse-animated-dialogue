@@ -1,4 +1,4 @@
----@class actorHeadLookAtAnimator : initializedService, actorAnimator
+---@class headLookAtAnimator : initializedService, actorAnimator
 local this = {}
 
 ---@private

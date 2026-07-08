@@ -1,0 +1,4 @@
+---@meta
+---@class trackBinding
+---@field public target niNode
+---@field public controller niTimeController

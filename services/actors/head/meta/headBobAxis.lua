@@ -1,0 +1,7 @@
+---@meta
+---@class headBobAxis
+---@field public maxAngle number Peak offset in radians when motion and strength align.
+---@field public frequency1 number Base wave frequency (rad/s); jittered per dialogue.
+---@field public frequency2 number Base wave frequency (rad/s); jittered per dialogue.
+---@field public wave? headBobWave This dialogue's jittered frequencies and random phases.
+---@field public wander? headBobWander Slow random wander mixed in by the Randomness setting.

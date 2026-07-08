@@ -28,11 +28,13 @@ local this = {
     actorController = require("tauer.animated-dialogue.services.actors.actorController"),
     actorPoseBlender = require("tauer.animated-dialogue.services.actors.actorPoseBlender"),
     actorTrackBinder = require("tauer.animated-dialogue.services.actors.actorTrackBinder"),
-    actorTurnAnimator = require("tauer.animated-dialogue.services.actors.animators.turnAnimator"),
-    actorHeadMorphAnimator = require("tauer.animated-dialogue.services.actors.animators.headMorphAnimator"),
-    actorHeadLookAtAnimator = require("tauer.animated-dialogue.services.actors.animators.headLookAtAnimator"),
-    actorHeadBobAnimator = require("tauer.animated-dialogue.services.actors.animators.headBobAnimator"),
-    actorLipsyncController = require("tauer.animated-dialogue.services.actors.actorLipsyncController"),
+    actorTurnAnimator = require("tauer.animated-dialogue.services.actors.actorTurnAnimator"),
+
+    headMorphAnimator = require("tauer.animated-dialogue.services.actors.head.animators.headMorphAnimator"),
+    headLookAtAnimator = require("tauer.animated-dialogue.services.actors.head.animators.headLookAtAnimator"),
+    headBobAnimator = require("tauer.animated-dialogue.services.actors.head.animators.headBobAnimator"),
+
+    lipsyncController = require("tauer.animated-dialogue.services.lipsync.lipsyncController"),
 
     bodySkeletonTicker = require("tauer.animated-dialogue.services.actors.body.bodySkeletonTicker"),
     clipBodyAnimator = require("tauer.animated-dialogue.services.actors.body.animators.clipBodyAnimator"),

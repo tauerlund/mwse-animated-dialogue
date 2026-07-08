@@ -1,0 +1,7 @@
+---@meta
+---@class headBobWander
+---@field public from number
+---@field public to number
+---@field public value number
+---@field public elapsed number
+---@field public duration number

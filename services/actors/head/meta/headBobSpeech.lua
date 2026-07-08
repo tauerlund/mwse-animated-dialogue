@@ -1,0 +1,6 @@
+---@meta
+---@class headBobSpeech
+---@field public activity number Eases 0..1 as talking starts/stops; the steady part of the strength.
+---@field public loudness number Slow-smoothed lipsync level; accents the strength.
+---@field public holdTimer number
+---@field public isTalking boolean True while speaking or holding; bob time only advances then.

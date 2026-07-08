@@ -1,0 +1,4 @@
+---@meta
+---@class trackRestBone
+---@field public target niNode
+---@field public rotation tes3matrix33

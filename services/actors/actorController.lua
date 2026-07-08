@@ -29,19 +29,19 @@ this.bodyAnimatorSelector = nil
 this.actorTurnAnimator = nil
 
 ---@private
----@type actorHeadMorphAnimator
+---@type headMorphAnimator
 this.actorHeadMorphAnimator = nil
 
 ---@private
----@type actorHeadLookAtAnimator
+---@type headLookAtAnimator
 this.actorHeadLookAtAnimator = nil
 
 ---@private
----@type actorHeadBobAnimator
+---@type headBobAnimator
 this.actorHeadBobAnimator = nil
 
 ---@private
----@type actorLipsyncController
+---@type lipsyncController
 this.actorLipsyncController = nil
 
 ---@private
@@ -55,10 +55,10 @@ function this.initialize(services)
     this.settings                = services.settings
     this.bodyAnimatorSelector    = services.bodyAnimatorSelector
     this.actorTurnAnimator       = services.actorTurnAnimator
-    this.actorHeadMorphAnimator  = services.actorHeadMorphAnimator
-    this.actorHeadLookAtAnimator = services.actorHeadLookAtAnimator
-    this.actorHeadBobAnimator    = services.actorHeadBobAnimator
-    this.actorLipsyncController  = services.actorLipsyncController
+    this.actorHeadMorphAnimator  = services.headMorphAnimator
+    this.actorHeadLookAtAnimator = services.headLookAtAnimator
+    this.actorHeadBobAnimator    = services.headBobAnimator
+    this.actorLipsyncController  = services.lipsyncController
 
     local events                 = services.enums.events
 

@@ -1,4 +1,4 @@
----@class actorHeadBobAnimator : initializedService, actorAnimator
+---@class headBobAnimator : initializedService, actorAnimator
 local this = {}
 
 ---@private
@@ -81,7 +81,7 @@ this.actor = nil
 this.eventHandlers = nil
 
 ---@private
----@type actorLipsyncController
+---@type lipsyncController
 this.lipsyncController = nil
 
 ---@public
@@ -90,7 +90,7 @@ this.lipsyncController = nil
 function this.initialize(services)
     this.eventRegistrar    = services.eventRegistrar
     this.settings          = services.settings
-    this.lipsyncController = services.actorLipsyncController
+    this.lipsyncController = services.lipsyncController
 
     local events           = services.enums.events
     this.eventHandlers     = {

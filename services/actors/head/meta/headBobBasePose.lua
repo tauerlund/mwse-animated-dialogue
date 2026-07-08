@@ -1,0 +1,9 @@
+---@meta
+---@class headBobBasePose
+---@field public tracked boolean
+---@field public x number Bob-free euler the offsets ride on.
+---@field public y number
+---@field public z number
+---@field public writtenX number Euler written last frame; if it still matches, no other animator moved the head.
+---@field public writtenY number
+---@field public writtenZ number
