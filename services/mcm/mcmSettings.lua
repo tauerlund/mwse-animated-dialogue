@@ -15,6 +15,7 @@ this.defaults = {
     actorNativeAnimEnabled = true,
     creatureAnimEnabled = true,
     actorTalkAnimEnabled = true,
+    actorTalkAnimChance = 0.5,
     actorTurnEnabled = true,
     actorHeadMorphAnimEnabled = true,
     actorSimulatedVoiceEnabled = true,

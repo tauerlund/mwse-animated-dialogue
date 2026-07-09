@@ -20,6 +20,9 @@ return {
     [keys.actorTalkAnimEnabled] = "Enable Actor Talk Animations",
     [keys.actorTalkAnimEnabledDescription] =
     "Enables or disables actor talking gesture animations played while responding during dialogue. Requires actor animations to be enabled.",
+    [keys.actorTalkAnimChance] = "Talk Animation Chance",
+    [keys.actorTalkAnimChanceDescription] =
+    "The chance that a talking gesture plays on any given response, so actors do not gesture on every single line. Animations configured for a specific dialogue topic always play and ignore this setting.",
     [keys.actorTurnEnabled] = "Enable Actor Turning",
     [keys.actorTurnEnabledDescription] = "Enables or disables the actor turning to face the player when dialogue starts.",
     [keys.actorHeadMorphAnimEnabled] = "Enable Head Morph Animations",

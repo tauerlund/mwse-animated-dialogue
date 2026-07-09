@@ -61,6 +61,20 @@ function this.initialize(template, services)
         }),
     })
 
+    bodyCategory:createPercentageSlider({
+        label = translations.get(keys.actorTalkAnimChance),
+        description = translations.get(keys.actorTalkAnimChanceDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "actorTalkAnimChance",
+            table = services.settings
+        }),
+        min = 0,
+        max = 1,
+        step = 0.01,
+        jump = 0.1,
+        decimalPlaces = 0,
+    })
+
     local headCategory = page:createCategory({
         label = translations.get(keys.headCategory)
     })

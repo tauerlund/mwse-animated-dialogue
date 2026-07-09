@@ -100,13 +100,7 @@ function this.onDialogueInfo(info)
         return
     end
 
-    local talk = this.animationConfiguration.talk
-    local override = this.animationResolver.resolveOverride(info.id)
-
-    local animation =
-        override and override.animation or
-        talk and table.choice(talk)
-
+    local animation = this.resolveTalkAnimation(info)
     if not animation then
         return
     end
@@ -116,6 +110,24 @@ function this.onDialogueInfo(info)
         animation = animation,
         revertTo  = this.animationConfiguration.idle,
     })
+end
+
+---@private
+---@param info tes3dialogueInfo
+---@return animationDefinition|nil
+function this.resolveTalkAnimation(info)
+    local override = this.animationResolver.resolveOverride(info.id)
+    if override then
+        return override.animation
+    end
+
+    if math.random() >= this.settings.actorTalkAnimChance then
+        return nil
+    end
+
+    local talk = this.animationConfiguration.talk
+
+    return talk and table.choice(talk)
 end
 
 ---@public
