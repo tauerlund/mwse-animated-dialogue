@@ -6,8 +6,11 @@ local this = {}
 this.eventRegistrar = nil
 
 ---@private
----@type settings
-this.settings = nil
+---@type cameraPresetResolver
+this.cameraPresetResolver = nil
+
+---@private
+this.cameraAnchors = require("tauer.animated-dialogue.services.camera.presets.enums.cameraAnchors")
 
 ---@private
 ---@type tes3vector3
@@ -36,11 +39,11 @@ this.eventHandlers = nil
 ---@param services serviceCollection
 ---@return boolean,string|nil
 function this.initialize(services)
-    this.eventRegistrar = services.eventRegistrar
-    this.settings       = services.settings
+    this.eventRegistrar       = services.eventRegistrar
+    this.cameraPresetResolver = services.cameraPresetResolver
 
-    local events        = services.enums.events
-    this.eventHandlers  = {
+    local events              = services.enums.events
+    this.eventHandlers        = {
         [events.dialogueStarted] = this.onDialogueStarted,
         [events.dialogueEnded]   = this.onDialogueEnded,
     }
@@ -48,6 +51,13 @@ function this.initialize(services)
     this.eventRegistrar.register(this.eventHandlers)
 
     return true, nil
+end
+
+---@public
+---@param services serviceCollection
+---@return initializedService[]
+function this.dependencies(services)
+    return { services.cameraPresetResolver }
 end
 
 ---@public
@@ -59,7 +69,7 @@ end
 ---@param event dialogueStartedEventData
 function this.onDialogueStarted(event)
     local actor          = event.actor
-    local settings       = this.settings
+    local preset         = this.cameraPresetResolver.resolve()
     local playerPosition = tes3.player.position
     local actorForward   = tes3vector3.new(playerPosition.x - actor.position.x, playerPosition.y - actor.position.y, 0)
         :normalized()
@@ -77,20 +87,21 @@ function this.onDialogueStarted(event)
     local targetPosition = nil
     if headNode then
         aimPoint = headNode.worldTransform.translation
-        targetPosition = aimPoint
-            + actorForward * settings.distance
-            + actorRight * settings.horizontalOffset
-            + this.worldUp * settings.verticalOffset
+        targetPosition = this.resolveAnchorPoint(preset, headNode)
+            + actorForward * preset.distance
+            + actorRight * preset.horizontalOffset
+            + this.worldUp * preset.verticalOffset
     else
         targetPosition = cameraPosition
         aimPoint = tes3vector3.new(actor.position.x, actor.position.y, cameraPosition.z)
     end
 
     local lookDirection          = this.resolveLookDirection(aimPoint, targetPosition) or -actorForward
+    local targetRotation         = this.computeTargetRotation(preset, lookDirection)
 
     this.originalRotation        = tes3.worldController.worldCamera.cameraRoot.rotation:toQuaternion()
-    this.targetRotation          = this.computeTargetRotation(lookDirection)
-    this.targetDisplacement      = targetPosition - cameraPosition
+    this.targetRotation          = this.originalRotation:slerp(targetRotation, preset.rotationStrength)
+    this.targetDisplacement      = (targetPosition - cameraPosition) * preset.positionStrength
     this.cameraRootLocalPosition = tes3.worldController.worldCamera.cameraRoot.translation:copy()
 end
 
@@ -132,6 +143,24 @@ function this.resolveHeadNode(actor)
 end
 
 ---@private
+---@param preset cameraPreset
+---@param headNode niNode
+---@return tes3vector3
+function this.resolveAnchorPoint(preset, headNode)
+    local headPosition = headNode.worldTransform.translation
+    local eyePosition  = tes3.getPlayerEyePosition()
+
+    local x = headPosition.x
+    local y = headPosition.y
+    if preset.anchor == this.cameraAnchors.player then
+        x = eyePosition.x
+        y = eyePosition.y
+    end
+
+    return tes3vector3.new(x, y, math.lerp(eyePosition.z, headPosition.z, preset.verticalAnchor))
+end
+
+---@private
 ---@param aimPoint tes3vector3
 ---@param targetPosition tes3vector3
 ---@return tes3vector3|nil
@@ -144,11 +173,11 @@ function this.resolveLookDirection(aimPoint, targetPosition)
 end
 
 ---@private
+---@param preset cameraPreset
 ---@param lookDirection tes3vector3
 ---@return niQuaternion
-function this.computeTargetRotation(lookDirection)
-    local settings = this.settings
-    local right    = lookDirection:cross(this.worldUp)
+function this.computeTargetRotation(preset, lookDirection)
+    local right = lookDirection:cross(this.worldUp)
 
     if right:length() < 0.001 then
         right = tes3vector3.new(1, 0, 0)
@@ -156,17 +185,17 @@ function this.computeTargetRotation(lookDirection)
         right = right:normalized()
     end
 
-    if settings.yawOffset ~= 0 then
-        lookDirection = this.rotateAroundAxis(lookDirection, this.worldUp, settings.yawOffset)
-        right = this.rotateAroundAxis(right, this.worldUp, settings.yawOffset)
+    if preset.yawOffset ~= 0 then
+        lookDirection = this.rotateAroundAxis(lookDirection, this.worldUp, preset.yawOffset)
+        right = this.rotateAroundAxis(right, this.worldUp, preset.yawOffset)
     end
 
-    if settings.pitchOffset ~= 0 then
-        lookDirection = this.rotateAroundAxis(lookDirection, right, settings.pitchOffset)
+    if preset.pitchOffset ~= 0 then
+        lookDirection = this.rotateAroundAxis(lookDirection, right, preset.pitchOffset)
     end
 
-    if settings.rollOffset ~= 0 then
-        right = this.rotateAroundAxis(right, -lookDirection, settings.rollOffset)
+    if preset.rollOffset ~= 0 then
+        right = this.rotateAroundAxis(right, -lookDirection, preset.rollOffset)
     end
 
     local up = right:cross(lookDirection):normalized()

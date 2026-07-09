@@ -64,6 +64,13 @@ return {
     [keys.propsEnabled] = "Enable Props",
     [keys.propsEnabledDescription] =
     "Enables or disables actors holding props during dialogue (when configured)",
+    [keys.presetsCategory] = "Presets",
+    [keys.cameraPresetFirstPerson] = "First Person Preset",
+    [keys.cameraPresetFirstPersonDescription] =
+    "The camera preset used when dialogue starts while the player is in first person.",
+    [keys.cameraPresetThirdPerson] = "Third Person Preset",
+    [keys.cameraPresetThirdPersonDescription] =
+    "The camera preset used when dialogue starts while the player is in third person.",
     [keys.positionCategory] = "Position",
     [keys.rotationCategory] = "Rotation",
     [keys.timingCategory] = "Timing",

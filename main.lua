@@ -29,6 +29,8 @@ function this.initializeMod(_)
 	local initializedServices = {
 		services.ruleLoader,
 		services.eventLogger,
+		services.cameraPresetLoader,
+		services.cameraPresetResolver,
 		services.animationLoader,
 		services.animationResolver,
 		services.animationFilterer,
@@ -65,4 +67,4 @@ function this.initializeMod(_)
 end
 
 event.register(tes3.event.modConfigReady, this.initializeMcm)
-event.register(tes3.event.initialized, this.initializeMod)
+event.register(tes3.event.initialized, this.initializeMod, { priority = 200 })
