@@ -59,6 +59,7 @@ end
 ---@param event dialogueStartedEventData
 function this.onDialogueStarted(event)
     local actor          = event.actor
+    local settings       = this.settings
     local playerPosition = tes3.player.position
     local actorForward   = tes3vector3.new(playerPosition.x - actor.position.x, playerPosition.y - actor.position.y, 0)
         :normalized()
@@ -69,9 +70,27 @@ function this.onDialogueStarted(event)
         actorRight = actorRight:normalized()
     end
 
+    local cameraPosition = tes3.getCameraPosition()
+    local headNode       = this.resolveHeadNode(actor)
+
+    local aimPoint       = nil
+    local targetPosition = nil
+    if headNode then
+        aimPoint = headNode.worldTransform.translation
+        targetPosition = aimPoint
+            + actorForward * settings.distance
+            + actorRight * settings.horizontalOffset
+            + this.worldUp * settings.verticalOffset
+    else
+        targetPosition = cameraPosition
+        aimPoint = tes3vector3.new(actor.position.x, actor.position.y, cameraPosition.z)
+    end
+
+    local lookDirection          = this.resolveLookDirection(aimPoint, targetPosition) or -actorForward
+
     this.originalRotation        = tes3.worldController.worldCamera.cameraRoot.rotation:toQuaternion()
-    this.targetRotation          = this.computeTargetRotation(actorForward, actorRight)
-    this.targetDisplacement      = this.computeTargetDisplacement(actor, actorForward, actorRight)
+    this.targetRotation          = this.computeTargetRotation(lookDirection)
+    this.targetDisplacement      = targetPosition - cameraPosition
     this.cameraRootLocalPosition = tes3.worldController.worldCamera.cameraRoot.translation:copy()
 end
 
@@ -102,13 +121,40 @@ function this.update(cameraWrapper, skyWrapper, animationProgress, _)
 end
 
 ---@private
----@param actorForward tes3vector3
----@param actorRight tes3vector3
+---@param actor tes3reference
+---@return niNode|nil
+function this.resolveHeadNode(actor)
+    local animationData = actor.animationData
+    if not animationData then
+        return nil
+    end
+    return animationData.headNode
+end
+
+---@private
+---@param aimPoint tes3vector3
+---@param targetPosition tes3vector3
+---@return tes3vector3|nil
+function this.resolveLookDirection(aimPoint, targetPosition)
+    local lookDirection = aimPoint - targetPosition
+    if lookDirection:length() < 0.001 then
+        return nil
+    end
+    return lookDirection:normalized()
+end
+
+---@private
+---@param lookDirection tes3vector3
 ---@return niQuaternion
-function this.computeTargetRotation(actorForward, actorRight)
-    local settings      = this.settings
-    local lookDirection = -actorForward
-    local right         = lookDirection:cross(this.worldUp)
+function this.computeTargetRotation(lookDirection)
+    local settings = this.settings
+    local right    = lookDirection:cross(this.worldUp)
+
+    if right:length() < 0.001 then
+        right = tes3vector3.new(1, 0, 0)
+    else
+        right = right:normalized()
+    end
 
     if settings.yawOffset ~= 0 then
         lookDirection = this.rotateAroundAxis(lookDirection, this.worldUp, settings.yawOffset)
@@ -116,13 +162,11 @@ function this.computeTargetRotation(actorForward, actorRight)
     end
 
     if settings.pitchOffset ~= 0 then
-        lookDirection = this.rotateAroundAxis(lookDirection, actorRight, settings.pitchOffset)
-        right = this.rotateAroundAxis(right, actorRight, settings.pitchOffset)
+        lookDirection = this.rotateAroundAxis(lookDirection, right, settings.pitchOffset)
     end
 
     if settings.rollOffset ~= 0 then
-        lookDirection = this.rotateAroundAxis(lookDirection, actorForward, settings.rollOffset)
-        right = this.rotateAroundAxis(right, actorForward, settings.rollOffset)
+        right = this.rotateAroundAxis(right, -lookDirection, settings.rollOffset)
     end
 
     local up = right:cross(lookDirection):normalized()
@@ -132,29 +176,6 @@ function this.computeTargetRotation(actorForward, actorRight)
         right.y, lookDirection.y, up.y,
         right.z, lookDirection.z, up.z
     ):toQuaternion()
-end
-
----@private
----@param actor tes3reference
----@param actorForward tes3vector3
----@param actorRight tes3vector3
----@return tes3vector3
-function this.computeTargetDisplacement(actor, actorForward, actorRight)
-    local animationData = actor.animationData
-    if not animationData or not animationData.headNode then
-        return tes3vector3.new(0, 0, 0)
-    end
-
-    local settings       = this.settings
-    local headPosition   = animationData.headNode.worldTransform.translation
-    local cameraPosition = tes3.getCameraPosition()
-
-    local targetPosition = headPosition
-        + actorForward * settings.distance
-        + actorRight * settings.horizontalOffset
-        + this.worldUp * settings.verticalOffset
-
-    return targetPosition - cameraPosition
 end
 
 ---@private
