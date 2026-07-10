@@ -1,10 +1,16 @@
 ---@class optionsPage : mcmPage
 local this = {}
 
+---@private
+---@type cameraPresetLoader
+this.cameraPresetLoader = nil
+
 ---@public
 ---@param template mwseMCMTemplate
 ---@param services serviceCollection
 function this.initialize(template, services)
+    this.cameraPresetLoader = services.cameraPresetLoader
+
     local translations = services.translations
     local keys = services.enums.translationKey
 
@@ -25,26 +31,27 @@ function this.initialize(template, services)
         label = translations.get(keys.presetsCategory)
     })
 
-    local options = this.buildPresetOptions(services.cameraPresetLoader)
 
     presetsCategory:createDropdown({
         label = translations.get(keys.cameraPresetFirstPerson),
         description = translations.get(keys.cameraPresetFirstPersonDescription),
-        options = options,
+        options = this.buildPresetOptions(),
         variable = mwse.mcm.createTableVariable({
             id = "cameraPresetFirstPerson",
             table = services.settings
         }),
+        postCreate = this.refreshOptions,
     })
 
     presetsCategory:createDropdown({
         label = translations.get(keys.cameraPresetThirdPerson),
         description = translations.get(keys.cameraPresetThirdPersonDescription),
-        options = options,
+        options = this.buildPresetOptions(),
         variable = mwse.mcm.createTableVariable({
             id = "cameraPresetThirdPerson",
             table = services.settings
         }),
+        postCreate = this.refreshOptions,
     })
 
     local swayCategory = page:createCategory({
@@ -87,14 +94,19 @@ function this.initialize(template, services)
         jump = 0.2,
         decimalPlaces = 2,
     })
-
 end
 
 ---@private
----@param cameraPresetLoader cameraPresetLoader
+---@param dropdown mwseMCMDropdown
+function this.refreshOptions(dropdown)
+    dropdown.options = this.buildPresetOptions()
+end
+
+---@private
 ---@return mwseMCMDropdownOption[]
-function this.buildPresetOptions(cameraPresetLoader)
+function this.buildPresetOptions()
     local options = {}
+    local cameraPresetLoader = this.cameraPresetLoader
 
     for _, id in ipairs(cameraPresetLoader.getIds()) do
         table.insert(options, {
