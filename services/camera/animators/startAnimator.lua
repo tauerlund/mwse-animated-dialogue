@@ -96,12 +96,15 @@ function this.onDialogueStarted(event)
         aimPoint = tes3vector3.new(actor.position.x, actor.position.y, cameraPosition.z)
     end
 
-    local lookDirection          = this.resolveLookDirection(aimPoint, targetPosition) or -actorForward
+    local displacement           = (targetPosition - cameraPosition) * preset.positionStrength
+    local restingPosition        = cameraPosition + displacement
+
+    local lookDirection          = this.resolveLookDirection(aimPoint, restingPosition) or -actorForward
     local targetRotation         = this.computeTargetRotation(preset, lookDirection)
 
     this.originalRotation        = tes3.worldController.worldCamera.cameraRoot.rotation:toQuaternion()
     this.targetRotation          = this.originalRotation:slerp(targetRotation, preset.rotationStrength)
-    this.targetDisplacement      = (targetPosition - cameraPosition) * preset.positionStrength
+    this.targetDisplacement      = displacement
     this.cameraRootLocalPosition = tes3.worldController.worldCamera.cameraRoot.translation:copy()
 end
 
