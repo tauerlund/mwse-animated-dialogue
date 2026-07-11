@@ -1,0 +1,14 @@
+---@meta
+
+---@class cameraPreset
+---@field public id string
+---@field public name string
+---@field public anchor cameraAnchor
+---@field public verticalAnchor number
+---@field public distance number
+---@field public horizontalOffset number
+---@field public verticalOffset number
+---@field public pitchOffset number
+---@field public yawOffset number
+---@field public rollOffset number
+---@field public animationDuration number

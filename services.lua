@@ -45,6 +45,8 @@ local this = {
     creatureConfigLoader = require("tauer.animated-dialogue.services.actors.creatures.creatureConfigLoader"),
     creatureAnimationResolver = require("tauer.animated-dialogue.services.actors.creatures.creatureAnimationResolver"),
 
+    cameraPresetLoader = require("tauer.animated-dialogue.services.camera.presets.cameraPresetLoader"),
+    cameraPresetResolver = require("tauer.animated-dialogue.services.camera.presets.cameraPresetResolver"),
     cameraController = require("tauer.animated-dialogue.services.camera.cameraController"),
     cameraStartAnimator = require("tauer.animated-dialogue.services.camera.animators.startAnimator"),
     cameraSwayAnimator = require("tauer.animated-dialogue.services.camera.animators.swayAnimator"),
@@ -77,6 +79,7 @@ local this = {
         events = require("tauer.animated-dialogue.services.events.enums.events"),
         translationKey = require("tauer.animated-dialogue.services.translations.enums.translationKey"),
         effectModes = require("tauer.animated-dialogue.services.mcm.pages.enums.effectModes"),
+        cameraAnchors = require("tauer.animated-dialogue.services.camera.presets.enums.cameraAnchors"),
     }
 }
 

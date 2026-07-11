@@ -29,6 +29,14 @@ this.skyWrapper = nil
 this.animationTime = 0
 
 ---@private
+---@type number
+this.animationDuration = 0
+
+---@private
+---@type cameraPresetResolver
+this.cameraPresetResolver = nil
+
+---@private
 ---@type cameraAnimator[]
 this.animators = {}
 
@@ -47,12 +55,13 @@ this.paused = false
 ---@param services serviceCollection
 ---@return boolean,string|nil
 function this.initialize(services)
-    this.eventRegistrar      = services.eventRegistrar
-    this.settings            = services.settings
-    this.cameraStartAnimator = services.cameraStartAnimator
-    this.cameraSwayAnimator  = services.cameraSwayAnimator
+    this.eventRegistrar       = services.eventRegistrar
+    this.settings             = services.settings
+    this.cameraStartAnimator  = services.cameraStartAnimator
+    this.cameraSwayAnimator   = services.cameraSwayAnimator
+    this.cameraPresetResolver = services.cameraPresetResolver
 
-    local events             = services.enums.events
+    local events              = services.enums.events
 
     this.eventHandlers       = {
         lifetime = {
@@ -72,6 +81,13 @@ function this.initialize(services)
 end
 
 ---@public
+---@param services serviceCollection
+---@return initializedService[]
+function this.dependencies(services)
+    return { services.cameraPresetResolver }
+end
+
+---@public
 function this.uninitialize()
     this.eventRegistrar.unregister(this.eventHandlers.lifetime)
 end
@@ -84,6 +100,7 @@ function this.onDialogueStarted(_)
     end
     this.setupWrappers()
     this.animationTime = 0
+    this.animationDuration = this.cameraPresetResolver.resolve().animationDuration
 
     this.animators = { this.cameraStartAnimator }
 
@@ -119,12 +136,12 @@ function this.onEnterFrame(e)
         return
     end
 
-    local settings     = this.settings
-    this.animationTime = math.min(this.animationTime + e.delta, settings.animationDuration)
+    local duration     = this.animationDuration
+    this.animationTime = math.min(this.animationTime + e.delta, duration)
 
     local t            = 1
-    if settings.animationDuration > 0 then
-        t = math.ease.smoothstep(this.animationTime / settings.animationDuration)
+    if duration > 0 then
+        t = math.ease.smoothstep(this.animationTime / duration)
     end
 
     for i = 1, #this.animators do

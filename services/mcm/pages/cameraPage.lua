@@ -1,10 +1,16 @@
 ---@class optionsPage : mcmPage
 local this = {}
 
+---@private
+---@type cameraPresetLoader
+this.cameraPresetLoader = nil
+
 ---@public
 ---@param template mwseMCMTemplate
 ---@param services serviceCollection
 function this.initialize(template, services)
+    this.cameraPresetLoader = services.cameraPresetLoader
+
     local translations = services.translations
     local keys = services.enums.translationKey
 
@@ -21,108 +27,31 @@ function this.initialize(template, services)
         }),
     })
 
-    local positionCategory = page:createCategory({
-        label = translations.get(keys.positionCategory)
+    local presetsCategory = page:createCategory({
+        label = translations.get(keys.presetsCategory)
     })
 
-    positionCategory:createSlider({
-        label = translations.get(keys.distance),
-        description = translations.get(keys.distanceDescription),
+
+    presetsCategory:createDropdown({
+        label = translations.get(keys.cameraPresetFirstPerson),
+        description = translations.get(keys.cameraPresetFirstPersonDescription),
+        options = this.buildPresetOptions(),
         variable = mwse.mcm.createTableVariable({
-            id = "distance",
+            id = "cameraPresetFirstPerson",
             table = services.settings
         }),
-        min = 0,
-        max = 500,
-        step = 5,
-        jump = 50,
+        postCreate = this.refreshOptions,
     })
 
-    positionCategory:createSlider({
-        label = translations.get(keys.horizontalOffset),
-        description = translations.get(keys.horizontalOffsetDescription),
+    presetsCategory:createDropdown({
+        label = translations.get(keys.cameraPresetThirdPerson),
+        description = translations.get(keys.cameraPresetThirdPersonDescription),
+        options = this.buildPresetOptions(),
         variable = mwse.mcm.createTableVariable({
-            id = "horizontalOffset",
+            id = "cameraPresetThirdPerson",
             table = services.settings
         }),
-        min = -200,
-        max = 200,
-        step = 5,
-        jump = 20,
-    })
-
-    positionCategory:createSlider({
-        label = translations.get(keys.verticalOffset),
-        description = translations.get(keys.verticalOffsetDescription),
-        variable = mwse.mcm.createTableVariable({
-            id = "verticalOffset",
-            table = services.settings
-        }),
-        min = -200,
-        max = 200,
-        step = 5,
-        jump = 20,
-    })
-
-    local rotationCategory = page:createCategory({
-        label = translations.get(keys.rotationCategory)
-    })
-
-    rotationCategory:createSlider({
-        label = translations.get(keys.pitchOffset),
-        description = translations.get(keys.pitchOffsetDescription),
-        variable = mwse.mcm.createTableVariable({
-            id = "pitchOffset",
-            table = services.settings
-        }),
-        min = -45,
-        max = 45,
-        step = 1,
-        jump = 5,
-    })
-
-    rotationCategory:createSlider({
-        label = translations.get(keys.yawOffset),
-        description = translations.get(keys.yawOffsetDescription),
-        variable = mwse.mcm.createTableVariable({
-            id = "yawOffset",
-            table = services.settings
-        }),
-        min = -45,
-        max = 45,
-        step = 1,
-        jump = 5,
-    })
-
-    rotationCategory:createSlider({
-        label = translations.get(keys.rollOffset),
-        description = translations.get(keys.rollOffsetDescription),
-        variable = mwse.mcm.createTableVariable({
-            id = "rollOffset",
-            table = services.settings
-        }),
-        min = -45,
-        max = 45,
-        step = 1,
-        jump = 5,
-    })
-
-    local timingCategory = page:createCategory({
-        label = translations.get(keys.timingCategory)
-    })
-
-    timingCategory:createSlider({
-        label = translations.get(keys.animationDuration),
-        description = translations.get(keys.animationDurationDescription),
-        variable = mwse.mcm.createTableVariable({
-            id = "animationDuration",
-            table = services.settings
-        }),
-        min = 0,
-        max = 5,
-        step = 0.1,
-        jump = 0.5,
-        decimalPlaces = 1,
+        postCreate = this.refreshOptions,
     })
 
     local swayCategory = page:createCategory({
@@ -165,7 +94,28 @@ function this.initialize(template, services)
         jump = 0.2,
         decimalPlaces = 2,
     })
+end
 
+---@private
+---@param dropdown mwseMCMDropdown
+function this.refreshOptions(dropdown)
+    dropdown.options = this.buildPresetOptions()
+end
+
+---@private
+---@return mwseMCMDropdownOption[]
+function this.buildPresetOptions()
+    local options = {}
+    local cameraPresetLoader = this.cameraPresetLoader
+
+    for _, id in ipairs(cameraPresetLoader.getIds()) do
+        table.insert(options, {
+            label = cameraPresetLoader.getPreset(id).name or id,
+            value = id
+        })
+    end
+
+    return options
 end
 
 return this
