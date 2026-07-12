@@ -16,14 +16,6 @@ this.blinkTimer = 0
 this.blinkInterval = 0
 
 ---@private
----@type eventRegistrar
-this.eventRegistrar = nil
-
----@private
----@type settings
-this.settings = nil
-
----@private
 ---@type tes3reference
 this.actor = nil
 
@@ -33,13 +25,10 @@ this.nodeResolver = nil
 
 ---@private
 ---@type niTimeController[]
-this.morphers = {}
+this.morphers = nil
 
 ---@private
 this.resolved = false
-
----@private
-this.eventHandlers = nil
 
 ---@private
 ---@type lipsyncController
@@ -49,59 +38,53 @@ this.lipsyncController = nil
 ---@param services serviceCollection
 ---@return boolean,string|nil
 function this.initialize(services)
-    this.eventRegistrar    = services.eventRegistrar
-    this.settings          = services.settings
     this.nodeResolver      = services.nodeResolver
     this.lipsyncController = services.lipsyncController
-
-    local events           = services.enums.events
-    this.eventHandlers     = {
-        [events.dialogueStarted]      = this.onDialogueStarted,
-        [events.dialogueEnded]        = this.onDialogueEnded,
-        [tes3.event.bodyPartsUpdated] = this.onBodyPartsUpdated,
-    }
-
-    this.eventRegistrar.register(this.eventHandlers)
 
     return true, nil
 end
 
 ---@public
-function this.uninitialize()
-    this.eventRegistrar.unregister(this.eventHandlers)
+---@return headMorphAnimator
+function this.create()
+    local instance = setmetatable({}, { __index = this })
+
+    instance.actor = nil
+    instance.morphers = {}
+    instance.resolved = false
+    instance.blinkTimer = 0
+    instance.blinkInterval = 0
+
+    return instance
 end
 
----@private
----@param event dialogueStartedEventData
-function this.onDialogueStarted(event)
-    this.actor = event.actor
-    this.resolved = false
-    this.morphers = {}
-    this.startBlinkTimer()
+---@public
+---@param reference tes3reference
+function this:begin(reference)
+    self.actor = reference
+    self.resolved = false
+    self.morphers = {}
+    self:startBlinkTimer()
 end
 
----@private
-function this.onDialogueEnded()
-    this.actor = nil
-    this.resolved = false
-    this.morphers = {}
-end
-
----@private
----@param event bodyPartsUpdatedEventData
-function this.onBodyPartsUpdated(event)
-    if event.reference ~= this.actor then
+--- A body-part rebuild mid-dialogue (an equipment change) swaps the head morph
+--- geometry for a new node with the same name, leaving the cache pointing at
+--- dead geometry - the mouth would freeze from that topic on.
+---@public
+---@param e bodyPartsUpdatedEventData
+function this:onBodyPartsUpdated(e)
+    if e.reference ~= self.actor then
         return
     end
 
-    this.resolved = false
-    this.morphers = {}
+    self.resolved = false
+    self.morphers = {}
 end
 
 ---@public
 ---@param delta number
-function this.update(delta)
-    local animationData = this.actor.animationData
+function this:update(delta)
+    local animationData = self.actor.animationData
     if not animationData then
         return
     end
@@ -110,19 +93,19 @@ function this.update(delta)
         return
     end
 
-    if not this.resolved then
-        this.morphers = this.nodeResolver.resolveControllers(
+    if not self.resolved then
+        self.morphers = self.nodeResolver.resolveControllers(
             animationData.headNode,
             ni.type.NiGeomMorpherController)
-        this.resolved = true
+        self.resolved = true
     end
 
-    local phase = this.lipsyncController.isActive(animationData)
-        and this.getTalkPhase(animationData)
-        or this.getBlinkPhase(animationData, delta)
+    local phase = self.lipsyncController.isActive(animationData)
+        and self:getTalkPhase(animationData)
+        or self:getBlinkPhase(animationData, delta)
 
-    for i = 1, #this.morphers do
-        local target = this.morphers[i].target --[[@as niNode]]
+    for i = 1, #self.morphers do
+        local target = self.morphers[i].target --[[@as niNode]]
         if target then
             target:update({
                 controllers = true,
@@ -135,10 +118,10 @@ end
 ---@private
 ---@param animationData tes3animationData
 ---@return number
-function this.getTalkPhase(animationData)
-    this.stopBlinkTimer()
+function this:getTalkPhase(animationData)
+    self:stopBlinkTimer()
 
-    local level     = this.lipsyncController.getLipsyncLevel(animationData)
+    local level     = self.lipsyncController.getLipsyncLevel(animationData)
 
     local startTime = animationData.talkMorphStartTime
     local endTime   = animationData.talkMorphEndTime
@@ -151,20 +134,20 @@ end
 ---@param animationData tes3animationData
 ---@param delta number
 ---@return number
-function this.getBlinkPhase(animationData, delta)
+function this:getBlinkPhase(animationData, delta)
     local startTime = animationData.blinkMorphStartTime
     local endTime   = animationData.blinkMorphEndTime
     local duration  = endTime - startTime
 
-    this.blinkTimer = this.blinkTimer + delta
+    self.blinkTimer = self.blinkTimer + delta
 
-    if this.blinkTimer < this.blinkInterval then
+    if self.blinkTimer < self.blinkInterval then
         return startTime
     end
 
-    local elapsed = this.blinkTimer - this.blinkInterval
+    local elapsed = self.blinkTimer - self.blinkInterval
     if elapsed >= duration then
-        this.startBlinkTimer()
+        self:startBlinkTimer()
         return startTime
     end
 
@@ -172,20 +155,20 @@ function this.getBlinkPhase(animationData, delta)
 end
 
 ---@private
-function this.startBlinkTimer()
-    this.blinkTimer = 0
-    this.blinkInterval = this.getRandomBlinkInterval()
+function this:startBlinkTimer()
+    self.blinkTimer = 0
+    self.blinkInterval = self:getRandomBlinkInterval()
 end
 
 ---@private
-function this.stopBlinkTimer()
-    this.blinkTimer = 0
+function this:stopBlinkTimer()
+    self.blinkTimer = 0
 end
 
 ---@private
 ---@return number
-function this.getRandomBlinkInterval()
-    return this.minBlinkInterval + math.random() * (this.maxBlinkInterval - this.minBlinkInterval)
+function this:getRandomBlinkInterval()
+    return self.minBlinkInterval + math.random() * (self.maxBlinkInterval - self.minBlinkInterval)
 end
 
 return this

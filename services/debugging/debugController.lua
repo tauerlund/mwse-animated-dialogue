@@ -26,8 +26,8 @@ this.debugSliderPanel = nil
 this.animationLoader = nil
 
 ---@private
----@type clipBodyAnimator
-this.clipBodyAnimator = nil
+---@type actorController
+this.actorController = nil
 
 ---@private
 ---@type translations
@@ -81,7 +81,7 @@ function this.initialize(services)
     this.guiBuilder = services.guiBuilder
     this.debugSliderPanel = services.debuggingSliderPanel
     this.animationLoader = services.animationLoader
-    this.clipBodyAnimator = services.clipBodyAnimator
+    this.actorController = services.actorController
     this.translations = services.translations
     this.translationKey = services.enums.translationKey
 
@@ -256,16 +256,7 @@ function this.buildPreviewControls(content)
     if #baseEntries > 0 then
         this.buildDropdown(content, "Preview Animation",
             "Force a base clip onto this NPC.", baseEntries,
-            function(entry)
-                if not this.currentNpc then
-                    return
-                end
-
-                this.clipBodyAnimator.play({
-                    actor     = this.currentNpc,
-                    animation = entry.animation,
-                })
-            end)
+            this.previewAnimation)
     end
 
     if #overrideEntries > 0 then
@@ -279,6 +270,27 @@ function this.buildPreviewControls(content)
                 this.triggerDialogueInfo(entry.dialogueId)
             end)
     end
+end
+
+--- Forces a base clip straight onto the actor's body animator, bypassing
+--- resolution. Only the clip strategy plays authored clips - a creature or a
+--- custom-override actor has nothing to preview onto.
+---@private
+---@param entry previewEntry
+function this.previewAnimation(entry)
+    if not this.currentNpc then
+        return
+    end
+
+    local bodyAnimator = this.actorController.getActorBodyAnimator()
+    if not bodyAnimator or not bodyAnimator.play then
+        return
+    end
+
+    bodyAnimator:play({
+        actor     = this.currentNpc,
+        animation = entry.animation,
+    })
 end
 
 ---@private

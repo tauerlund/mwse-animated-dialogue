@@ -17,6 +17,10 @@ this.actorPoseBlender = nil
 this.bodySkeletonTicker = nil
 
 ---@private
+---@type actorPoseBlender
+this.poseBlender = nil
+
+---@private
 ---@type bodySkeletonTicker.state
 this.ticker = nil
 
@@ -31,8 +35,6 @@ function this.initialize(services)
     this.actorPoseBlender   = services.actorPoseBlender
     this.bodySkeletonTicker = services.bodySkeletonTicker
 
-    this.ticker             = this.bodySkeletonTicker.create()
-
     return true, nil
 end
 
@@ -44,35 +46,42 @@ function this.handles(reference)
         return false
     end
 
-    if not this.settings.actorNativeAnimEnabled then
-        return false
-    end
-
     local animationData = reference.animationData
     return animationData ~= nil and animationData.hasOverrideAnimations
 end
 
 ---@public
+---@return overrideBodyAnimator
+function this.create()
+    local instance = setmetatable({}, { __index = this })
+
+    instance.poseBlender = this.actorPoseBlender.create()
+    instance.ticker = this.bodySkeletonTicker.create()
+
+    return instance
+end
+
+---@public
 ---@param reference tes3reference
-function this.begin(reference)
-    local start, stop = this.resolveNativeWindow(reference)
+function this:begin(reference)
+    local start, stop = self:resolveNativeWindow(reference)
     if not start or not stop then
         return
     end
 
-    this.bodySkeletonTicker.begin(this.ticker, {
+    self.bodySkeletonTicker.begin(self.ticker, {
         actor              = reference,
         start              = start,
         stop               = stop,
-        poseBlender        = this.actorPoseBlender,
-        transitionDuration = this.settings.transitionDuration,
+        poseBlender        = self.poseBlender,
+        transitionDuration = self.settings.transitionDuration,
     })
 end
 
 ---@private
 ---@param reference tes3reference
 ---@return number|nil start, number|nil stop
-function this.resolveNativeWindow(reference)
+function this:resolveNativeWindow(reference)
     local animationData = reference.animationData
     if not animationData then
         return nil
@@ -87,7 +96,7 @@ function this.resolveNativeWindow(reference)
     local timings     = animationGroup.actionTimings
     local start, stop = timings[1], timings[#timings]
     if not start or not stop or stop <= start then
-        this.logger:warn("Native animation window invalid for '%s' (group %s); skipping", reference.object.id, group)
+        self.logger:warn("Native animation window invalid for '%s' (group %s); skipping", reference.object.id, group)
         return nil
     end
 
@@ -95,14 +104,14 @@ function this.resolveNativeWindow(reference)
 end
 
 ---@public
-function this.stop()
-    this.bodySkeletonTicker.reset(this.ticker)
+function this:stop()
+    self.bodySkeletonTicker.reset(self.ticker)
 end
 
 ---@public
 ---@param delta number
-function this.update(delta)
-    this.bodySkeletonTicker.update(this.ticker, delta)
+function this:update(delta)
+    self.bodySkeletonTicker.update(self.ticker, delta)
 end
 
 return this

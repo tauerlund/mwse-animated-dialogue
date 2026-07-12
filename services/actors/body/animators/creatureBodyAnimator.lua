@@ -18,6 +18,10 @@ this.actorPoseBlender = nil
 this.bodySkeletonTicker = nil
 
 ---@private
+---@type actorPoseBlender
+this.poseBlender = nil
+
+---@private
 ---@type bodySkeletonTicker.state
 this.ticker = nil
 
@@ -32,8 +36,6 @@ function this.initialize(services)
     this.actorPoseBlender          = services.actorPoseBlender
     this.creatureAnimationResolver = services.creatureAnimationResolver
     this.bodySkeletonTicker        = services.bodySkeletonTicker
-
-    this.ticker                    = this.bodySkeletonTicker.create()
 
     return true, nil
 end
@@ -50,19 +52,29 @@ end
 ---@return boolean
 function this.handles(reference)
     return reference.object.objectType == tes3.objectType.creature
-        and this.settings.creatureAnimEnabled
+end
+
+---@public
+---@return creatureBodyAnimator
+function this.create()
+    local instance = setmetatable({}, { __index = this })
+
+    instance.poseBlender = this.actorPoseBlender.create()
+    instance.ticker = this.bodySkeletonTicker.create()
+
+    return instance
 end
 
 ---@public
 ---@param reference tes3reference
-function this.begin(reference)
+function this:begin(reference)
     if not reference.animationData then
         return
     end
 
-    local drive = this.creatureAnimationResolver.resolve(reference)
+    local drive = self.creatureAnimationResolver.resolve(reference)
     if not drive then
-        this.logger:warn("No usable idle group for creature '%s'; skipping", reference.object.id)
+        self.logger:warn("No usable idle group for creature '%s'; skipping", reference.object.id)
         return
     end
 
@@ -73,24 +85,24 @@ function this.begin(reference)
         loopCount = -1,
     })
 
-    this.bodySkeletonTicker.begin(this.ticker, {
+    self.bodySkeletonTicker.begin(self.ticker, {
         actor              = reference,
         start              = drive.start,
         stop               = drive.stop,
-        poseBlender        = this.actorPoseBlender,
-        transitionDuration = this.settings.transitionDuration,
+        poseBlender        = self.poseBlender,
+        transitionDuration = self.settings.transitionDuration,
     })
 end
 
 ---@public
-function this.stop()
-    this.bodySkeletonTicker.reset(this.ticker)
+function this:stop()
+    self.bodySkeletonTicker.reset(self.ticker)
 end
 
 ---@public
 ---@param delta number
-function this.update(delta)
-    this.bodySkeletonTicker.update(this.ticker, delta)
+function this:update(delta)
+    self.bodySkeletonTicker.update(self.ticker, delta)
 end
 
 return this

@@ -38,6 +38,10 @@ this.activeAnimation = nil
 this.revertTo = nil
 
 ---@private
+---@type actorPoseBlender
+this.poseBlender = nil
+
+---@private
 ---@type track
 this.bodyTrack = nil
 
@@ -59,9 +63,6 @@ function this.initialize(services)
     this.animationResolver = services.animationResolver
     this.events            = services.enums.events
 
-    this.bodyTrack         = this.actorTrackBinder.create()
-    this.torchTrack        = this.actorTrackBinder.create()
-
     return true, nil
 end
 
@@ -70,20 +71,35 @@ end
 ---@return boolean
 function this.handles(reference)
     return reference.object.objectType == tes3.objectType.npc
-        and this.settings.actorAnimEnabled
+end
+
+---@public
+---@return clipBodyAnimator
+function this.create()
+    local instance = setmetatable({}, { __index = this })
+
+    instance.actor = nil
+    instance.animationConfiguration = nil
+    instance.activeAnimation = nil
+    instance.revertTo = nil
+    instance.poseBlender = this.actorPoseBlender.create()
+    instance.bodyTrack = this.actorTrackBinder.create()
+    instance.torchTrack = this.actorTrackBinder.create()
+
+    return instance
 end
 
 ---@public
 ---@param reference tes3reference
-function this.begin(reference)
-    local configuration = this.animationResolver.resolveBase(reference)
+function this:begin(reference)
+    local configuration = self.animationResolver.resolveBase(reference)
     if not configuration then
         return
     end
 
-    this.animationConfiguration = configuration
+    self.animationConfiguration = configuration
 
-    this.play({
+    self:play({
         actor     = reference,
         animation = configuration.idle,
     })
@@ -91,111 +107,111 @@ end
 
 ---@public
 ---@param info tes3dialogueInfo
-function this.onDialogueInfo(info)
-    if not this.settings.actorTalkAnimEnabled then
+function this:onDialogueInfo(info)
+    if not self.settings.actorTalkAnimEnabled then
         return
     end
 
-    if not this.animationConfiguration then
+    if not self.animationConfiguration then
         return
     end
 
-    local animation = this.resolveTalkAnimation(info)
+    local animation = self:resolveTalkAnimation(info)
     if not animation then
         return
     end
 
-    this.play({
-        actor     = this.actor,
+    self:play({
+        actor     = self.actor,
         animation = animation,
-        revertTo  = this.animationConfiguration.idle,
+        revertTo  = self.animationConfiguration.idle,
     })
 end
 
 ---@private
 ---@param info tes3dialogueInfo
 ---@return animationDefinition|nil
-function this.resolveTalkAnimation(info)
-    local override = this.animationResolver.resolveOverride(info.id)
+function this:resolveTalkAnimation(info)
+    local override = self.animationResolver.resolveOverride(info.id)
     if override then
         return override.animation
     end
 
-    if math.random() >= this.settings.actorTalkAnimChance then
+    if math.random() >= self.settings.actorTalkAnimChance then
         return nil
     end
 
-    local talk = this.animationConfiguration.talk
+    local talk = self.animationConfiguration.talk
 
     return talk and table.choice(talk)
 end
 
 ---@public
 ---@param params clipBodyAnimator.play.param
-function this.play(params)
+function this:play(params)
     if not params.actor.animationData then
         return
     end
 
-    this.actor = params.actor
-    this.revertTo = params.revertTo
+    self.actor = params.actor
+    self.revertTo = params.revertTo
 
-    this.applyAnimation(params.animation, params.revertTo == nil)
+    self:applyAnimation(params.animation, params.revertTo == nil)
 end
 
 ---@public
-function this.stop()
-    this.clearPlayback()
-    this.animationConfiguration = nil
-    this.actorPoseBlender.reset()
+function this:stop()
+    self:clearPlayback()
+    self.animationConfiguration = nil
+    self.poseBlender:reset()
 end
 
 ---@private
-function this.clearPlayback()
-    this.resetTracks()
-    this.setActiveAnimation(nil)
-    this.actor = nil
-    this.revertTo = nil
+function this:clearPlayback()
+    self:resetTracks()
+    self:setActiveAnimation(nil)
+    self.actor = nil
+    self.revertTo = nil
 end
 
 ---@private
 ---@param animation animationDefinition|nil
-function this.setActiveAnimation(animation)
-    if this.activeAnimation then
+function this:setActiveAnimation(animation)
+    if self.activeAnimation then
         ---@type animationEventData
-        local eventData = { animation = this.activeAnimation }
-        event.trigger(this.events.animationEnded, eventData)
+        local eventData = { animation = self.activeAnimation }
+        event.trigger(self.events.animationEnded, eventData)
     end
 
-    this.activeAnimation = animation
+    self.activeAnimation = animation
 
     if animation then
         ---@type animationEventData
         local eventData = { animation = animation }
-        event.trigger(this.events.animationStarted, eventData)
+        event.trigger(self.events.animationStarted, eventData)
     end
 end
 
 ---@private
 ---@param animation animationDefinition
 ---@param loop boolean
-function this.applyAnimation(animation, loop)
-    local animationData = this.actor.animationData
+function this:applyAnimation(animation, loop)
+    local animationData = self.actor.animationData
     if not animationData then
         return
     end
 
-    this.resetTracks()
-    this.actorPoseBlender.capture(animationData.actorNode, this.settings.transitionDuration)
+    self:resetTracks()
+    self.poseBlender:capture(animationData.actorNode, self.settings.transitionDuration)
 
-    local holdingTorch = this.isHoldingTorch()
+    local holdingTorch = self:isHoldingTorch()
 
     local region       = holdingTorch and
-        this.actorTrackBinder.region.body or
-        this.actorTrackBinder.region.all
+        self.actorTrackBinder.region.body or
+        self.actorTrackBinder.region.all
 
-    local count        = this.actorTrackBinder.bind({
-        track     = this.bodyTrack,
+    local count        = self.actorTrackBinder.bind({
+        track     = self.bodyTrack,
         actorNode = animationData.actorNode,
         file      = animation.file,
         group     = animation.group,
@@ -204,40 +220,40 @@ function this.applyAnimation(animation, loop)
     })
 
     if count == 0 then
-        this.clearPlayback()
+        self:clearPlayback()
         return
     end
 
-    this.setActiveAnimation(animation)
+    self:setActiveAnimation(animation)
 
     if holdingTorch then
-        this.applyTorchArm(animationData.actorNode)
+        self:applyTorchArm(animationData.actorNode)
     end
 end
 
 ---@private
 ---@param actorNode niNode
-function this.applyTorchArm(actorNode)
-    this.actorTrackBinder.bind({
-        track     = this.torchTrack,
+function this:applyTorchArm(actorNode)
+    self.actorTrackBinder.bind({
+        track     = self.torchTrack,
         actorNode = actorNode,
-        file      = this.torchArmAnimation.file,
-        group     = this.torchArmAnimation.group,
-        region    = this.actorTrackBinder.region.leftArm,
+        file      = self.torchArmAnimation.file,
+        group     = self.torchArmAnimation.group,
+        region    = self.actorTrackBinder.region.leftArm,
         loop      = true,
     })
 end
 
----@private
+---@public
 ---@return boolean
-function this.overridesLookAt()
-    return this.activeAnimation ~= nil and this.activeAnimation.overrideLookAt == true
+function this:overridesLookAt()
+    return self.activeAnimation ~= nil and self.activeAnimation.overrideLookAt == true
 end
 
 ---@private
 ---@return boolean
-function this.isHoldingTorch()
-    local mobile = this.actor.mobile
+function this:isHoldingTorch()
+    local mobile = self.actor.mobile
     if not mobile then
         return false
     end
@@ -249,14 +265,14 @@ function this.isHoldingTorch()
 end
 
 ---@private
-function this.resetTracks()
-    this.actorTrackBinder.reset(this.bodyTrack)
-    this.actorTrackBinder.reset(this.torchTrack)
+function this:resetTracks()
+    self.actorTrackBinder.reset(self.bodyTrack)
+    self.actorTrackBinder.reset(self.torchTrack)
 end
 
 ---@private
 ---@param track track
-function this.updateTrack(track)
+function this:updateTrack(track)
     for i = 1, track.count do
         track.controllers[i].target:update({
             controllers = true,
@@ -272,7 +288,7 @@ end
 ---@private
 ---@param track track
 ---@param delta number
-function this.advanceTrack(track, delta)
+function this:advanceTrack(track, delta)
     if track.count == 0 then
         return
     end
@@ -286,40 +302,40 @@ function this.advanceTrack(track, delta)
     if track.looping then
         track.phase = track.start
     else
-        this.applyAnimation(this.revertTo, true)
+        self:applyAnimation(self.revertTo, true)
     end
 end
 
 ---@public
 ---@param delta number
-function this.update(delta)
-    if not this.actor then
+function this:update(delta)
+    if not self.actor then
         return
     end
 
-    local animationData = this.actor.animationData
+    local animationData = self.actor.animationData
     if not animationData then
         return
     end
 
-    this.updateTrack(this.bodyTrack)
-    this.updateTrack(this.torchTrack)
+    self:updateTrack(self.bodyTrack)
+    self:updateTrack(self.torchTrack)
 
     animationData.actorNode:update({ children = true })
 
-    if this.actorPoseBlender.isActive() then
-        this.actorPoseBlender.update(animationData.actorNode, delta)
+    if self.poseBlender:isActive() then
+        self.poseBlender:update(animationData.actorNode, delta)
     end
 
-    if not this.overridesLookAt() then
+    if not self:overridesLookAt() then
         animationData.headNode:update({
             controllers = true,
             time        = 0
         })
     end
 
-    this.advanceTrack(this.torchTrack, delta)
-    this.advanceTrack(this.bodyTrack, delta)
+    self:advanceTrack(self.torchTrack, delta)
+    self:advanceTrack(self.bodyTrack, delta)
 end
 
 return this

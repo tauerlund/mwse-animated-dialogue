@@ -1,0 +1,5 @@
+---@meta
+---@class actorTurnAnimator.begin.param
+---@field reference tes3reference The reference that turns.
+---@field target tes3reference The reference it turns to face.
+---@field restoresOrientation? boolean Restore the original yaw when the dialogue ends.

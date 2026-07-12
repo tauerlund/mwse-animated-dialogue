@@ -1,0 +1,5 @@
+---@meta
+---@class headLookAtAnimator.begin.param
+---@field reference tes3reference The reference whose head aims.
+---@field target? tes3reference The reference to aim at. Omitted aims at the camera.
+---@field bodyAnimator? bodyAnimator The reference's body animator, consulted for clips that own the head.

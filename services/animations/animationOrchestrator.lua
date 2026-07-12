@@ -1,10 +1,11 @@
---- Routes the dialogue lifecycle to the actor's body-animation strategy: selects
---- one (bodyAnimatorSelector) at dialogue start, then forwards begin / dialogue
---- info / stop to it. It is strategy-agnostic - each strategy owns what it plays
---- (ordinary NPCs resolve dialogue clips; the native creature / custom-override
---- strategies self-resolve and ignore per-line info). The only cross-cutting
---- concern kept here is buffering a dialogue info that arrives before the actor
---- is established (the greeting case) and replaying it once begin has run.
+--- Routes spoken dialogue lines to the body-animation strategies driving the
+--- conversation. actorController owns the strategies (it builds and ticks them)
+--- and hands them over at dialogue start with a synchronous begin, keeping
+--- decide -> perform on one call stack. This service is strategy-agnostic: each
+--- strategy owns what it plays, and the ones that drive one continuous clip (the
+--- creature / custom-override strategies) simply omit onDialogueInfo. The only
+--- cross-cutting concern kept here is buffering a line that arrives before the
+--- strategies are established (the greeting case) and replaying it once they are.
 ---@class animationOrchestrator : initializedService
 local this = {}
 
@@ -13,19 +14,14 @@ local this = {}
 this.eventRegistrar = nil
 
 ---@private
----@type bodyAnimatorSelector
-this.bodyAnimatorSelector = nil
+---@type bodyAnimator[]
+this.bodyAnimators = {}
 
 ---@private
----@type bodyAnimator|nil
-this.activeBodyAnimator = nil
+this.active = false
 
 ---@private
----@type tes3reference
-this.actor = nil
-
----@private
----@type dialogueInfoEventData|nil
+---@type tes3dialogueInfo|nil
 this.pendingInfo = nil
 
 ---@private
@@ -36,15 +32,13 @@ this.eventHandlers = nil
 ---@param services serviceCollection
 ---@return boolean,string|nil
 function this.initialize(services)
-    this.eventRegistrar       = services.eventRegistrar
-    this.bodyAnimatorSelector = services.bodyAnimatorSelector
+    this.eventRegistrar = services.eventRegistrar
 
-    local events              = services.enums.events
+    local events        = services.enums.events
 
-    this.eventHandlers        = {
-        [events.dialogueStarted] = this.onDialogueStarted,
-        [events.dialogueEnded]   = this.onDialogueEnded,
-        [events.dialogueInfo]    = this.onDialogueInfo,
+    this.eventHandlers  = {
+        [events.dialogueEnded] = this.onDialogueEnded,
+        [events.dialogueInfo]  = this.onDialogueInfo,
     }
 
     this.eventRegistrar.register(this.eventHandlers)
@@ -57,20 +51,14 @@ function this.uninitialize()
     this.eventRegistrar.unregister(this.eventHandlers)
 end
 
----@private
----@param e dialogueStartedEventData
-function this.onDialogueStarted(e)
-    this.activeBodyAnimator = this.bodyAnimatorSelector.resolve(e.actor)
-    if not this.activeBodyAnimator then
-        this.pendingInfo = nil
-        return
-    end
+---@public
+---@param bodyAnimators bodyAnimator[]
+function this.begin(bodyAnimators)
+    this.bodyAnimators = bodyAnimators
+    this.active = true
 
-    this.actor = e.actor
-    this.activeBodyAnimator.begin(e.actor)
-
-    if this.pendingInfo and this.pendingInfo.actor == e.actor then
-        this.deliverInfo(this.pendingInfo.info)
+    if this.pendingInfo then
+        this.deliverInfo(this.pendingInfo)
     end
 
     this.pendingInfo = nil
@@ -79,33 +67,29 @@ end
 ---@private
 ---@param e dialogueInfoEventData
 function this.onDialogueInfo(e)
-    if not this.actor then
-        this.pendingInfo = e
+    if not this.active then
+        this.pendingInfo = e.info
         return
     end
 
     this.deliverInfo(e.info)
 end
 
---- Forwards a spoken line to the active strategy only if it reacts to lines.
---- Native strategies (creature / custom-override) drive one continuous clip and
---- omit the optional onDialogueInfo hook entirely.
 ---@private
 ---@param info tes3dialogueInfo
 function this.deliverInfo(info)
-    if this.activeBodyAnimator.onDialogueInfo then
-        this.activeBodyAnimator.onDialogueInfo(info)
+    for i = 1, #this.bodyAnimators do
+        local animator = this.bodyAnimators[i]
+        if animator.onDialogueInfo then
+            animator:onDialogueInfo(info)
+        end
     end
 end
 
 ---@private
 function this.onDialogueEnded()
-    if this.activeBodyAnimator then
-        this.activeBodyAnimator.stop()
-    end
-
-    this.activeBodyAnimator = nil
-    this.actor = nil
+    this.bodyAnimators = {}
+    this.active = false
     this.pendingInfo = nil
 end
 
