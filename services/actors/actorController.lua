@@ -49,6 +49,10 @@ this.headBobAnimator = nil
 this.lipsyncController = nil
 
 ---@private
+---@type lookAtModes
+this.lookAtModes = nil
+
+---@private
 this.paused = false
 
 ---@public
@@ -63,6 +67,7 @@ function this.initialize(services)
     this.headLookAtAnimator    = services.headLookAtAnimator
     this.headBobAnimator       = services.headBobAnimator
     this.lipsyncController     = services.lipsyncController
+    this.lookAtModes           = services.enums.lookAtModes
 
     local events               = services.enums.events
 
@@ -131,9 +136,14 @@ function this.addActorAnimators(actor)
         this.addAnimator(morph)
     end
 
-    if this.settings.actorHeadLookAtEnabled then
+    local lookAtMode = this.resolveActorLookAtMode()
+    if lookAtMode ~= this.lookAtModes.off then
         local lookAt = this.headLookAtAnimator.create()
-        lookAt:begin({ reference = actor, bodyAnimator = body })
+        lookAt:begin({
+            reference    = actor,
+            target       = this.resolveActorLookAtTarget(lookAtMode),
+            bodyAnimator = body,
+        })
         this.addAnimator(lookAt)
     end
 
@@ -152,6 +162,27 @@ function this.resolveActorToggles()
         native   = this.settings.actorNativeAnimEnabled,
         clip     = this.settings.actorAnimEnabled,
     }
+end
+
+---@private
+---@return string
+function this.resolveActorLookAtMode()
+    if tes3.is3rdPerson() then
+        return this.settings.actorHeadLookAtModeThirdPerson
+    end
+
+    return this.settings.actorHeadLookAtModeFirstPerson
+end
+
+---@private
+---@param mode string
+---@return tes3reference|nil
+function this.resolveActorLookAtTarget(mode)
+    if mode == this.lookAtModes.player then
+        return tes3.player
+    end
+
+    return nil
 end
 
 ---@private

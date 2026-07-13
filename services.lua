@@ -77,6 +77,7 @@ local this = {
         events = require("tauer.animated-dialogue.services.events.enums.events"),
         translationKey = require("tauer.animated-dialogue.services.translations.enums.translationKey"),
         effectModes = require("tauer.animated-dialogue.services.mcm.pages.enums.effectModes"),
+        lookAtModes = require("tauer.animated-dialogue.services.mcm.pages.enums.lookAtModes"),
         cameraAnchors = require("tauer.animated-dialogue.services.camera.presets.enums.cameraAnchors"),
     }
 }

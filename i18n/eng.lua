@@ -37,9 +37,15 @@ return {
     [keys.actorSimulatedVoiceMaxDuration] = "Simulate Voice: Max Duration",
     [keys.actorSimulatedVoiceMaxDurationDescription] =
     "The longest a simulated line will keep animating, in seconds. Longer responses are capped at this value so the mouth movement does not run on far past the point the player has read the line.",
-    [keys.actorHeadLookAtEnabled] = "Enable Head Look-At",
-    [keys.actorHeadLookAtEnabledDescription] =
-    "Enables or disables the actor's head turning to look at the camera during dialogue.",
+    [keys.actorHeadLookAtModeFirstPerson] = "Head Look-At (First Person)",
+    [keys.actorHeadLookAtModeFirstPersonDescription] =
+    "What the actor's head turns to look at while you are in first person.\n\nCamera: looks into the camera.\n\nPlayer: looks at the player's head.\n\nOff: the head is left to the body animation.\n\nWhat reads best depends on the camera preset the perspective uses: Player suits over-the-shoulder framings, Camera suits centered ones.",
+    [keys.actorHeadLookAtModeThirdPerson] = "Head Look-At (Third Person)",
+    [keys.actorHeadLookAtModeThirdPersonDescription] =
+    "What the actor's head turns to look at while you are in third person.\n\nCamera: looks into the camera.\n\nPlayer: looks at the player's head.\n\nOff: the head is left to the body animation.\n\nWhat reads best depends on the camera preset the perspective uses: Player suits over-the-shoulder framings, Camera suits centered ones.",
+    [keys.actorHeadLookAtModeCamera] = "Camera",
+    [keys.actorHeadLookAtModePlayer] = "Player",
+    [keys.actorHeadLookAtModeOff] = "Off",
     [keys.actorHeadBobEnabled] = "Enable Head Bob",
     [keys.actorHeadBobEnabledDescription] =
     "Enables or disables subtle procedural head movement while the actor is speaking a voiced line.",

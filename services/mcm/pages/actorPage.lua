@@ -125,11 +125,32 @@ function this.initialize(template, services)
         decimalPlaces = 0,
     })
 
-    headCategory:createOnOffButton({
-        label = translations.get(keys.actorHeadLookAtEnabled),
-        description = translations.get(keys.actorHeadLookAtEnabledDescription),
+    local lookAtModes = services.enums.lookAtModes
+
+    headCategory:createCycleButton({
+        label = translations.get(keys.actorHeadLookAtModeFirstPerson),
+        description = translations.get(keys.actorHeadLookAtModeFirstPersonDescription),
+        options = {
+            { text = translations.get(keys.actorHeadLookAtModeCamera), value = lookAtModes.camera },
+            { text = translations.get(keys.actorHeadLookAtModePlayer), value = lookAtModes.player },
+            { text = translations.get(keys.actorHeadLookAtModeOff),    value = lookAtModes.off },
+        },
         variable = mwse.mcm.createTableVariable({
-            id = "actorHeadLookAtEnabled",
+            id = "actorHeadLookAtModeFirstPerson",
+            table = services.settings
+        }),
+    })
+
+    headCategory:createCycleButton({
+        label = translations.get(keys.actorHeadLookAtModeThirdPerson),
+        description = translations.get(keys.actorHeadLookAtModeThirdPersonDescription),
+        options = {
+            { text = translations.get(keys.actorHeadLookAtModeCamera), value = lookAtModes.camera },
+            { text = translations.get(keys.actorHeadLookAtModePlayer), value = lookAtModes.player },
+            { text = translations.get(keys.actorHeadLookAtModeOff),    value = lookAtModes.off },
+        },
+        variable = mwse.mcm.createTableVariable({
+            id = "actorHeadLookAtModeThirdPerson",
             table = services.settings
         }),
     })
