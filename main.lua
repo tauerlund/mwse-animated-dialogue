@@ -36,6 +36,7 @@ function this.initializeMod(_)
 		services.animationFilterer,
 		services.dialogueController,
 		services.renderingController,
+		services.playerController,
 		services.actorController,
 		services.actorTurnAnimator,
 		services.actorTrackBinder,

@@ -23,6 +23,8 @@ local this = {
     particleAnimator = require("tauer.animated-dialogue.services.particles.particleAnimator"),
     particleController = require("tauer.animated-dialogue.services.particles.particleController"),
 
+    playerController = require("tauer.animated-dialogue.services.player.playerController"),
+
     actorController = require("tauer.animated-dialogue.services.actors.actorController"),
     actorPoseBlender = require("tauer.animated-dialogue.services.actors.actorPoseBlender"),
     actorTrackBinder = require("tauer.animated-dialogue.services.actors.actorTrackBinder"),
@@ -78,6 +80,7 @@ local this = {
         translationKey = require("tauer.animated-dialogue.services.translations.enums.translationKey"),
         effectModes = require("tauer.animated-dialogue.services.mcm.pages.enums.effectModes"),
         lookAtModes = require("tauer.animated-dialogue.services.mcm.pages.enums.lookAtModes"),
+        hidePlayerModes = require("tauer.animated-dialogue.services.mcm.pages.enums.hidePlayerModes"),
         cameraAnchors = require("tauer.animated-dialogue.services.camera.presets.enums.cameraAnchors"),
     }
 }

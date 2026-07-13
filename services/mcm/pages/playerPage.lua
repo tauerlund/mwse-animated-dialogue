@@ -29,6 +29,27 @@ function this.initialize(template, services)
         description = translations.get(keys.playerPageDescription)
     })
 
+    local visibilityCategory = page:createCategory({
+        label = translations.get(keys.visibilityCategory)
+    })
+
+    local hidePlayerModes = services.enums.hidePlayerModes
+
+    visibilityCategory:createCycleButton({
+        label = translations.get(keys.hidePlayerMode),
+        description = translations.get(keys.hidePlayerModeDescription),
+        options = {
+            { text = translations.get(keys.hidePlayerModeFirstPerson), value = hidePlayerModes.firstPerson },
+            { text = translations.get(keys.hidePlayerModeThirdPerson), value = hidePlayerModes.thirdPerson },
+            { text = translations.get(keys.hidePlayerModeAlways),      value = hidePlayerModes.always },
+            { text = translations.get(keys.hidePlayerModeNever),       value = hidePlayerModes.never },
+        },
+        variable = mwse.mcm.createTableVariable({
+            id = "hidePlayerMode",
+            table = services.settings
+        }),
+    })
+
     local bodyCategory = page:createCategory({
         label = translations.get(keys.bodyCategory)
     })

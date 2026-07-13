@@ -86,6 +86,14 @@ return {
     [keys.playerHeadLookAtEnabled] = "Enable Head Look-At",
     [keys.playerHeadLookAtEnabledDescription] =
     "Turns the player's head to look at the actor during dialogue.",
+    [keys.visibilityCategory] = "Visibility",
+    [keys.hidePlayerMode] = "Hide Player",
+    [keys.hidePlayerModeDescription] =
+    "Hides the player's model while dialogue is open, so it does not clutter the shot.\n\nFirst Person: hides the first-person hands when dialogue starts in first person.\n\nThird Person: hides the player's body when dialogue starts in third person.\n\nAlways: hides in both perspectives.\n\nNever: leaves the player visible.",
+    [keys.hidePlayerModeFirstPerson] = "First Person",
+    [keys.hidePlayerModeThirdPerson] = "Third Person",
+    [keys.hidePlayerModeAlways] = "Always",
+    [keys.hidePlayerModeNever] = "Never",
     [keys.presetsCategory] = "Presets",
     [keys.cameraPresetFirstPerson] = "First Person Preset",
     [keys.cameraPresetFirstPersonDescription] =

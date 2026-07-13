@@ -10,6 +10,9 @@ this.effectModes = require("tauer.animated-dialogue.services.mcm.pages.enums.eff
 ---@private
 this.lookAtModes = require("tauer.animated-dialogue.services.mcm.pages.enums.lookAtModes")
 
+---@private
+this.hidePlayerModes = require("tauer.animated-dialogue.services.mcm.pages.enums.hidePlayerModes")
+
 ---@class settings
 this.defaults = {
     enabled = true,
@@ -37,6 +40,7 @@ this.defaults = {
     playerAnimation = "",
     playerTurnEnabled = true,
     playerHeadLookAtEnabled = true,
+    hidePlayerMode = this.hidePlayerModes.never,
     propsEnabled = true,
     lightEnabled = true,
     particlesEnabled = true,
