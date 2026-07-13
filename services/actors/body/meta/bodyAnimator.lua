@@ -8,13 +8,14 @@
 ---@field play? fun(self: bodyAnimator, params: clipBodyAnimator.play.param)
 ---@field stop fun(self: bodyAnimator)
 ---@field suppressesTurn? boolean
+---@field preferredAnimationId? string|nil Base configuration id the clip strategy resolves ahead of the context-driven pick. Set between create and begin.
 
---- Which strategies a participant will accept, keyed by the selector's gate name.
----@class bodyAnimatorGates
+--- Which strategies a participant has enabled, keyed by strategy kind.
+---@class bodyAnimatorToggles
 ---@field creature boolean
 ---@field native boolean
 ---@field clip boolean
 
 ---@class bodyAnimatorStrategy
----@field gate string
+---@field kind string
 ---@field animator bodyAnimator

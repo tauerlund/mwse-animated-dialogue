@@ -117,6 +117,7 @@ function this.onDialogueStarted(e)
     this.actorBodyAnimator = nil
 
     this.addActorAnimators(e.actor)
+    this.addPlayerAnimators(e.actor)
 
     this.animationOrchestrator.begin(this.bodyAnimators)
 
@@ -127,7 +128,7 @@ end
 ---@private
 ---@param actor tes3reference
 function this.addActorAnimators(actor)
-    local body = this.bodyAnimatorSelector.resolve(actor, this.resolveActorGates())
+    local body = this.bodyAnimatorSelector.resolve(actor, this.resolveActorToggles())
     if body then
         body:begin(actor)
         this.addBodyAnimator(body)
@@ -161,12 +162,56 @@ function this.addActorAnimators(actor)
 end
 
 ---@private
----@return bodyAnimatorGates
-function this.resolveActorGates()
+---@return bodyAnimatorToggles
+function this.resolveActorToggles()
     return {
         creature = this.settings.creatureAnimEnabled,
         native   = this.settings.actorNativeAnimEnabled,
         clip     = this.settings.actorAnimEnabled,
+    }
+end
+
+--- The player's body animator joins the per-frame tick list but not the list
+--- handed to the orchestrator - the player plays one continuous clip and must
+--- not gesture along to the actor's lines.
+---@private
+---@param actor tes3reference
+function this.addPlayerAnimators(actor)
+    if not tes3.is3rdPerson() then
+        return
+    end
+
+    local player = tes3.player
+    local body = this.bodyAnimatorSelector.resolve(player, this.resolvePlayerToggles())
+    if body then
+        body.preferredAnimationId = this.settings.playerAnimation
+        body:begin(player)
+        this.addAnimator(body)
+    end
+
+    if this.settings.playerTurnEnabled then
+        local turn = this.actorTurnAnimator.create()
+        turn:begin({ reference = player, target = actor, restoresOrientation = true })
+        this.addAnimator(turn)
+    end
+
+    if this.settings.playerHeadLookAtEnabled then
+        local lookAt = this.headLookAtAnimator.create()
+        lookAt:begin({ reference = player, target = actor, bodyAnimator = body })
+        this.addAnimator(lookAt)
+    end
+end
+
+--- Native and creature strategies are bypassed for the player: an explicit MCM
+--- animation pick must not be ignored because a custom anim replacer sets
+--- hasOverrideAnimations on the player.
+---@private
+---@return bodyAnimatorToggles
+function this.resolvePlayerToggles()
+    return {
+        creature = false,
+        native   = false,
+        clip     = this.settings.playerAnimEnabled,
     }
 end
 

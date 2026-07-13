@@ -25,6 +25,10 @@ this.events = nil
 ---@type tes3reference
 this.actor = nil
 
+---@public
+---@type string|nil
+this.preferredAnimationId = nil
+
 ---@private
 ---@type baseAnimationConfiguration|nil
 this.animationConfiguration = nil
@@ -79,6 +83,7 @@ function this.create()
     local instance = setmetatable({}, { __index = this })
 
     instance.actor = nil
+    instance.preferredAnimationId = nil
     instance.animationConfiguration = nil
     instance.activeAnimation = nil
     instance.revertTo = nil
@@ -92,7 +97,7 @@ end
 ---@public
 ---@param reference tes3reference
 function this:begin(reference)
-    local configuration = self.animationResolver.resolveBase(reference)
+    local configuration = self.animationResolver.resolveBase(reference, self.preferredAnimationId)
     if not configuration then
         return
     end
