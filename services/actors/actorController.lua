@@ -21,20 +21,12 @@ this.eventHandlers = {
 this.animators = {}
 
 ---@private
----@type bodyAnimator[]
-this.bodyAnimators = {}
-
----@private
 ---@type bodyAnimator|nil
 this.actorBodyAnimator = nil
 
 ---@private
 ---@type bodyAnimatorSelector
 this.bodyAnimatorSelector = nil
-
----@private
----@type animationOrchestrator
-this.animationOrchestrator = nil
 
 ---@private
 ---@type actorTurnAnimator
@@ -66,7 +58,6 @@ function this.initialize(services)
     this.eventRegistrar        = services.eventRegistrar
     this.settings              = services.settings
     this.bodyAnimatorSelector  = services.bodyAnimatorSelector
-    this.animationOrchestrator = services.animationOrchestrator
     this.actorTurnAnimator     = services.actorTurnAnimator
     this.headMorphAnimator     = services.headMorphAnimator
     this.headLookAtAnimator    = services.headLookAtAnimator
@@ -108,13 +99,10 @@ end
 ---@param e dialogueStartedEventData
 function this.onDialogueStarted(e)
     this.animators = {}
-    this.bodyAnimators = {}
     this.actorBodyAnimator = nil
 
     this.addActorAnimators(e.actor)
     this.addPlayerAnimators(e.actor)
-
-    this.animationOrchestrator.begin(this.bodyAnimators)
 
     this.paused = false
     this.eventRegistrar.register(this.eventHandlers.dialogue)
@@ -126,7 +114,7 @@ function this.addActorAnimators(actor)
     local body = this.bodyAnimatorSelector.resolve(actor, this.resolveActorToggles())
     if body then
         body:begin(actor)
-        this.addBodyAnimator(body)
+        this.addAnimator(body)
     end
 
     this.actorBodyAnimator = body
@@ -211,20 +199,12 @@ function this.addAnimator(animator)
 end
 
 ---@private
----@param animator bodyAnimator
-function this.addBodyAnimator(animator)
-    this.addAnimator(animator)
-    this.bodyAnimators[#this.bodyAnimators + 1] = animator
-end
-
----@private
 function this.onDialogueEnded()
     this.eventRegistrar.unregister(this.eventHandlers.dialogue)
 
     this.stopAnimators()
 
     this.animators = {}
-    this.bodyAnimators = {}
     this.actorBodyAnimator = nil
 end
 

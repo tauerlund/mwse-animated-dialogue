@@ -3,7 +3,6 @@
 ---@field handles fun(reference: tes3reference): boolean
 ---@field create fun(): bodyAnimator
 ---@field begin fun(self: bodyAnimator, reference: tes3reference)
----@field onDialogueInfo? fun(self: bodyAnimator, info: tes3dialogueInfo)
 ---@field overridesLookAt? fun(self: bodyAnimator): boolean
 ---@field play? fun(self: bodyAnimator, params: clipBodyAnimator.play.param)
 ---@field stop fun(self: bodyAnimator)

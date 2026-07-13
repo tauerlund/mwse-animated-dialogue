@@ -45,7 +45,6 @@ function this.initializeMod(_)
 		services.creatureBodyAnimator,
 		services.overrideBodyAnimator,
 		services.bodyAnimatorSelector,
-		services.animationOrchestrator,
 		services.headMorphAnimator,
 		services.headBobAnimator,
 		services.lipsyncController,

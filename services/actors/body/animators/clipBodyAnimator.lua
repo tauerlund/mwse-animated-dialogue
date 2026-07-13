@@ -22,6 +22,14 @@ this.animationResolver = nil
 this.events = nil
 
 ---@private
+---@type eventRegistrar
+this.eventRegistrar = nil
+
+---@private
+---@type eventHandlers
+this.eventHandlers = nil
+
+---@private
 ---@type tes3reference
 this.actor = nil
 
@@ -66,6 +74,7 @@ function this.initialize(services)
     this.actorTrackBinder  = services.actorTrackBinder
     this.animationResolver = services.animationResolver
     this.events            = services.enums.events
+    this.eventRegistrar    = services.eventRegistrar
 
     return true, nil
 end
@@ -87,6 +96,7 @@ function this.create()
     instance.animationConfiguration = nil
     instance.activeAnimation = nil
     instance.revertTo = nil
+    instance.eventHandlers = nil
     instance.poseBlender = this.actorPoseBlender.create()
     instance.bodyTrack = this.actorTrackBinder.create()
     instance.torchTrack = this.actorTrackBinder.create()
@@ -97,6 +107,13 @@ end
 ---@public
 ---@param reference tes3reference
 function this:begin(reference)
+    self.eventHandlers = {
+        [self.events.dialogueInfo] = function(e)
+            self:onDialogueInfo(e)
+        end
+    }
+    self.eventRegistrar.register(self.eventHandlers)
+
     local configuration = self.animationResolver.resolveBase(reference, self.preferredAnimationId)
     if not configuration then
         return
@@ -110,9 +127,13 @@ function this:begin(reference)
     })
 end
 
----@public
----@param info tes3dialogueInfo
-function this:onDialogueInfo(info)
+---@private
+---@param e dialogueInfoEventData
+function this:onDialogueInfo(e)
+    if e.actor ~= self.actor then
+        return
+    end
+
     if not self.settings.actorTalkAnimEnabled then
         return
     end
@@ -121,7 +142,7 @@ function this:onDialogueInfo(info)
         return
     end
 
-    local animation = self:resolveTalkAnimation(info)
+    local animation = self:resolveTalkAnimation(e.info)
     if not animation then
         return
     end
@@ -166,6 +187,7 @@ end
 
 ---@public
 function this:stop()
+    self.eventRegistrar.unregister(self.eventHandlers)
     self:clearPlayback()
     self.animationConfiguration = nil
     self.poseBlender:reset()
