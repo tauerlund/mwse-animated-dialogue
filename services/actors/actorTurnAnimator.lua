@@ -2,16 +2,20 @@
 local this = {}
 
 ---@private
----@type eventRegistrar
-this.eventRegistrar = nil
-
----@private
 ---@type settings
 this.settings = nil
 
 ---@private
 ---@type tes3reference
 this.actor = nil
+
+---@private
+---@type tes3reference
+this.target = nil
+
+---@private
+---@type boolean
+this.restoresOrientation = false
 
 ---@private
 ---@type number
@@ -22,72 +26,81 @@ this.originalYaw = nil
 this.targetYaw = nil
 
 ---@private
----@type number
 this.turnTime = 0
-
----@private
-this.eventHandlers = nil
 
 ---@public
 ---@param services serviceCollection
 ---@return boolean,string|nil
 function this.initialize(services)
-    this.eventRegistrar = services.eventRegistrar
-    this.settings       = services.settings
-
-    local events        = services.enums.events
-    this.eventHandlers  = {
-        [events.dialogueStarted] = this.onDialogueStarted,
-        [events.dialogueEnded]   = this.onDialogueEnded,
-    }
-
-    this.eventRegistrar.register(this.eventHandlers)
+    this.settings = services.settings
 
     return true, nil
 end
 
 ---@public
-function this.uninitialize()
-    this.eventRegistrar.unregister(this.eventHandlers)
+---@return actorTurnAnimator
+function this.create()
+    local instance = setmetatable({}, { __index = this })
+
+    instance.actor = nil
+    instance.target = nil
+    instance.restoresOrientation = false
+    instance.originalYaw = nil
+    instance.targetYaw = nil
+    instance.turnTime = 0
+
+    return instance
 end
 
----@private
----@param event dialogueStartedEventData
-function this.onDialogueStarted(event)
-    this.actor           = event.actor
-    this.turnTime        = 0
-    this.originalYaw     = event.actor.orientation.z
+---@public
+---@param params actorTurnAnimator.begin.param
+function this:begin(params)
+    self.actor               = params.reference
+    self.target              = params.target
+    self.restoresOrientation = params.restoresOrientation == true
+    self.turnTime            = 0
+    self.originalYaw         = params.reference.orientation.z
 
-    local playerPosition = tes3.player.position
-    local deltaX         = playerPosition.x - event.actor.position.x
-    local deltaY         = playerPosition.y - event.actor.position.y
+    local targetPosition     = params.target.position
+    local deltaX             = targetPosition.x - params.reference.position.x
+    local deltaY             = targetPosition.y - params.reference.position.y
 
-    this.targetYaw       = math.atan2(deltaX, deltaY)
+    self.targetYaw           = math.atan2(deltaX, deltaY)
 end
 
----@private
-function this.onDialogueEnded()
-    this.actor       = nil
-    this.originalYaw = nil
-    this.targetYaw   = nil
+---@public
+function this:stop()
+    if self.restoresOrientation and self.originalYaw then
+        self:applyYaw(self.originalYaw)
+    end
+
+    self.actor = nil
+    self.target = nil
+    self.originalYaw = nil
+    self.targetYaw = nil
 end
 
 ---@public
 ---@param delta number
-function this.update(delta)
-    local duration = this.settings.turnDuration
-    this.turnTime  = math.min(this.turnTime + delta, duration)
+function this:update(delta)
+    local duration = self.settings.turnDuration
+    self.turnTime  = math.min(self.turnTime + delta, duration)
 
     local progress = 1
     if duration > 0 then
-        progress = math.ease.smoothstep(this.turnTime / duration)
+        progress = math.ease.smoothstep(self.turnTime / duration)
     end
 
-    local yaw              = this.lerpAngle(this.originalYaw, this.targetYaw, progress)
-    local orientation      = this.actor.orientation:copy()
+    self:applyYaw(self:lerpAngle(self.originalYaw, self.targetYaw, progress))
+end
+
+---@private
+---@param yaw number
+function this:applyYaw(yaw)
+    local orientation      = self.actor.orientation:copy()
 
     orientation.z          = yaw
-    this.actor.orientation = orientation
+    self.actor.orientation = orientation
 end
 
 ---@private
@@ -95,7 +108,7 @@ end
 ---@param toAngle number
 ---@param progress number
 ---@return number
-function this.lerpAngle(fromAngle, toAngle, progress)
+function this:lerpAngle(fromAngle, toAngle, progress)
     local diff = toAngle - fromAngle
     if diff > math.pi then
         diff = diff - 2 * math.pi

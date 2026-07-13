@@ -2,7 +2,7 @@
 local this = {}
 
 ---@private
----@type bodyAnimator[]
+---@type bodyAnimatorStrategy[]
 this.strategies = nil
 
 ---@public
@@ -10,9 +10,9 @@ this.strategies = nil
 ---@return boolean,string|nil
 function this.initialize(services)
     this.strategies = {
-        services.creatureBodyAnimator,
-        services.overrideBodyAnimator,
-        services.clipBodyAnimator,
+        { kind = "creature", animator = services.creatureBodyAnimator },
+        { kind = "native",   animator = services.overrideBodyAnimator },
+        { kind = "clip",     animator = services.clipBodyAnimator },
     }
 
     return true, nil
@@ -20,12 +20,13 @@ end
 
 ---@public
 ---@param reference tes3reference
+---@param toggles bodyAnimatorToggles
 ---@return bodyAnimator|nil
-function this.resolve(reference)
+function this.resolve(reference, toggles)
     for i = 1, #this.strategies do
         local strategy = this.strategies[i]
-        if strategy.handles(reference) then
-            return strategy
+        if toggles[strategy.kind] and strategy.animator.handles(reference) then
+            return strategy.animator.create()
         end
     end
 

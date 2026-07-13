@@ -14,8 +14,6 @@ local this = {
         "tauer.animated-dialogue.services.animations.animationFilterer"),
     animationLoader = require("tauer.animated-dialogue.services.animations.animationLoader"),
     animationResolver = require("tauer.animated-dialogue.services.animations.animationResolver"),
-    animationOrchestrator = require(
-        "tauer.animated-dialogue.services.animations.animationOrchestrator"),
 
     dialogueController = require("tauer.animated-dialogue.services.dialogue.dialogueController"),
 
@@ -79,6 +77,7 @@ local this = {
         events = require("tauer.animated-dialogue.services.events.enums.events"),
         translationKey = require("tauer.animated-dialogue.services.translations.enums.translationKey"),
         effectModes = require("tauer.animated-dialogue.services.mcm.pages.enums.effectModes"),
+        lookAtModes = require("tauer.animated-dialogue.services.mcm.pages.enums.lookAtModes"),
         cameraAnchors = require("tauer.animated-dialogue.services.camera.presets.enums.cameraAnchors"),
     }
 }

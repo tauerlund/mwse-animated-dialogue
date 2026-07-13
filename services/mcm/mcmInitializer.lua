@@ -8,6 +8,7 @@ this.pages = {
 	require("tauer.animated-dialogue.services.mcm.pages.cameraPage"),
 	require("tauer.animated-dialogue.services.mcm.pages.presetsPage"),
 	require("tauer.animated-dialogue.services.mcm.pages.actorPage"),
+	require("tauer.animated-dialogue.services.mcm.pages.playerPage"),
 	require("tauer.animated-dialogue.services.mcm.pages.effectsPage"),
 	require("tauer.animated-dialogue.services.mcm.pages.weatherPage"),
 	require("tauer.animated-dialogue.services.mcm.pages.debuggingPage"),

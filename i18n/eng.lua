@@ -37,9 +37,15 @@ return {
     [keys.actorSimulatedVoiceMaxDuration] = "Simulate Voice: Max Duration",
     [keys.actorSimulatedVoiceMaxDurationDescription] =
     "The longest a simulated line will keep animating, in seconds. Longer responses are capped at this value so the mouth movement does not run on far past the point the player has read the line.",
-    [keys.actorHeadLookAtEnabled] = "Enable Head Look-At",
-    [keys.actorHeadLookAtEnabledDescription] =
-    "Enables or disables the actor's head turning to look at the camera during dialogue.",
+    [keys.actorHeadLookAtModeFirstPerson] = "Head Look-At (First Person)",
+    [keys.actorHeadLookAtModeFirstPersonDescription] =
+    "What the actor's head turns to look at while you are in first person.\n\nCamera: looks into the camera.\n\nPlayer: looks at the player's head.\n\nOff: the head is left to the body animation.\n\nWhat reads best depends on the camera preset the perspective uses: Player suits over-the-shoulder framings, Camera suits centered ones.",
+    [keys.actorHeadLookAtModeThirdPerson] = "Head Look-At (Third Person)",
+    [keys.actorHeadLookAtModeThirdPersonDescription] =
+    "What the actor's head turns to look at while you are in third person.\n\nCamera: looks into the camera.\n\nPlayer: looks at the player's head.\n\nOff: the head is left to the body animation.\n\nWhat reads best depends on the camera preset the perspective uses: Player suits over-the-shoulder framings, Camera suits centered ones.",
+    [keys.actorHeadLookAtModeCamera] = "Camera",
+    [keys.actorHeadLookAtModePlayer] = "Player",
+    [keys.actorHeadLookAtModeOff] = "Off",
     [keys.actorHeadBobEnabled] = "Enable Head Bob",
     [keys.actorHeadBobEnabledDescription] =
     "Enables or disables subtle procedural head movement while the actor is speaking a voiced line.",
@@ -64,6 +70,22 @@ return {
     [keys.propsEnabled] = "Enable Props",
     [keys.propsEnabledDescription] =
     "Enables or disables actors holding props during dialogue (when configured)",
+    [keys.playerPage] = "Player",
+    [keys.playerPageDescription] =
+    "Animates the player during dialogue, alongside the actor. Player animations apply in third person only; in first person the player's body is not visible and these settings do nothing.",
+    [keys.playerAnimEnabled] = "Enable Player Animations",
+    [keys.playerAnimEnabledDescription] =
+    "Animates the player's body during dialogue, using the same animations as actors. Third person only.",
+    [keys.playerAnimation] = "Animation",
+    [keys.playerAnimationDescription] =
+    "Which animation the player's body plays during dialogue. Context-driven picks one the same way actors do, based on sex, class, and equipment; a specific pick always plays, ignoring those conditions.",
+    [keys.playerAnimationContextDriven] = "Context-driven",
+    [keys.playerTurnEnabled] = "Enable Player Turning",
+    [keys.playerTurnEnabledDescription] =
+    "Turns the player to face the actor when dialogue starts, and restores the original facing when it ends.",
+    [keys.playerHeadLookAtEnabled] = "Enable Head Look-At",
+    [keys.playerHeadLookAtEnabledDescription] =
+    "Turns the player's head to look at the actor during dialogue.",
     [keys.presetsCategory] = "Presets",
     [keys.cameraPresetFirstPerson] = "First Person Preset",
     [keys.cameraPresetFirstPersonDescription] =

@@ -1,17 +1,17 @@
----@class headLookAtAnimator : initializedService, actorAnimator
+---@class headLookAtAnimator : service, actorAnimator
 local this = {}
-
----@private
----@type eventRegistrar
-this.eventRegistrar = nil
-
----@private
----@type settings
-this.settings = nil
 
 ---@private
 ---@type tes3reference
 this.actor = nil
+
+---@private
+---@type tes3reference|nil
+this.target = nil
+
+---@private
+---@type bodyAnimator|nil
+this.bodyAnimator = nil
 
 ---@private
 this.axisSafeLength = 1e-5
@@ -21,7 +21,8 @@ this.antiParallelThreshold = 1e-4
 this.maxHeadYaw = math.pi / 2
 
 ---@private
-this.arc = niQuaternion.new()
+---@type niQuaternion
+this.arc = nil
 
 ---@private
 this.lerpSpeed = 8
@@ -35,74 +36,39 @@ this.currentEulerZ = nil
 ---@private
 this.overridden = false
 
----@private
-this.eventHandlers = nil
-
 ---@public
----@param services serviceCollection
----@return boolean,string|nil
-function this.initialize(services)
-    this.eventRegistrar = services.eventRegistrar
-    this.settings       = services.settings
+---@return headLookAtAnimator
+function this.create()
+    local instance = setmetatable({}, { __index = this })
 
-    local events        = services.enums.events
-    this.eventHandlers  = {
-        [events.dialogueStarted]  = this.onDialogueStarted,
-        [events.dialogueEnded]    = this.onDialogueEnded,
-        [events.animationStarted] = this.onAnimationStarted,
-        [events.animationEnded]   = this.onAnimationEnded,
-    }
+    instance.actor = nil
+    instance.target = nil
+    instance.bodyAnimator = nil
+    instance.arc = niQuaternion.new()
+    instance.currentEulerX = nil
+    instance.currentEulerZ = nil
+    instance.overridden = false
 
-    this.eventRegistrar.register(this.eventHandlers)
-
-    return true, nil
+    return instance
 end
 
 ---@public
-function this.uninitialize()
-    this.eventRegistrar.unregister(this.eventHandlers)
-end
-
----@private
----@param event dialogueStartedEventData
-function this.onDialogueStarted(event)
-    this.actor = event.actor
-    this.overridden = false
-end
-
----@private
-function this.onDialogueEnded()
-    this.actor = nil
-    this.currentEulerX = nil
-    this.currentEulerZ = nil
-    this.overridden = false
-end
-
----@private
----@param event animationEventData
-function this.onAnimationStarted(event)
-    this.overridden = event.animation.overrideLookAt == true
-end
-
----@private
-function this.onAnimationEnded()
-    if not this.overridden then
-        return
-    end
-
-    this.overridden = false
-    this.currentEulerX = nil
-    this.currentEulerZ = nil
+---@param params headLookAtAnimator.begin.param
+function this:begin(params)
+    self.actor = params.reference
+    self.target = params.target
+    self.bodyAnimator = params.bodyAnimator
+    self.overridden = false
 end
 
 ---@public
 ---@param delta number
-function this.update(delta)
-    if this.overridden then
+function this:update(delta)
+    if self:resolveOverridden() then
         return
     end
 
-    local animationData = this.actor.animationData
+    local animationData = self.actor.animationData
     if not animationData then
         return
     end
@@ -112,17 +78,17 @@ function this.update(delta)
     end
 
     local node               = animationData.headNode
-    local cameraPosition     = tes3.worldController.worldCamera.cameraRoot.worldTransform.translation
+    local aimPoint           = self:resolveAimPoint()
     local headWorldTransform = node.worldTransform
     local headWorldRotation  = headWorldTransform.rotation:copy()
     headWorldRotation:reorthogonalize()
 
     local headWorldPosition              = headWorldTransform.translation
-    local direction                      = this.clampDirectionToBody((cameraPosition - headWorldPosition):normalized(),
+    local direction                      = self:clampDirectionToBody((aimPoint - headWorldPosition):normalized(),
         animationData)
     local forward                        = headWorldRotation:getForwardVector()
 
-    local arc                            = this.calculateArc(direction, forward)
+    local arc                            = self:calculateArc(direction, forward)
     local updatedWorldRotation           = (arc * headWorldRotation:toQuaternion()):toRotation()
 
     local invertedParentWorldRotation, _ = node.parent.worldTransform.rotation:copy():invert()
@@ -131,32 +97,70 @@ function this.update(delta)
     local originalEuler, _               = node.rotation:toEulerXYZ()
     local updatedEuler, _                = updatedLocalRotation:toEulerXYZ()
 
-    if this.currentEulerX == nil then
-        this.currentEulerX = originalEuler.x
-        this.currentEulerZ = originalEuler.z
+    if self.currentEulerX == nil then
+        self.currentEulerX = originalEuler.x
+        self.currentEulerZ = originalEuler.z
     end
 
-    local t            = 1 - math.exp(-this.lerpSpeed * delta)
-    this.currentEulerX = this.currentEulerX + (updatedEuler.x - this.currentEulerX) * t
-    this.currentEulerZ = this.currentEulerZ + (updatedEuler.z - this.currentEulerZ) * t
+    local t            = 1 - math.exp(-self.lerpSpeed * delta)
+    self.currentEulerX = self.currentEulerX + (updatedEuler.x - self.currentEulerX) * t
+    self.currentEulerZ = self.currentEulerZ + (updatedEuler.z - self.currentEulerZ) * t
 
-    node.rotation:fromEulerXYZ(this.currentEulerX, originalEuler.y, this.currentEulerZ)
+    node.rotation:fromEulerXYZ(self.currentEulerX, originalEuler.y, self.currentEulerZ)
     node:update()
+end
+
+---@private
+---@return boolean
+function this:resolveOverridden()
+    local bodyAnimator = self.bodyAnimator
+    local overridden   = bodyAnimator ~= nil
+        and bodyAnimator.overridesLookAt ~= nil
+        and bodyAnimator:overridesLookAt()
+
+    if overridden then
+        self.overridden = true
+        return true
+    end
+
+    if self.overridden then
+        self.overridden = false
+        self.currentEulerX = nil
+        self.currentEulerZ = nil
+    end
+
+    return false
+end
+
+---@private
+---@return tes3vector3
+function this:resolveAimPoint()
+    if not self.target then
+        return tes3.worldController.worldCamera.cameraRoot.worldTransform.translation
+    end
+
+    local animationData = self.target.animationData
+    local headNode      = animationData and animationData.headNode
+    if not headNode then
+        return self.target.position
+    end
+
+    return headNode.worldTransform.translation
 end
 
 ---@private
 ---@param direction tes3vector3
 ---@param animationData tes3animationData
 ---@return tes3vector3
-function this.clampDirectionToBody(direction, animationData)
+function this:clampDirectionToBody(direction, animationData)
     local horizontalLength = math.sqrt(direction.x ^ 2 + direction.y ^ 2)
-    if horizontalLength < this.axisSafeLength then
+    if horizontalLength < self.axisSafeLength then
         return direction
     end
 
     local bodyForward       = animationData.actorNode.worldTransform.rotation:getForwardVector()
     local bodyForwardLength = math.sqrt(bodyForward.x ^ 2 + bodyForward.y ^ 2)
-    if bodyForwardLength < this.axisSafeLength then
+    if bodyForwardLength < self.axisSafeLength then
         return direction
     end
 
@@ -172,11 +176,11 @@ function this.clampDirectionToBody(direction, animationData)
         angle = -angle
     end
 
-    if math.abs(angle) <= this.maxHeadYaw then
+    if math.abs(angle) <= self.maxHeadYaw then
         return direction
     end
 
-    local clampedAngle = math.clamp(angle, -this.maxHeadYaw, this.maxHeadYaw)
+    local clampedAngle = math.clamp(angle, -self.maxHeadYaw, self.maxHeadYaw)
     local cosAngle     = math.cos(clampedAngle)
     local sinAngle     = math.sin(clampedAngle)
 
@@ -191,28 +195,28 @@ end
 ---@param direction tes3vector3
 ---@param forward tes3vector3
 ---@return niQuaternion
-function this.calculateArc(direction, forward)
+function this:calculateArc(direction, forward)
     local dot        = math.min(math.max(forward:dot(direction), -1), 1)
     local axis       = forward:cross(direction)
     local axisLength = axis:length()
 
-    if axisLength > this.axisSafeLength then
+    if axisLength > self.axisSafeLength then
         axis:normalize()
     else
         axis = forward:cross(tes3vector3.new(0, 0, 1))
-        if axis:length() < this.axisSafeLength then
+        if axis:length() < self.axisSafeLength then
             axis = forward:cross(tes3vector3.new(0, 1, 0))
         end
         axis:normalize()
     end
 
-    if math.abs(dot + 1) < this.antiParallelThreshold then
-        this.arc:fromAngleAxis(math.pi, tes3vector3.new(0, 0, 1))
+    if math.abs(dot + 1) < self.antiParallelThreshold then
+        self.arc:fromAngleAxis(math.pi, tes3vector3.new(0, 0, 1))
     else
-        this.arc:fromAngleAxis(math.acos(dot), axis)
+        self.arc:fromAngleAxis(math.acos(dot), axis)
     end
 
-    return this.arc
+    return self.arc
 end
 
 return this

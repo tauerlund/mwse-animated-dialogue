@@ -1,3 +1,6 @@
 ---@meta
+--- A per-participant animator instance, created by its module's create() and
+--- discarded at dialogue end.
 ---@class actorAnimator
----@field public update fun(delta:number)
+---@field public update fun(self: actorAnimator, delta: number)
+---@field public stop? fun(self: actorAnimator)

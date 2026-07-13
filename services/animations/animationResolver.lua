@@ -48,9 +48,12 @@ end
 
 ---@public
 ---@param actor tes3reference
+---@param preferredId string|nil
 ---@return baseAnimationConfiguration|nil
-function this.resolveBase(actor)
-    local configuration = this.resolveBaseConfiguration(actor)
+function this.resolveBase(actor, preferredId)
+    local configuration = this.resolvePreferredConfiguration(preferredId)
+        or this.resolveBaseConfiguration(actor)
+
     if not configuration or not configuration.idle then
         return nil
     end
@@ -63,6 +66,36 @@ end
 ---@return overrideAnimationConfiguration|nil
 function this.resolveOverride(dialogueId)
     return this.overrideConfigurations[dialogueId]
+end
+
+---@private
+---@param preferredId string|nil
+---@return baseAnimationConfiguration|nil
+function this.resolvePreferredConfiguration(preferredId)
+    if not preferredId or preferredId == "" then
+        return nil
+    end
+
+    local configuration = this.findBaseConfiguration(preferredId)
+    if not configuration then
+        this.logger:warn("Preferred animation '%s' does not exist, resolving from context", preferredId)
+        return nil
+    end
+
+    return configuration
+end
+
+---@private
+---@param id string
+---@return baseAnimationConfiguration|nil
+function this.findBaseConfiguration(id)
+    for i = 1, #this.baseConfigurations do
+        if this.baseConfigurations[i].id == id then
+            return this.baseConfigurations[i]
+        end
+    end
+
+    return nil
 end
 
 ---@private

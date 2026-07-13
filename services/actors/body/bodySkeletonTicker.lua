@@ -45,7 +45,7 @@ function this.begin(state, params)
     -- Capture the pre-animation pose before the first tick drives the skeleton,
     -- so the blend eases from the frozen dialogue-open pose into the clip.
     if state.poseBlender and actorNode then
-        state.poseBlender.capture(actorNode, state.transitionDuration)
+        state.poseBlender:capture(actorNode, state.transitionDuration)
     end
 end
 
@@ -53,7 +53,7 @@ end
 ---@param state bodySkeletonTicker.state
 function this.reset(state)
     if state.poseBlender then
-        state.poseBlender.reset()
+        state.poseBlender:reset()
     end
 
     state.actor              = nil
@@ -92,8 +92,8 @@ function this.update(state, delta)
     end
     animationData.actorNode:update({ children = true })
 
-    if state.poseBlender and state.poseBlender.isActive() then
-        state.poseBlender.update(animationData.actorNode, delta)
+    if state.poseBlender and state.poseBlender:isActive() then
+        state.poseBlender:update(animationData.actorNode, delta)
     end
 
     state.phase = state.phase + delta

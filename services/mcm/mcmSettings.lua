@@ -7,6 +7,9 @@ this.path = "animated-dialogue"
 ---@private
 this.effectModes = require("tauer.animated-dialogue.services.mcm.pages.enums.effectModes")
 
+---@private
+this.lookAtModes = require("tauer.animated-dialogue.services.mcm.pages.enums.lookAtModes")
+
 ---@class settings
 this.defaults = {
     enabled = true,
@@ -21,7 +24,8 @@ this.defaults = {
     actorSimulatedVoiceEnabled = true,
     actorSimulatedVoiceSpeed = 1.0,
     actorSimulatedVoiceMaxDuration = 12,
-    actorHeadLookAtEnabled = true,
+    actorHeadLookAtModeFirstPerson = this.lookAtModes.camera,
+    actorHeadLookAtModeThirdPerson = this.lookAtModes.camera,
     actorHeadBobEnabled = true,
     actorHeadBobNodEnabled = true,
     actorHeadBobYawEnabled = true,
@@ -29,6 +33,10 @@ this.defaults = {
     actorHeadBobAmount = 1.0,
     actorHeadBobSpeed = 1.0,
     actorHeadBobRandomness = 0.4,
+    playerAnimEnabled = true,
+    playerAnimation = "",
+    playerTurnEnabled = true,
+    playerHeadLookAtEnabled = true,
     propsEnabled = true,
     lightEnabled = true,
     particlesEnabled = true,
