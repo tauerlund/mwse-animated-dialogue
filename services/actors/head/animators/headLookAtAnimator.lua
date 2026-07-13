@@ -5,9 +5,6 @@ local this = {}
 ---@type tes3reference
 this.actor = nil
 
---- Who the head aims at. Nil aims at the camera - the actor looks at whoever is
---- watching. A reference aims at that reference's head instead, which is what
---- the player needs: they look at the actor, not down the lens.
 ---@private
 ---@type tes3reference|nil
 this.target = nil
@@ -113,9 +110,6 @@ function this:update(delta)
     node:update()
 end
 
---- While the body clip owns the head, the look-at stays out of its way. On the
---- frame the clip hands the head back, the eased eulers are dropped so the head
---- eases out of the clip's final pose instead of snapping from a stale one.
 ---@private
 ---@return boolean
 function this:resolveOverridden()

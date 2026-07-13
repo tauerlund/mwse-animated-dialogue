@@ -223,9 +223,6 @@ function this.showDebugHud()
     this.updateStatusLabel()
 end
 
---- Rebuilds the preview dropdowns so they follow MCM changes made mid-dialogue
---- (the settings-bound guiBuilder callback unregisters itself when the HUD is
---- destroyed).
 ---@private
 function this.onSettingsUpdated()
     if not this.previewContainer then
@@ -236,11 +233,6 @@ function this.onSettingsUpdated()
     this.buildPreviewControls(this.previewContainer)
 end
 
---- Two dropdowns: one forces a base clip directly onto the NPC (bypassing
---- resolution/filtering — pair with pause/step to scrub frame-by-frame); the
---- other simulates a dialogue line so overrides run through the real path,
---- driving both the override clip and its prop. Both are hidden when NPC
---- animations are disabled.
 ---@private
 ---@param content tes3uiElement
 function this.buildPreviewControls(content)
@@ -272,9 +264,6 @@ function this.buildPreviewControls(content)
     end
 end
 
---- Forces a base clip straight onto the actor's body animator, bypassing
---- resolution. Only the clip strategy plays authored clips - a creature or a
---- custom-override actor has nothing to preview onto.
 ---@private
 ---@param entry previewEntry
 function this.previewAnimation(entry)
@@ -338,8 +327,6 @@ function this.buildOverrideEntries()
     return entries
 end
 
---- Builds a captioned dropdown into `content`, appends its handle to
---- `previewDropdowns`, and returns it. `onSelect` runs with the chosen entry.
 ---@private
 ---@param content tes3uiElement
 ---@param caption string
@@ -468,11 +455,6 @@ function this.selectDropdown(dropdown, index)
     dropdown.onSelect(entry)
 end
 
---- Fires a synthetic dialogueInfo so overrides run through the real path,
---- driving both the override talk clip (clipBodyAnimator) and prop spawn
---- (propSpawner) exactly as an in-game dialogue line would.
---- The info is deliberately a partial stand-in for tes3dialogueInfo carrying
---- only `id`; a consumer reading any other field will break on debug triggers.
 ---@private
 ---@param dialogueId string
 function this.triggerDialogueInfo(dialogueId)
@@ -492,7 +474,6 @@ function this.applyTextSelectColors(element)
     element.widget.pressed = tes3ui.getPalette(tes3.palette.normalPressedColor)
 end
 
---- Prettifies the entry's config table via `json.encode` into a single tooltip label.
 ---@private
 ---@param entry previewEntry
 function this.showJsonTooltip(entry)
@@ -591,9 +572,6 @@ function this.togglePause()
     end
 end
 
---- Advances the frozen scene by a single frame: resumes everyone, then re-pauses
---- after one enterFrame. The re-pause tick registers at a low priority so it runs
---- after every service's enterFrame handler, giving them exactly one update.
 ---@private
 function this.stepFrame()
     if not this.paused then

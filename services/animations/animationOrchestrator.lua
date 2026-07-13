@@ -1,11 +1,3 @@
---- Routes spoken dialogue lines to the body-animation strategies driving the
---- conversation. actorController owns the strategies (it builds and ticks them)
---- and hands them over at dialogue start with a synchronous begin, keeping
---- decide -> perform on one call stack. This service is strategy-agnostic: each
---- strategy owns what it plays, and the ones that drive one continuous clip (the
---- creature / custom-override strategies) simply omit onDialogueInfo. The only
---- cross-cutting concern kept here is buffering a line that arrives before the
---- strategies are established (the greeting case) and replaying it once they are.
 ---@class animationOrchestrator : initializedService
 local this = {}
 

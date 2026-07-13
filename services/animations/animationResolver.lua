@@ -68,9 +68,6 @@ function this.resolveOverride(dialogueId)
     return this.overrideConfigurations[dialogueId]
 end
 
---- An explicit pick bypasses the filtering rules - the conditions on a config
---- describe which actors suit it, and must not veto what the user chose for
---- themselves. Only a stale id falls back to the context-driven pick.
 ---@private
 ---@param preferredId string|nil
 ---@return baseAnimationConfiguration|nil
