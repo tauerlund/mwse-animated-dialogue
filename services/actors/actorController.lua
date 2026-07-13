@@ -167,9 +167,6 @@ function this.resolveActorToggles()
     }
 end
 
---- The player's body animator joins the per-frame tick list but not the list
---- handed to the orchestrator - the player plays one continuous clip and must
---- not gesture along to the actor's lines.
 ---@private
 ---@param actor tes3reference
 function this.addPlayerAnimators(actor)
@@ -198,9 +195,6 @@ function this.addPlayerAnimators(actor)
     end
 end
 
---- Native and creature strategies are bypassed for the player: an explicit MCM
---- animation pick must not be ignored because a custom anim replacer sets
---- hasOverrideAnimations on the player.
 ---@private
 ---@return bodyAnimatorToggles
 function this.resolvePlayerToggles()
@@ -255,10 +249,6 @@ function this.onGameUnpaused()
     this.paused = false
 end
 
---- An equipment change rebuilds an actor's body parts, invalidating any node
---- an animator cached. Fanned out here so the animators need no subscriptions
---- of their own - as instances they would share one handler function, which the
---- event system would deduplicate down to a single registration.
 ---@private
 ---@param e bodyPartsUpdatedEventData
 function this.onBodyPartsUpdated(e)
