@@ -24,6 +24,14 @@ this.actor = nil
 this.nodeResolver = nil
 
 ---@private
+---@type eventRegistrar
+this.eventRegistrar = nil
+
+---@private
+---@type eventHandlers
+this.eventHandlers = nil
+
+---@private
 ---@type niTimeController[]
 this.morphers = nil
 
@@ -40,6 +48,7 @@ this.lipsyncController = nil
 function this.initialize(services)
     this.nodeResolver      = services.nodeResolver
     this.lipsyncController = services.lipsyncController
+    this.eventRegistrar    = services.eventRegistrar
 
     return true, nil
 end
@@ -54,6 +63,7 @@ function this.create()
     instance.resolved = false
     instance.blinkTimer = 0
     instance.blinkInterval = 0
+    instance.eventHandlers = nil
 
     return instance
 end
@@ -64,13 +74,21 @@ function this:begin(reference)
     self.actor = reference
     self.resolved = false
     self.morphers = {}
+    self.eventHandlers = {
+        [tes3.event.bodyPartsUpdated] = function(e)
+            self:onBodyPartsUpdated(e)
+        end
+    }
+    self.eventRegistrar.register(self.eventHandlers)
     self:startBlinkTimer()
 end
 
---- A body-part rebuild mid-dialogue (an equipment change) swaps the head morph
---- geometry for a new node with the same name, leaving the cache pointing at
---- dead geometry - the mouth would freeze from that topic on.
 ---@public
+function this:stop()
+    self.eventRegistrar.unregister(self.eventHandlers)
+end
+
+---@private
 ---@param e bodyPartsUpdatedEventData
 function this:onBodyPartsUpdated(e)
     if e.reference ~= self.actor then

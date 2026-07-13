@@ -4,4 +4,3 @@
 ---@class actorAnimator
 ---@field public update fun(self: actorAnimator, delta: number)
 ---@field public stop? fun(self: actorAnimator)
----@field public onBodyPartsUpdated? fun(self: actorAnimator, e: bodyPartsUpdatedEventData)

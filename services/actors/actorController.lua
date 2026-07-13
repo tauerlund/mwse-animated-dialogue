@@ -81,10 +81,9 @@ function this.initialize(services)
             [events.dialogueEnded]   = this.onDialogueEnded,
         },
         dialogue = {
-            [tes3.event.enterFrame]       = this.onEnterFrame,
-            [tes3.event.bodyPartsUpdated] = this.onBodyPartsUpdated,
-            [events.gamePaused]           = this.onGamePaused,
-            [events.gameUnpaused]         = this.onGameUnpaused,
+            [tes3.event.enterFrame] = this.onEnterFrame,
+            [events.gamePaused]     = this.onGamePaused,
+            [events.gameUnpaused]   = this.onGameUnpaused,
         }
     }
 
@@ -247,17 +246,6 @@ end
 ---@private
 function this.onGameUnpaused()
     this.paused = false
-end
-
----@private
----@param e bodyPartsUpdatedEventData
-function this.onBodyPartsUpdated(e)
-    for i = 1, #this.animators do
-        local animator = this.animators[i]
-        if animator.onBodyPartsUpdated then
-            animator:onBodyPartsUpdated(e)
-        end
-    end
 end
 
 ---@private
