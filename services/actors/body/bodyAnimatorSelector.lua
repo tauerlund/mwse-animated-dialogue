@@ -1,7 +1,3 @@
---- Picks the body-animation strategy for a reference and returns a fresh
---- instance of it. The caller supplies the toggles - which strategies it has
---- enabled - so the same strategies can serve participants with independent
---- MCM settings (the actor's and the player's).
 ---@class bodyAnimatorSelector : initializedService
 local this = {}
 

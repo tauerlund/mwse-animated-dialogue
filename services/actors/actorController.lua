@@ -1,7 +1,3 @@
---- Builds the animators for every participant in the dialogue and ticks them
---- each frame. Animators are per-participant instances, created here and thrown
---- away at dialogue end, so the same modules can drive the actor and the player
---- side by side.
 ---@class actorController : initializedService
 local this = {}
 
@@ -85,10 +81,10 @@ function this.initialize(services)
             [events.dialogueEnded]   = this.onDialogueEnded,
         },
         dialogue = {
-            [tes3.event.enterFrame]        = this.onEnterFrame,
-            [tes3.event.bodyPartsUpdated]  = this.onBodyPartsUpdated,
-            [events.gamePaused]            = this.onGamePaused,
-            [events.gameUnpaused]          = this.onGameUnpaused,
+            [tes3.event.enterFrame]       = this.onEnterFrame,
+            [tes3.event.bodyPartsUpdated] = this.onBodyPartsUpdated,
+            [events.gamePaused]           = this.onGamePaused,
+            [events.gameUnpaused]         = this.onGameUnpaused,
         }
     }
 
