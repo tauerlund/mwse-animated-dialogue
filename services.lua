@@ -81,7 +81,9 @@ local this = {
     triggerOverrideSection = require(
         "tauer.animated-dialogue.services.debugging.sections.triggerOverrideSection"),
     propTransformSection = require("tauer.animated-dialogue.services.debugging.sections.propTransformSection"),
+    cameraPresetSection = require("tauer.animated-dialogue.services.debugging.sections.cameraPresetSection"),
     debugAnimationsTab = require("tauer.animated-dialogue.services.debugging.tabs.debugAnimationsTab"),
+    debugCameraTab = require("tauer.animated-dialogue.services.debugging.tabs.debugCameraTab"),
     debugWindow = require("tauer.animated-dialogue.services.debugging.debugWindow"),
     debugController = require("tauer.animated-dialogue.services.debugging.debugController"),
 

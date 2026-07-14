@@ -206,7 +206,7 @@ return {
     [keys.debuggingPage] = "Debugging",
     [keys.debugModeEnabled] = "Debugging Mode",
     [keys.debugModeEnabledDescription] =
-    "Development tool. Opens a debug window during dialogue with tabs for previewing animations and tuning prop transforms (copyable as JSON), and enables the pause key below. Leave off during normal play.",
+    "Development tool. Opens a debug window during dialogue with tabs for previewing animations, tuning prop transforms, and live-editing camera presets, and enables the pause key below. Leave off during normal play.",
     [keys.debugPauseKey] = "Pause / Unpause Key",
     [keys.debugPauseKeyDescription] =
     "While debugging mode is on, this key freezes and unfreezes the dialogue scene (actor animation, particles, lights, and weather) so prop transforms can be tuned against a still pose. Only active during dialogue.",
@@ -233,7 +233,15 @@ return {
     [keys.debugReset] = "Reset",
     [keys.debugCopy] = "Copy",
     [keys.debugSaveTransform] = "Save Transform to %{source}",
-    [keys.debugSaveTransformConfirm] = "Overwrite %{source} with the current prop transform? The whole file is rewritten.",
+    [keys.debugSaveTransformConfirm] =
+    "Overwrite %{source} with the current prop transform? The whole file is rewritten.",
     [keys.debugSave] = "Save",
     [keys.debugTransformSaved] = "Saved prop transform to %{source}.",
+    [keys.debugTabCamera] = "Camera",
+    [keys.debugCameraPreset] = "Camera Preset",
+    [keys.debugCameraDisabledHint] = "Camera animation is disabled in the MCM.",
+    [keys.debugReplay] = "Replay",
+    [keys.debugSavePreset] = "Save Preset to %{id}.json",
+    [keys.debugSavePresetConfirm] = "Overwrite %{id}.json with the current values?",
+    [keys.debugPresetSaved] = "Saved preset to %{id}.json.",
 }

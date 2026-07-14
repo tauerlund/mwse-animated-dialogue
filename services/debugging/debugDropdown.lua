@@ -24,7 +24,15 @@ end
 function this.create(params)
     local guiBuilder = this.guiBuilder
 
-    local header = guiBuilder.createTextSelect({ parent = params.parent })
+    local frame = guiBuilder.createThinBorder({ parent = params.parent })
+        :withFlowDirection(tes3.flowDirection.topToBottom)
+        :withAutoSize()
+        :withProportional({ width = 1.0 })
+        :withPadding({ all = 8 })
+        :withBorder({ bottom = 4 })
+        :build()
+
+    local header = guiBuilder.createTextSelect({ parent = frame })
         :withText(params.entries[1].label)
         :withWidgetColors({
             idle = tes3ui.getPalette(tes3.palette.normalColor),
@@ -33,16 +41,18 @@ function this.create(params)
         })
         :build()
 
-    local optionsBlock = guiBuilder.createBlock({ parent = params.parent })
+    local optionsBlock = guiBuilder.createBlock({ parent = frame })
         :withFlowDirection(tes3.flowDirection.topToBottom)
         :withAutoSize()
         :build()
 
-    guiBuilder.createLabel({ parent = params.parent })
-        :withText(params.hint)
-        :withColor(tes3ui.getPalette(tes3.palette.disabledColor))
-        :withWrapText()
-        :build()
+    if params.hint then
+        guiBuilder.createLabel({ parent = params.parent })
+            :withText(params.hint)
+            :withColor(tes3ui.getPalette(tes3.palette.disabledColor))
+            :withWrapText()
+            :build()
+    end
 
     ---@type dropdown
     local dropdown = {

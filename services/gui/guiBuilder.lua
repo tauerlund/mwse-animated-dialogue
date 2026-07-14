@@ -191,6 +191,19 @@ function this:withMinSize(parameters)
 end
 
 ---@public
+---@param parameters sizeParameters
+---@return guiBuilder
+function this:withMaxSize(parameters)
+	if parameters.width then
+		self.element.maxWidth = parameters.width
+	end
+	if parameters.height then
+		self.element.maxHeight = parameters.height
+	end
+	return self
+end
+
+---@public
 ---@param parameters vector2Parameters
 ---@return guiBuilder
 function this:withPosition(parameters)

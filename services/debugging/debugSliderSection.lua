@@ -6,6 +6,10 @@ local this = {}
 this.guiBuilder = nil
 
 ---@private
+---@type debugSectionBuilder
+this.debugSectionBuilder = nil
+
+---@private
 ---@type translations
 this.translations = nil
 
@@ -18,6 +22,7 @@ this.translationKey = nil
 ---@return boolean, string|nil
 function this.initialize(services)
     this.guiBuilder = services.guiBuilder
+    this.debugSectionBuilder = services.debugSectionBuilder
     this.translations = services.translations
     this.translationKey = services.enums.translationKey
 
@@ -28,27 +33,16 @@ end
 ---@param params debugSliderSection.create.param
 ---@return tes3uiElement
 function this.create(params)
-    local guiBuilder = this.guiBuilder
-
-    local section = guiBuilder.createBlock({ parent = params.parent })
-        :withFlowDirection(tes3.flowDirection.topToBottom)
-        :withAutoSize()
-        :withPadding({ top = 4, bottom = 4 })
-        :build()
-
-    guiBuilder.createLabel({ parent = section })
-        :withText(params.title)
-        :build()
-
-    guiBuilder.createDivider({ parent = section }):build()
+    local section = this.debugSectionBuilder.createGroup({
+        parent = params.parent,
+        title = params.title,
+    })
 
     local rows = {}
 
     for _, definition in ipairs(params.sliders) do
         table.insert(rows, this.createSliderRow(section, definition))
     end
-
-    guiBuilder.createDivider({ parent = section }):build()
 
     this.createButtonRow(section, rows, params.onCopy)
 
@@ -65,19 +59,15 @@ function this.createSliderRow(section, definition)
     local defaultStep = math.round((definition.default - definition.min) / definition.step)
 
     local row = guiBuilder.createBlock({ parent = section })
-        :withFlowDirection(tes3.flowDirection.leftToRight)
+        :withFlowDirection(tes3.flowDirection.topToBottom)
         :withAutoSize()
+        :withProportional({ width = 1.0 })
         :withPadding({ top = 4, bottom = 4 })
         :build()
 
-    guiBuilder.createLabel({ parent = row })
-        :withText(definition.label)
-        :withSize({ width = 60 })
-        :build()
-
     local valueLabel = guiBuilder.createLabel({ parent = row })
-        :withText(string.format("%.3f", definition.default))
-        :withSize({ width = 55 })
+        :withText(this.labelText(definition, definition.default))
+        :withPadding({ bottom = 2 })
         :build()
 
     local slider = guiBuilder.createSlider({
@@ -87,13 +77,14 @@ function this.createSliderRow(section, definition)
             step = 1,
             jump = math.max(1, math.round(steps / 10)),
         })
-        :withSize({ width = 185 })
+        :withProportional({ width = 1.0 })
+        :withMaxSize({ width = 400 })
         :build()
 
     slider:registerAfter(tes3.uiEvent.partScrollBarChanged, function()
         local currentStep = slider.widget.current
         local value = definition.min + (currentStep / steps) * (definition.max - definition.min)
-        valueLabel.text = string.format("%.3f", value)
+        valueLabel.text = this.labelText(definition, value)
         this.refreshLayout(section)
         definition.onChange(value)
     end)
@@ -122,7 +113,7 @@ function this.createButtonRow(section, rows, onCopy)
     resetButton:registerBefore(tes3.uiEvent.mouseClick, function()
         for _, row in ipairs(rows) do
             row.slider.widget.current = row.defaultStep
-            row.valueLabel.text = string.format("%.3f", row.definition.default)
+            row.valueLabel.text = this.labelText(row.definition, row.definition.default)
             row.definition.onChange(row.definition.default)
         end
         this.refreshLayout(section)
@@ -139,6 +130,24 @@ function this.createButtonRow(section, rows, onCopy)
     copyButton:registerBefore(tes3.uiEvent.mouseClick, function()
         os.setClipboardText(onCopy())
     end)
+end
+
+---@private
+---@param definition debugSliderDefinition
+---@param value number
+---@return string
+function this.labelText(definition, value)
+    return string.format("%s: %s", definition.label, this.formatValue(value))
+end
+
+---@private
+---@param value number
+---@return string
+function this.formatValue(value)
+    local text = string.format("%.3f", value)
+    text = text:gsub("0+$", ""):gsub("%.$", "")
+
+    return text
 end
 
 ---@private

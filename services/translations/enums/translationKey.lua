@@ -185,6 +185,13 @@ local this = {
     debugSaveTransformConfirm = "debugSaveTransformConfirm",
     debugSave = "debugSave",
     debugTransformSaved = "debugTransformSaved",
+    debugTabCamera = "debugTabCamera",
+    debugCameraPreset = "debugCameraPreset",
+    debugCameraDisabledHint = "debugCameraDisabledHint",
+    debugReplay = "debugReplay",
+    debugSavePreset = "debugSavePreset",
+    debugSavePresetConfirm = "debugSavePresetConfirm",
+    debugPresetSaved = "debugPresetSaved",
 }
 
 return this

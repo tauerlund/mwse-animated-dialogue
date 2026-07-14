@@ -17,6 +17,22 @@ this.cameraAnchors = require("tauer.animated-dialogue.services.camera.presets.en
 this.worldUp = tes3vector3.new(0, 0, 1)
 
 ---@private
+---@type number
+this.liveEaseRate = 8
+
+---@private
+---@type tes3reference|nil
+this.actor = nil
+
+---@private
+---@type cameraPreset|nil
+this.activePreset = nil
+
+---@private
+---@type tes3vector3
+this.startCameraPosition = nil
+
+---@private
 ---@type niQuaternion
 this.originalRotation = nil
 
@@ -27,6 +43,14 @@ this.targetRotation = nil
 ---@private
 ---@type tes3vector3
 this.targetDisplacement = nil
+
+---@private
+---@type niQuaternion|nil
+this.appliedRotation = nil
+
+---@private
+---@type tes3vector3|nil
+this.appliedDisplacement = nil
 
 ---@private
 ---@type tes3vector3
@@ -44,8 +68,10 @@ function this.initialize(services)
 
     local events              = services.enums.events
     this.eventHandlers        = {
-        [events.dialogueStarted] = this.onDialogueStarted,
-        [events.dialogueEnded]   = this.onDialogueEnded,
+        [events.dialogueStarted]     = this.onDialogueStarted,
+        [events.dialogueEnded]       = this.onDialogueEnded,
+        [events.settingsUpdated]     = this.onSettingsUpdated,
+        [events.cameraPresetUpdated] = this.onCameraPresetUpdated,
     }
 
     this.eventRegistrar.register(this.eventHandlers)
@@ -68,8 +94,42 @@ end
 ---@private
 ---@param event dialogueStartedEventData
 function this.onDialogueStarted(event)
-    local actor          = event.actor
-    local preset         = this.cameraPresetResolver.resolve()
+    this.actor                   = event.actor
+    this.activePreset            = this.cameraPresetResolver.resolve()
+    this.startCameraPosition     = tes3.getCameraPosition()
+    this.originalRotation        = tes3.worldController.worldCamera.cameraRoot.rotation:toQuaternion()
+    this.cameraRootLocalPosition = tes3.worldController.worldCamera.cameraRoot.translation:copy()
+    this.appliedRotation         = nil
+    this.appliedDisplacement     = nil
+
+    this.computeTarget()
+end
+
+---@private
+function this.onSettingsUpdated()
+    if not this.actor then
+        return
+    end
+
+    this.activePreset = this.cameraPresetResolver.resolve()
+    this.computeTarget()
+end
+
+---@private
+---@param event cameraPresetUpdatedEventData
+function this.onCameraPresetUpdated(event)
+    if not this.actor then
+        return
+    end
+
+    this.activePreset = event.preset
+    this.computeTarget()
+end
+
+---@private
+function this.computeTarget()
+    local actor          = this.actor
+    local preset         = this.activePreset
     local playerPosition = tes3.player.position
     local actorForward   = tes3vector3.new(playerPosition.x - actor.position.x, playerPosition.y - actor.position.y, 0)
         :normalized()
@@ -80,7 +140,7 @@ function this.onDialogueStarted(event)
         actorRight = actorRight:normalized()
     end
 
-    local cameraPosition = tes3.getCameraPosition()
+    local cameraPosition = this.startCameraPosition
     local headNode       = this.resolveHeadNode(actor)
 
     local aimPoint       = nil
@@ -96,22 +156,24 @@ function this.onDialogueStarted(event)
         aimPoint = tes3vector3.new(actor.position.x, actor.position.y, cameraPosition.z)
     end
 
-    local displacement           = targetPosition - cameraPosition
+    local displacement      = targetPosition - cameraPosition
 
-    local lookDirection          = this.resolveLookDirection(aimPoint, targetPosition) or -actorForward
-    local targetRotation         = this.computeTargetRotation(preset, lookDirection)
+    local lookDirection     = this.resolveLookDirection(aimPoint, targetPosition) or -actorForward
 
-    this.originalRotation        = tes3.worldController.worldCamera.cameraRoot.rotation:toQuaternion()
-    this.targetRotation          = targetRotation
-    this.targetDisplacement      = displacement
-    this.cameraRootLocalPosition = tes3.worldController.worldCamera.cameraRoot.translation:copy()
+    this.targetRotation     = this.computeTargetRotation(preset, lookDirection)
+    this.targetDisplacement = displacement
 end
 
 ---@private
 function this.onDialogueEnded()
+    this.actor                   = nil
+    this.activePreset            = nil
+    this.startCameraPosition     = nil
     this.originalRotation        = nil
     this.targetRotation          = nil
     this.targetDisplacement      = nil
+    this.appliedRotation         = nil
+    this.appliedDisplacement     = nil
     this.cameraRootLocalPosition = nil
 end
 
@@ -119,18 +181,42 @@ end
 ---@param cameraWrapper niNode
 ---@param skyWrapper niNode
 ---@param animationProgress number
----@param _ number
-function this.update(cameraWrapper, skyWrapper, animationProgress, _)
-    local targetOrientation   = this.originalRotation:slerp(this.targetRotation, animationProgress):toRotation()
+---@param delta number
+function this.update(cameraWrapper, skyWrapper, animationProgress, delta)
+    this.advancePose(animationProgress, delta)
+
+    local targetOrientation   = this.appliedRotation:toRotation()
     local cameraRootRotation  = tes3.worldController.worldCamera.cameraRoot.rotation
     local wrapperRotation     = targetOrientation * cameraRootRotation:transpose()
     local localPosition       = this.cameraRootLocalPosition
 
-    local displacement        = this.targetDisplacement * animationProgress
+    local displacement        = this.appliedDisplacement
     cameraWrapper.translation = displacement + localPosition - wrapperRotation * localPosition
     cameraWrapper.rotation    = wrapperRotation
 
     skyWrapper.translation    = displacement
+end
+
+---@private
+---@param animationProgress number
+---@param delta number
+function this.advancePose(animationProgress, delta)
+    if animationProgress < 1 then
+        this.appliedRotation     = this.originalRotation:slerp(this.targetRotation, animationProgress)
+        this.appliedDisplacement = this.targetDisplacement * animationProgress
+        return
+    end
+
+    if not this.appliedRotation then
+        this.appliedRotation     = this.targetRotation
+        this.appliedDisplacement = this.targetDisplacement
+        return
+    end
+
+    local alpha              = 1 - math.exp(-this.liveEaseRate * delta)
+    this.appliedRotation     = this.appliedRotation:slerp(this.targetRotation, alpha)
+    this.appliedDisplacement = this.appliedDisplacement
+        + (this.targetDisplacement - this.appliedDisplacement) * alpha
 end
 
 ---@private

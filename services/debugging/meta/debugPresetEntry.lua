@@ -1,0 +1,3 @@
+---@meta
+---@class debugPresetEntry : debugDropdownEntry
+---@field public preset cameraPreset

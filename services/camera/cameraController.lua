@@ -69,9 +69,12 @@ function this.initialize(services)
             [events.dialogueEnded]   = this.onDialogueEnded,
         },
         dialogue = {
-            [tes3.event.enterFrame] = this.onEnterFrame,
-            [events.gamePaused]     = this.onGamePaused,
-            [events.gameUnpaused]   = this.onGameUnpaused,
+            [tes3.event.enterFrame]          = this.onEnterFrame,
+            [events.gamePaused]              = this.onGamePaused,
+            [events.gameUnpaused]            = this.onGameUnpaused,
+            [events.settingsUpdated]         = this.onSettingsUpdated,
+            [events.cameraPresetUpdated]     = this.onCameraPresetUpdated,
+            [events.cameraAnimationReplayed] = this.onCameraAnimationReplayed,
         }
     }
 
@@ -127,6 +130,22 @@ end
 ---@private
 function this.onGameUnpaused()
     this.paused = false
+end
+
+---@private
+function this.onSettingsUpdated()
+    this.animationDuration = this.cameraPresetResolver.resolve().animationDuration
+end
+
+---@private
+---@param e cameraPresetUpdatedEventData
+function this.onCameraPresetUpdated(e)
+    this.animationDuration = e.preset.animationDuration
+end
+
+---@private
+function this.onCameraAnimationReplayed()
+    this.animationTime = 0
 end
 
 ---@private

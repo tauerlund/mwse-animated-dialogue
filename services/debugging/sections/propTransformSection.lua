@@ -302,9 +302,6 @@ function this.buildSaveButton(parent)
         return
     end
 
-    this.guiBuilder.createDivider({ parent = parent })
-        :build()
-
     local button = this.guiBuilder.createButton({ parent = parent })
         :withText(this.translations.get(this.translationKey.debugSaveTransform, { source = configuration.source }))
         :build()

@@ -1,0 +1,3 @@
+---@meta
+---@class cameraPresetUpdatedEventData
+---@field public preset cameraPreset

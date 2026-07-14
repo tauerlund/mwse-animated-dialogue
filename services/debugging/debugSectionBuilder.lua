@@ -44,6 +44,27 @@ function this.create(params)
 end
 
 ---@public
+---@param params debugSectionBuilder.createGroup.param
+---@return tes3uiElement
+function this.createGroup(params)
+    local guiBuilder = this.guiBuilder
+
+    local group = guiBuilder.createThinBorder({ parent = params.parent })
+        :withFlowDirection(tes3.flowDirection.topToBottom)
+        :withAutoSize()
+        :withProportional({ width = 1.0 })
+        :withPadding({ all = 8 })
+        :withBorder({ bottom = 6 })
+        :build()
+
+    guiBuilder.createLabel({ parent = group })
+        :withText(params.title)
+        :build()
+
+    return group
+end
+
+---@public
 ---@param params debugSectionBuilder.createHint.param
 function this.createHint(params)
     this.guiBuilder.createLabel({ parent = params.parent })

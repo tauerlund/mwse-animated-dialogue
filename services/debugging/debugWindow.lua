@@ -47,6 +47,7 @@ function this.initialize(services)
 
     this.tabs = {
         services.debugAnimationsTab,
+        services.debugCameraTab,
     }
 
     return true, nil
@@ -113,6 +114,7 @@ function this.buildTabBar(menu)
     local tabBar = guiBuilder.createBlock({ parent = menu })
         :withFlowDirection(tes3.flowDirection.leftToRight)
         :withAutoSize()
+        :withBorder({ bottom = 8 })
         :build()
 
     for i, tab in ipairs(this.tabs) do
@@ -132,8 +134,6 @@ function this.buildTabBar(menu)
 
         table.insert(this.tabButtons, button)
     end
-
-    guiBuilder.createDivider({ parent = menu }):build()
 end
 
 ---@public
