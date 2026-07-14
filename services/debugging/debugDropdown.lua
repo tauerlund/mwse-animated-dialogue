@@ -26,8 +26,12 @@ function this.create(params)
 
     local header = guiBuilder.createTextSelect({ parent = params.parent })
         :withText(params.entries[1].label)
+        :withWidgetColors({
+            idle = tes3ui.getPalette(tes3.palette.normalColor),
+            over = tes3ui.getPalette(tes3.palette.normalOverColor),
+            pressed = tes3ui.getPalette(tes3.palette.normalPressedColor),
+        })
         :build()
-    this.applyTextSelectColors(header)
 
     local listParent = guiBuilder.createBlock({ parent = params.parent })
         :withFlowDirection(tes3.flowDirection.topToBottom)
@@ -90,8 +94,12 @@ function this.open(handle)
         local item = this.guiBuilder.createTextSelect({ parent = handle.listParent })
             :withText(entry.label)
             :withBorder({ left = 6 })
+            :withWidgetColors({
+                idle = tes3ui.getPalette(tes3.palette.normalColor),
+                over = tes3ui.getPalette(tes3.palette.normalOverColor),
+                pressed = tes3ui.getPalette(tes3.palette.normalPressedColor),
+            })
             :build()
-        this.applyTextSelectColors(item)
 
         item:registerBefore(tes3.uiEvent.mouseClick, function()
             this.select(handle, i)
@@ -135,14 +143,6 @@ function this.select(handle, index)
 
     this.close(handle)
     handle.onSelect(entry)
-end
-
----@private
----@param element tes3uiElement
-function this.applyTextSelectColors(element)
-    element.widget.idle = tes3ui.getPalette(tes3.palette.normalColor)
-    element.widget.over = tes3ui.getPalette(tes3.palette.normalOverColor)
-    element.widget.pressed = tes3ui.getPalette(tes3.palette.normalPressedColor)
 end
 
 ---@private

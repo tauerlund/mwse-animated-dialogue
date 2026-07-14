@@ -119,6 +119,11 @@ function this.buildTabBar(menu)
         local button = guiBuilder.createTextSelect({ parent = tabBar })
             :withText(tab.title)
             :withBorder({ right = 12 })
+            :withWidgetColors({
+                idle = tes3ui.getPalette(tes3.palette.normalColor),
+                over = tes3ui.getPalette(tes3.palette.normalOverColor),
+                pressed = tes3ui.getPalette(tes3.palette.normalPressedColor),
+            })
             :build()
 
         button:registerBefore(tes3.uiEvent.mouseClick, function()
@@ -180,9 +185,6 @@ function this.refreshTabButtons()
         else
             button.widget.idle = tes3ui.getPalette(tes3.palette.normalColor)
         end
-
-        button.widget.over = tes3ui.getPalette(tes3.palette.normalOverColor)
-        button.widget.pressed = tes3ui.getPalette(tes3.palette.normalPressedColor)
     end
 end
 

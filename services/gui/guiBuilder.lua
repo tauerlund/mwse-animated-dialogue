@@ -138,26 +138,26 @@ function this:withColor(color)
 end
 
 ---@public
+---@param params widgetColorParams
 ---@return guiBuilder
-function this:withHeaderColor()
-	self.element.color = tes3ui.getPalette(tes3.palette.headerColor)
-	return self
-end
-
----@public
----@return guiBuilder
-function this:withDisabledColor()
-	self.element.color = tes3ui.getPalette(tes3.palette.disabledColor)
-	return self
-end
-
----@public
----@return guiBuilder
-function this:withTextSelectColors()
+function this:withWidgetColors(params)
 	local widget = self.element.widget
-	widget.idle = tes3ui.getPalette(tes3.palette.normalColor)
-	widget.over = tes3ui.getPalette(tes3.palette.normalOverColor)
-	widget.pressed = tes3ui.getPalette(tes3.palette.normalPressedColor)
+	if not widget then
+		return self
+	end
+
+	if params.idle then
+		widget.idle = params.idle
+	end
+
+	if params.over then
+		widget.over = params.over
+	end
+
+	if params.pressed then
+		widget.pressed = params.pressed
+	end
+
 	return self
 end
 

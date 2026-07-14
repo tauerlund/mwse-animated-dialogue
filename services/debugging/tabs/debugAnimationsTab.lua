@@ -109,7 +109,7 @@ function this.uninitialize()
 end
 
 ---@public
----@param params debugTabs.build.param
+---@param params debugTab.build.param
 function this.build(params)
     this.content = params.parent
     this.actor = params.actor
