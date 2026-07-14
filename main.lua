@@ -67,8 +67,6 @@ function this.initializeMod(_)
 		services.triggerOverrideSection,
 		services.propTransformSection,
 		services.cameraPresetSection,
-		services.debugAnimationsTab,
-		services.debugCameraTab,
 		services.debugWindow,
 		services.debugController,
 	}

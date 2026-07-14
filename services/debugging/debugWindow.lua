@@ -46,8 +46,20 @@ function this.initialize(services)
     this.translationKey = services.enums.translationKey
 
     this.tabs = {
-        services.debugAnimationsTab,
-        services.debugCameraTab,
+        {
+            title = this.translations.get(this.translationKey.debugTabAnimations),
+            sections = {
+                services.previewAnimationSection,
+                services.triggerOverrideSection,
+                services.propTransformSection,
+            },
+        },
+        {
+            title = this.translations.get(this.translationKey.debugTabCamera),
+            sections = {
+                services.cameraPresetSection,
+            },
+        },
     }
 
     return true, nil
@@ -143,7 +155,7 @@ function this.hide()
     end
 
     if this.activeIndex then
-        this.tabs[this.activeIndex].destroy()
+        this.destroyTab(this.tabs[this.activeIndex])
     end
 
     this.menu:destroy()
@@ -162,19 +174,44 @@ function this.selectTab(index)
     end
 
     if this.activeIndex then
-        this.tabs[this.activeIndex].destroy()
+        this.destroyTab(this.tabs[this.activeIndex])
     end
 
     this.activeIndex = index
     this.content:destroyChildren()
     this.refreshTabButtons()
-
-    this.tabs[index].build({
-        parent = this.content,
-        actor = this.actor,
-    })
+    this.buildTab(this.tabs[index])
 
     this.menu:updateLayout()
+end
+
+---@private
+---@param tab debugTab
+function this.buildTab(tab)
+    for _, section in ipairs(tab.sections) do
+        section.build({
+            parent = this.createSectionBlock(),
+            actor = this.actor,
+        })
+    end
+end
+
+---@private
+---@param tab debugTab
+function this.destroyTab(tab)
+    for _, section in ipairs(tab.sections) do
+        section.destroy()
+    end
+end
+
+---@private
+---@return tes3uiElement
+function this.createSectionBlock()
+    return this.guiBuilder.createBlock({ parent = this.content })
+        :withFlowDirection(tes3.flowDirection.topToBottom)
+        :withAutoSize()
+        :withProportional({ width = 1.0 })
+        :build()
 end
 
 ---@private
