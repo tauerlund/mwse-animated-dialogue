@@ -73,8 +73,14 @@ local this = {
 
     debugSliderSection = require("tauer.animated-dialogue.services.debugging.debugSliderSection"),
     debugDropdown = require("tauer.animated-dialogue.services.debugging.debugDropdown"),
-    debugSection = require("tauer.animated-dialogue.services.debugging.debugSection"),
+    debugSectionBuilder = require("tauer.animated-dialogue.services.debugging.debugSectionBuilder"),
+    debugTooltip = require("tauer.animated-dialogue.services.debugging.debugTooltip"),
     debugStatusHud = require("tauer.animated-dialogue.services.debugging.debugStatusHud"),
+    previewAnimationSection = require(
+        "tauer.animated-dialogue.services.debugging.sections.previewAnimationSection"),
+    triggerOverrideSection = require(
+        "tauer.animated-dialogue.services.debugging.sections.triggerOverrideSection"),
+    propTransformSection = require("tauer.animated-dialogue.services.debugging.sections.propTransformSection"),
     debugAnimationsTab = require("tauer.animated-dialogue.services.debugging.tabs.debugAnimationsTab"),
     debugWindow = require("tauer.animated-dialogue.services.debugging.debugWindow"),
     debugController = require("tauer.animated-dialogue.services.debugging.debugController"),

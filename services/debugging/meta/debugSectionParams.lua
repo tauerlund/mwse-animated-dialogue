@@ -1,4 +1,0 @@
----@meta
----@class debugSection.create.param
----@field public parent tes3uiElement
----@field public title string

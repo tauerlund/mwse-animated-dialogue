@@ -1,4 +1,4 @@
----@class debugSection : initializedService
+---@class debugSectionBuilder : initializedService
 local this = {}
 
 ---@private
@@ -15,7 +15,7 @@ function this.initialize(services)
 end
 
 ---@public
----@param params debugSection.create.param
+---@param params debugSectionBuilder.create.param
 ---@return tes3uiElement
 function this.create(params)
     local guiBuilder = this.guiBuilder
@@ -41,6 +41,16 @@ function this.create(params)
         :build()
 
     return content
+end
+
+---@public
+---@param params debugSectionBuilder.createHint.param
+function this.createHint(params)
+    this.guiBuilder.createLabel({ parent = params.parent })
+        :withText(params.text)
+        :withColor(tes3ui.getPalette(tes3.palette.disabledColor))
+        :withWrapText()
+        :build()
 end
 
 return this
