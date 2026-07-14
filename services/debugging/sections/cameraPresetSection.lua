@@ -57,7 +57,7 @@ this.translationKey = nil
 this.block = nil
 
 ---@private
----@type cameraPreset|nil
+---@type cameraPreset
 this.preset = nil
 
 ---@private
@@ -266,9 +266,11 @@ function this.buildPositionSection(parent)
         parent = parent,
         title = this.translations.get(keys.positionCategory),
         sliders = {
-            this.createSlider({ label = keys.presetVerticalAnchor, min = 0, max = 1, step = 0.01, field = "verticalAnchor" }),
+            this.createSlider({ label = keys.presetVerticalAnchor, min = 0, max = 1, step = 0.01, field =
+            "verticalAnchor" }),
             this.createSlider({ label = keys.distance, min = 0, max = 300, step = 1, field = "distance" }),
-            this.createSlider({ label = keys.horizontalOffset, min = -150, max = 150, step = 1, field = "horizontalOffset" }),
+            this.createSlider({ label = keys.horizontalOffset, min = -150, max = 150, step = 1, field =
+            "horizontalOffset" }),
             this.createSlider({ label = keys.verticalOffset, min = -150, max = 150, step = 1, field = "verticalOffset" }),
         },
     })
