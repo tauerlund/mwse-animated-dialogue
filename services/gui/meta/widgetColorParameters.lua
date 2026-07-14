@@ -1,0 +1,5 @@
+---@meta
+---@class widgetColorParams
+---@field public idle? number[]
+---@field public over? number[]
+---@field public pressed? number[]

@@ -45,6 +45,10 @@ this.pendingInfo = nil
 this.definition = nil
 
 ---@private
+---@type string|nil
+this.dialogueId = nil
+
+---@private
 ---@type niNode|nil
 this.node = nil
 
@@ -143,13 +147,15 @@ function this.onDialogueInfo(e)
         return
     end
 
-    this.spawn(prop)
+    this.spawn(prop, e.info.id)
 end
 
 ---@private
 ---@param prop propDefinition
-function this.spawn(prop)
+---@param dialogueId string
+function this.spawn(prop, dialogueId)
     this.definition = prop
+    this.dialogueId = dialogueId
     this.elapsed    = 0
 
     this.eventRegistrar.register(this.eventHandlers.prop)
@@ -167,6 +173,7 @@ function this.despawn()
     this.node       = nil
     this.bone       = nil
     this.definition = nil
+    this.dialogueId = nil
     this.elapsed    = 0
 
     this.eventRegistrar.unregister(this.eventHandlers.prop)
@@ -227,7 +234,7 @@ function this.attach(prop)
     node:updateEffects()
 
     ---@type propSpawnedEventData
-    local eventData = { node = node }
+    local eventData = { node = node, dialogueId = this.dialogueId }
     event.trigger(this.events.propSpawned, eventData)
 end
 

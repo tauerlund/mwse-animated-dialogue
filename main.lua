@@ -58,7 +58,12 @@ function this.initializeMod(_)
 		services.particleController,
 		services.lightController,
 		services.propSpawner,
-		services.debuggingSliderPanel,
+		services.debugSliderSection,
+		services.debugDropdown,
+		services.debugSection,
+		services.debugStatusHud,
+		services.debugAnimationsTab,
+		services.debugWindow,
 		services.debugController,
 	}
 

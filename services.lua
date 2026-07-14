@@ -71,7 +71,12 @@ local this = {
 
     guiBuilder = require("tauer.animated-dialogue.services.gui.guiBuilder"),
 
-    debuggingSliderPanel = require("tauer.animated-dialogue.services.debugging.debugSliderPanel"),
+    debugSliderSection = require("tauer.animated-dialogue.services.debugging.debugSliderSection"),
+    debugDropdown = require("tauer.animated-dialogue.services.debugging.debugDropdown"),
+    debugSection = require("tauer.animated-dialogue.services.debugging.debugSection"),
+    debugStatusHud = require("tauer.animated-dialogue.services.debugging.debugStatusHud"),
+    debugAnimationsTab = require("tauer.animated-dialogue.services.debugging.tabs.debugAnimationsTab"),
+    debugWindow = require("tauer.animated-dialogue.services.debugging.debugWindow"),
     debugController = require("tauer.animated-dialogue.services.debugging.debugController"),
 
     ---@class enums
