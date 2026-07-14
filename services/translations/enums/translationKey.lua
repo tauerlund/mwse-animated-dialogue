@@ -167,6 +167,20 @@ local this = {
     debugHudStep = "debugHudStep",
     debugHudStatusRunning = "debugHudStatusRunning",
     debugHudStatusPaused = "debugHudStatusPaused",
+    debugWindowTitle = "debugWindowTitle",
+    debugTabAnimations = "debugTabAnimations",
+    debugPreviewAnimation = "debugPreviewAnimation",
+    debugPreviewAnimationHint = "debugPreviewAnimationHint",
+    debugTriggerOverride = "debugTriggerOverride",
+    debugTriggerOverrideHint = "debugTriggerOverrideHint",
+    debugActorAnimDisabledHint = "debugActorAnimDisabledHint",
+    debugPropSection = "debugPropSection",
+    debugNoPropSpawned = "debugNoPropSpawned",
+    debugTranslationSection = "debugTranslationSection",
+    debugRotationSection = "debugRotationSection",
+    debugScaleSection = "debugScaleSection",
+    debugReset = "debugReset",
+    debugCopy = "debugCopy",
 }
 
 return this

@@ -206,7 +206,7 @@ return {
     [keys.debuggingPage] = "Debugging",
     [keys.debugModeEnabled] = "Debugging Mode",
     [keys.debugModeEnabledDescription] =
-    "Development tool. Opens live translation, rotation, and scale sliders on each prop spawned during dialogue so its transform can be tuned and copied as JSON, and enables the pause key below. Leave off during normal play.",
+    "Development tool. Opens a debug window during dialogue with tabs for previewing animations and tuning prop transforms (copyable as JSON), and enables the pause key below. Leave off during normal play.",
     [keys.debugPauseKey] = "Pause / Unpause Key",
     [keys.debugPauseKeyDescription] =
     "While debugging mode is on, this key freezes and unfreezes the dialogue scene (actor animation, particles, lights, and weather) so prop transforms can be tuned against a still pose. Only active during dialogue.",
@@ -218,4 +218,18 @@ return {
     [keys.debugHudStep] = "Step Frame: %{key}",
     [keys.debugHudStatusRunning] = "Status: Running",
     [keys.debugHudStatusPaused] = "Status: Paused",
+    [keys.debugWindowTitle] = "Animated Dialogue: Debug",
+    [keys.debugTabAnimations] = "Animations",
+    [keys.debugPreviewAnimation] = "Preview Animation",
+    [keys.debugPreviewAnimationHint] = "Force a base clip onto this NPC.",
+    [keys.debugTriggerOverride] = "Trigger Override",
+    [keys.debugTriggerOverrideHint] = "Simulate a dialogue line: override clip + prop.",
+    [keys.debugActorAnimDisabledHint] = "Actor animations are disabled in the MCM.",
+    [keys.debugPropSection] = "Prop Transform",
+    [keys.debugNoPropSpawned] = "No prop spawned. Trigger an override with a prop to edit its transform.",
+    [keys.debugTranslationSection] = "Translation",
+    [keys.debugRotationSection] = "Rotation",
+    [keys.debugScaleSection] = "Scale",
+    [keys.debugReset] = "Reset",
+    [keys.debugCopy] = "Copy",
 }

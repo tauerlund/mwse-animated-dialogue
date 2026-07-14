@@ -94,11 +94,31 @@ end
 ---@public
 ---@param parameters createParameters
 ---@return guiBuilder
+function this.createVerticalScrollPane(parameters)
+	local element = parameters.parent:createVerticalScrollPane({
+		id = parameters.id,
+	})
+	return this.create(element)
+end
+
+---@public
+---@param parameters createParameters
+---@return guiBuilder
 function this.createTextSelect(parameters)
 	local element = parameters.parent:createTextSelect({
 		id = parameters.id,
 	})
 	return this.create(element)
+end
+
+---@public
+---@param element tes3uiElement
+function this.refreshLayout(element)
+	local menu = element:getTopLevelMenu()
+
+	if menu then
+		menu:updateLayout()
+	end
 end
 
 ---@public
@@ -119,6 +139,38 @@ end
 
 ---@public
 ---@return guiBuilder
+function this:withHeaderColor()
+	self.element.color = tes3ui.getPalette(tes3.palette.headerColor)
+	return self
+end
+
+---@public
+---@return guiBuilder
+function this:withDisabledColor()
+	self.element.color = tes3ui.getPalette(tes3.palette.disabledColor)
+	return self
+end
+
+---@public
+---@return guiBuilder
+function this:withTextSelectColors()
+	local widget = self.element.widget
+	widget.idle = tes3ui.getPalette(tes3.palette.normalColor)
+	widget.over = tes3ui.getPalette(tes3.palette.normalOverColor)
+	widget.pressed = tes3ui.getPalette(tes3.palette.normalPressedColor)
+	return self
+end
+
+---@public
+---@return guiBuilder
+function this:withWrapText()
+	self.element.wrapText = true
+	self.element.widthProportional = 1.0
+	return self
+end
+
+---@public
+---@return guiBuilder
 function this:withAutoSize()
 	self.element.autoHeight = true
 	self.element.autoWidth = true
@@ -134,6 +186,19 @@ function this:withMinSize(parameters)
 	end
 	if parameters.height then
 		self.element.minHeight = parameters.height
+	end
+	return self
+end
+
+---@public
+---@param parameters vector2Parameters
+---@return guiBuilder
+function this:withPosition(parameters)
+	if parameters.x then
+		self.element.positionX = parameters.x
+	end
+	if parameters.y then
+		self.element.positionY = parameters.y
 	end
 	return self
 end
