@@ -232,4 +232,8 @@ return {
     [keys.debugScaleSection] = "Scale",
     [keys.debugReset] = "Reset",
     [keys.debugCopy] = "Copy",
+    [keys.debugSaveTransform] = "Save Transform to %{source}",
+    [keys.debugSaveTransformConfirm] = "Overwrite %{source} with the current prop transform? The whole file is rewritten.",
+    [keys.debugSave] = "Save",
+    [keys.debugTransformSaved] = "Saved prop transform to %{source}.",
 }

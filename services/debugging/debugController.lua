@@ -161,17 +161,14 @@ end
 
 ---@private
 ---@param e keyDownEventData
----@param bind mwseKeyCombo|nil
+---@param keyCombo mwseKeyCombo|nil
 ---@return boolean
-function this.matchesKey(e, bind)
-    if not bind then
+function this.matchesKey(e, keyCombo)
+    if not keyCombo then
         return false
     end
 
-    return e.keyCode == bind.keyCode
-        and (not not e.isShiftDown) == (not not bind.isShiftDown)
-        and (not not e.isControlDown) == (not not bind.isControlDown)
-        and (not not e.isAltDown) == (not not bind.isAltDown)
+    return e.keyCode == keyCombo.keyCode
 end
 
 return this

@@ -181,6 +181,10 @@ local this = {
     debugScaleSection = "debugScaleSection",
     debugReset = "debugReset",
     debugCopy = "debugCopy",
+    debugSaveTransform = "debugSaveTransform",
+    debugSaveTransformConfirm = "debugSaveTransformConfirm",
+    debugSave = "debugSave",
+    debugTransformSaved = "debugTransformSaved",
 }
 
 return this

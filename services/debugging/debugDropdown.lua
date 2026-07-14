@@ -6,8 +6,8 @@ local this = {}
 this.guiBuilder = nil
 
 ---@private
----@type debugDropdownHandle[]
-this.handles = {}
+---@type dropdown[]
+this.dropdowns = {}
 
 ---@public
 ---@param services serviceCollection
@@ -20,7 +20,7 @@ end
 
 ---@public
 ---@param params debugDropdown.create.param
----@return debugDropdownHandle
+---@return dropdown
 function this.create(params)
     local guiBuilder = this.guiBuilder
 
@@ -33,7 +33,7 @@ function this.create(params)
         })
         :build()
 
-    local listParent = guiBuilder.createBlock({ parent = params.parent })
+    local optionsBlock = guiBuilder.createBlock({ parent = params.parent })
         :withFlowDirection(tes3.flowDirection.topToBottom)
         :withAutoSize()
         :build()
@@ -44,54 +44,54 @@ function this.create(params)
         :withWrapText()
         :build()
 
-    ---@type debugDropdownHandle
-    local handle = {
+    ---@type dropdown
+    local dropdown = {
         entries = params.entries,
         header = header,
-        listParent = listParent,
+        optionsBlock = optionsBlock,
         open = false,
         onSelect = params.onSelect,
         onHelp = params.onHelp,
     }
 
     header:registerBefore(tes3.uiEvent.mouseClick, function()
-        this.toggle(handle)
+        this.toggle(dropdown)
     end)
 
     header:registerBefore(tes3.uiEvent.destroy, function()
-        table.removevalue(this.handles, handle)
+        table.removevalue(this.dropdowns, dropdown)
     end)
 
-    table.insert(this.handles, handle)
+    table.insert(this.dropdowns, dropdown)
 
-    return handle
+    return dropdown
 end
 
 ---@public
----@param handle debugDropdownHandle
-function this.release(handle)
-    table.removevalue(this.handles, handle)
+---@param dropdown dropdown
+function this.remove(dropdown)
+    table.removevalue(this.dropdowns, dropdown)
 end
 
 ---@private
----@param handle debugDropdownHandle
-function this.toggle(handle)
-    if handle.open then
-        this.close(handle)
+---@param dropdown dropdown
+function this.toggle(dropdown)
+    if dropdown.open then
+        this.close(dropdown)
     else
-        this.open(handle)
+        this.open(dropdown)
     end
 end
 
 ---@private
----@param handle debugDropdownHandle
-function this.open(handle)
+---@param dropdown dropdown
+function this.open(dropdown)
     this.closeAll()
 
-    handle.open = true
+    dropdown.open = true
 
-    for i, entry in ipairs(handle.entries) do
-        local item = this.guiBuilder.createTextSelect({ parent = handle.listParent })
+    for i, entry in ipairs(dropdown.entries) do
+        local item = this.guiBuilder.createTextSelect({ parent = dropdown.optionsBlock })
             :withText(entry.label)
             :withBorder({ left = 6 })
             :withWidgetColors({
@@ -102,53 +102,53 @@ function this.open(handle)
             :build()
 
         item:registerBefore(tes3.uiEvent.mouseClick, function()
-            this.select(handle, i)
+            this.select(dropdown, i)
         end)
 
-        if handle.onHelp then
+        if dropdown.onHelp then
             item:register(tes3.uiEvent.help, function()
-                handle.onHelp(entry)
+                dropdown.onHelp(entry)
             end)
         end
     end
 
-    this.refreshLayout(handle)
+    this.refreshLayout(dropdown)
 end
 
 ---@private
----@param handle debugDropdownHandle
-function this.close(handle)
-    handle.open = false
-    handle.listParent:destroyChildren()
+---@param dropdown dropdown
+function this.close(dropdown)
+    dropdown.open = false
+    dropdown.optionsBlock:destroyChildren()
 
-    this.refreshLayout(handle)
+    this.refreshLayout(dropdown)
 end
 
 ---@private
 function this.closeAll()
-    for _, handle in ipairs(this.handles) do
-        if handle.open then
-            handle.open = false
-            handle.listParent:destroyChildren()
+    for _, dropdown in ipairs(this.dropdowns) do
+        if dropdown.open then
+            dropdown.open = false
+            dropdown.optionsBlock:destroyChildren()
         end
     end
 end
 
 ---@private
----@param handle debugDropdownHandle
+---@param dropdown dropdown
 ---@param index integer
-function this.select(handle, index)
-    local entry = handle.entries[index]
-    handle.header.text = entry.label
+function this.select(dropdown, index)
+    local entry = dropdown.entries[index]
+    dropdown.header.text = entry.label
 
-    this.close(handle)
-    handle.onSelect(entry)
+    this.close(dropdown)
+    dropdown.onSelect(entry)
 end
 
 ---@private
----@param handle debugDropdownHandle
-function this.refreshLayout(handle)
-    local menu = handle.header:getTopLevelMenu()
+---@param dropdown dropdown
+function this.refreshLayout(dropdown)
+    local menu = dropdown.header:getTopLevelMenu()
 
     if menu then
         menu:updateLayout()

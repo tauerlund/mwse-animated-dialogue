@@ -27,6 +27,10 @@ this.baseAnimationConfigurations = {}
 ---@type { [string]: overrideAnimationConfiguration }
 this.overrideAnimationConfigurations = {}
 
+---@private
+---@type { [string]: overrideAnimationConfigurationFile }
+this.overrideAnimationFiles = {}
+
 ---@public
 ---@param services serviceCollection
 ---@return boolean, string|nil
@@ -57,9 +61,28 @@ function this.getOverrideConfigurations()
 end
 
 ---@public
+---@param configuration overrideAnimationConfiguration
+---@return boolean
+function this.saveOverrideConfiguration(configuration)
+    local source = configuration.source --[[@as string]]
+    local configurations = source and this.overrideAnimationFiles[source]
+
+    if not configurations then
+        this.logger:error("Cannot save override configuration; unknown source file '%s'", source)
+        return false
+    end
+
+    local path = string.format("%s\\%s", this.overrideAnimationsPath, this.removeExtension(source))
+    mwse.saveConfig(path, this.removeSourceFilenames(configurations))
+
+    return true
+end
+
+---@public
 function this.uninitialize()
     this.baseAnimationConfigurations = {}
     this.overrideAnimationConfigurations = {}
+    this.overrideAnimationFiles = {}
 end
 
 ---@private
@@ -99,6 +122,8 @@ function this.loadOverrideConfigurations()
         local id = this.removeExtension(file)
         local path = string.format("%s\\%s", this.overrideAnimationsPath, id)
         local configurations = mwse.loadConfig(path) --[[@as overrideAnimationConfigurationFile]]
+        this.overrideAnimationFiles[file] = configurations
+
         for _, configuration in ipairs(configurations) do
             configuration.source = file
             for _, dialogueId in ipairs(configuration.dialogueIds) do
@@ -110,6 +135,21 @@ function this.loadOverrideConfigurations()
             end
         end
     end
+end
+
+---@private
+---@param configurations overrideAnimationConfigurationFile
+---@return overrideAnimationConfigurationFile
+function this.removeSourceFilenames(configurations)
+    local copies = {}
+
+    for _, configuration in ipairs(configurations) do
+        local copy = table.copy(configuration)
+        copy.source = nil
+        table.insert(copies, copy)
+    end
+
+    return copies
 end
 
 ---@private

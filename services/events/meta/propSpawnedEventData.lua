@@ -1,3 +1,4 @@
 ---@meta
 ---@class propSpawnedEventData
 ---@field public node niNode
+---@field public dialogueId string

@@ -42,27 +42,27 @@ function this.create(params)
 
     guiBuilder.createDivider({ parent = section }):build()
 
-    local sliderRefs = {}
+    local rows = {}
 
-    for _, sliderDef in ipairs(params.sliders) do
-        table.insert(sliderRefs, this.createSliderRow(section, sliderDef))
+    for _, definition in ipairs(params.sliders) do
+        table.insert(rows, this.createSliderRow(section, definition))
     end
 
     guiBuilder.createDivider({ parent = section }):build()
 
-    this.createButtonRow(section, sliderRefs, params.onCopy)
+    this.createButtonRow(section, rows, params.onCopy)
 
     return section
 end
 
 ---@private
 ---@param section tes3uiElement
----@param sliderDef debugSliderDef
----@return table
-function this.createSliderRow(section, sliderDef)
+---@param definition debugSliderDefinition
+---@return debugSliderRow
+function this.createSliderRow(section, definition)
     local guiBuilder = this.guiBuilder
-    local steps = math.round((sliderDef.max - sliderDef.min) / sliderDef.step)
-    local defaultStep = math.round((sliderDef.default - sliderDef.min) / sliderDef.step)
+    local steps = math.round((definition.max - definition.min) / definition.step)
+    local defaultStep = math.round((definition.default - definition.min) / definition.step)
 
     local row = guiBuilder.createBlock({ parent = section })
         :withFlowDirection(tes3.flowDirection.leftToRight)
@@ -71,16 +71,16 @@ function this.createSliderRow(section, sliderDef)
         :build()
 
     guiBuilder.createLabel({ parent = row })
-        :withText(sliderDef.label)
+        :withText(definition.label)
         :withSize({ width = 60 })
         :build()
 
     local valueLabel = guiBuilder.createLabel({ parent = row })
-        :withText(string.format("%.3f", sliderDef.default))
+        :withText(string.format("%.3f", definition.default))
         :withSize({ width = 55 })
         :build()
 
-    local sliderEl = guiBuilder.createSlider({
+    local slider = guiBuilder.createSlider({
             parent = row,
             current = defaultStep,
             max = steps,
@@ -90,22 +90,22 @@ function this.createSliderRow(section, sliderDef)
         :withSize({ width = 185 })
         :build()
 
-    sliderEl:registerAfter(tes3.uiEvent.partScrollBarChanged, function()
-        local intVal = sliderEl.widget.current
-        local floatVal = sliderDef.min + (intVal / steps) * (sliderDef.max - sliderDef.min)
-        valueLabel.text = string.format("%.3f", floatVal)
+    slider:registerAfter(tes3.uiEvent.partScrollBarChanged, function()
+        local currentStep = slider.widget.current
+        local value = definition.min + (currentStep / steps) * (definition.max - definition.min)
+        valueLabel.text = string.format("%.3f", value)
         this.refreshLayout(section)
-        sliderDef.onChange(floatVal)
+        definition.onChange(value)
     end)
 
-    return { sliderEl = sliderEl, valueLabel = valueLabel, defaultStep = defaultStep, sliderDef = sliderDef }
+    return { slider = slider, valueLabel = valueLabel, defaultStep = defaultStep, definition = definition }
 end
 
 ---@private
 ---@param section tes3uiElement
----@param sliderRefs table[]
+---@param rows debugSliderRow[]
 ---@param onCopy (fun(): string)|nil
-function this.createButtonRow(section, sliderRefs, onCopy)
+function this.createButtonRow(section, rows, onCopy)
     local guiBuilder = this.guiBuilder
     local translations = this.translations
     local keys = this.translationKey
@@ -120,10 +120,10 @@ function this.createButtonRow(section, sliderRefs, onCopy)
         :build()
 
     resetButton:registerBefore(tes3.uiEvent.mouseClick, function()
-        for _, ref in ipairs(sliderRefs) do
-            ref.sliderEl.widget.current = ref.defaultStep
-            ref.valueLabel.text = string.format("%.3f", ref.sliderDef.default)
-            ref.sliderDef.onChange(ref.sliderDef.default)
+        for _, row in ipairs(rows) do
+            row.slider.widget.current = row.defaultStep
+            row.valueLabel.text = string.format("%.3f", row.definition.default)
+            row.definition.onChange(row.definition.default)
         end
         this.refreshLayout(section)
     end)

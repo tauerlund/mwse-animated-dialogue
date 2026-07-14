@@ -117,10 +117,10 @@ function this.setPaused(paused)
 end
 
 ---@private
----@param bind mwseKeyCombo
+---@param keyCombo mwseKeyCombo
 ---@return string
-function this.getKeyName(bind)
-    return mwse.mcm.getKeyComboName(bind) or "Unbound"
+function this.getKeyName(keyCombo)
+    return mwse.mcm.getKeyComboName(keyCombo) or "Unbound"
 end
 
 return this

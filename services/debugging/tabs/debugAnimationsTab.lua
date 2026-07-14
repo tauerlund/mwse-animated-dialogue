@@ -62,12 +62,16 @@ this.actor = nil
 this.node = nil
 
 ---@private
+---@type string|nil
+this.dialogueId = nil
+
+---@private
 ---@type tes3uiElement|nil
 this.propBlock = nil
 
 ---@private
----@type debugDropdownHandle[]
-this.handles = {}
+---@type dropdown[]
+this.dropdowns = {}
 
 ---@private
 ---@type eventHandlers
@@ -119,7 +123,7 @@ end
 
 ---@public
 function this.destroy()
-    this.releaseHandles()
+    this.removeDropdowns()
     this.content = nil
     this.propBlock = nil
     this.actor = nil
@@ -133,27 +137,30 @@ function this.onPropSpawned(e)
     end
 
     this.node = e.node
+    this.dialogueId = e.dialogueId
     this.rebuildPropContent()
 end
 
 ---@private
 function this.onPropDespawned()
     this.node = nil
+    this.dialogueId = nil
     this.rebuildPropContent()
 end
 
 ---@private
 function this.onDialogueEnded()
     this.node = nil
+    this.dialogueId = nil
 end
 
 ---@private
-function this.releaseHandles()
-    for _, handle in ipairs(this.handles) do
-        this.debugDropdown.release(handle)
+function this.removeDropdowns()
+    for _, dropdown in ipairs(this.dropdowns) do
+        this.debugDropdown.remove(dropdown)
     end
 
-    this.handles = {}
+    this.dropdowns = {}
 end
 
 ---@private
@@ -162,7 +169,7 @@ function this.onSettingsUpdated()
         return
     end
 
-    this.releaseHandles()
+    this.removeDropdowns()
     this.content:destroyChildren()
     this.buildContent()
     this.content:getTopLevelMenu():updateLayout()
@@ -205,7 +212,7 @@ function this.buildAnimationDropdowns()
             title = translations.get(keys.debugPreviewAnimation),
         })
 
-        table.insert(this.handles, this.debugDropdown.create({
+        table.insert(this.dropdowns, this.debugDropdown.create({
             parent = section,
             hint = translations.get(keys.debugPreviewAnimationHint),
             entries = baseEntries,
@@ -220,7 +227,7 @@ function this.buildAnimationDropdowns()
             title = translations.get(keys.debugTriggerOverride),
         })
 
-        table.insert(this.handles, this.debugDropdown.create({
+        table.insert(this.dropdowns, this.debugDropdown.create({
             parent = section,
             hint = translations.get(keys.debugTriggerOverrideHint),
             entries = overrideEntries,
@@ -231,7 +238,7 @@ function this.buildAnimationDropdowns()
 end
 
 ---@private
----@param entry previewEntry
+---@param entry debugAnimationEntry
 function this.previewAnimation(entry)
     if not this.actor then
         return
@@ -249,7 +256,7 @@ function this.previewAnimation(entry)
 end
 
 ---@private
----@param entry previewEntry
+---@param entry debugAnimationEntry
 function this.triggerOverride(entry)
     if not this.actor then
         return
@@ -264,7 +271,7 @@ function this.triggerOverride(entry)
 end
 
 ---@private
----@return previewEntry[]
+---@return debugAnimationEntry[]
 function this.buildBaseEntries()
     local entries = {}
 
@@ -288,7 +295,7 @@ function this.buildBaseEntries()
 end
 
 ---@private
----@return previewEntry[]
+---@return debugAnimationEntry[]
 function this.buildOverrideEntries()
     local entries = {}
     local configurations = this.animationLoader.getOverrideConfigurations()
@@ -350,6 +357,106 @@ function this.buildPropContent()
     this.buildTranslationSection(section)
     this.buildRotationSection(section)
     this.buildScaleSection(section)
+    this.buildSaveButton(section)
+end
+
+---@private
+---@param parent tes3uiElement
+function this.buildSaveButton(parent)
+    local configuration = this.resolveConfiguration()
+    if not configuration then
+        return
+    end
+
+    this.guiBuilder.createDivider({ parent = parent })
+        :build()
+
+    local button = this.guiBuilder.createButton({ parent = parent })
+        :withText(this.translations.get(this.translationKey.debugSaveTransform, { source = configuration.source }))
+        :build()
+
+    button:registerBefore(tes3.uiEvent.mouseClick, this.confirmSaveTransform)
+end
+
+---@private
+function this.confirmSaveTransform()
+    local configuration = this.resolveConfiguration()
+    if not configuration then
+        return
+    end
+
+    tes3ui.showMessageMenu({
+        message = this.translations.get(this.translationKey.debugSaveTransformConfirm, { source = configuration.source }),
+        cancels = true,
+        leaveMenuMode = false,
+        buttons = {
+            {
+                text = this.translations.get(this.translationKey.debugSave),
+                callback = this.saveTransform,
+            },
+        },
+    })
+end
+
+---@private
+function this.saveTransform()
+    local configuration = this.resolveConfiguration()
+    if not configuration then
+        return
+    end
+
+    configuration.prop.transform = this.readTransform()
+
+    if not this.animationLoader.saveOverrideConfiguration(configuration) then
+        return
+    end
+
+    tes3.messageBox(this.translations.get(this.translationKey.debugTransformSaved, { source = configuration.source }))
+end
+
+---@private
+---@return overrideAnimationConfiguration|nil
+function this.resolveConfiguration()
+    if not this.node or not this.dialogueId then
+        return nil
+    end
+
+    local configuration = this.animationLoader.getOverrideConfigurations()[this.dialogueId]
+    if not configuration or not configuration.prop then
+        return nil
+    end
+
+    return configuration
+end
+
+---@private
+---@return transformOverride
+function this.readTransform()
+    local node = this.node
+
+    return {
+        translation = this.readVector(node.translation),
+        rotation = this.readVector(node.rotation:toEulerXYZ()),
+        scale = this.round(node.scale),
+    }
+end
+
+---@private
+---@param vector tes3vector3
+---@return { x: number, y: number, z: number }
+function this.readVector(vector)
+    return {
+        x = this.round(vector.x),
+        y = this.round(vector.y),
+        z = this.round(vector.z),
+    }
+end
+
+---@private
+---@param value number
+---@return number?
+function this.round(value)
+    return tonumber(string.format("%.4f", value))
 end
 
 ---@private
@@ -493,7 +600,7 @@ function this.buildScaleSection(parent)
 end
 
 ---@private
----@param entry previewEntry
+---@param entry debugAnimationEntry
 function this.showJsonTooltip(entry)
     local tooltip = tes3ui.createTooltipMenu()
 

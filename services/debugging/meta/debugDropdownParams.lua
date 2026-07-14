@@ -9,10 +9,10 @@
 ---@field public onSelect fun(entry: debugDropdownEntry)
 ---@field public onHelp (fun(entry: debugDropdownEntry))|nil
 
----@class debugDropdownHandle
+---@class dropdown
 ---@field public entries debugDropdownEntry[]
 ---@field public header tes3uiElement
----@field public listParent tes3uiElement
+---@field public optionsBlock tes3uiElement
 ---@field public open boolean
 ---@field public onSelect fun(entry: debugDropdownEntry)
 ---@field public onHelp (fun(entry: debugDropdownEntry))|nil
