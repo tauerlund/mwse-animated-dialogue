@@ -117,7 +117,12 @@ function this.onInfoGetText(e)
         return
     end
 
-    this.pendingInfo = { info = e.info, text = text }
+    if e.info.type == tes3.dialogueType.greeting then
+        this.pendingInfo = {
+            info = e.info,
+            text = text
+        }
+    end
 end
 
 ---@private
