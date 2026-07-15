@@ -76,7 +76,7 @@ function this.initialize(services)
     local effectModes            = services.enums.effectModes
 
     this.resolveLightsStrategies = {
-        [effectModes.actor] = this.resolveNpcLights,
+        [effectModes.actor] = this.resolveActorLights,
         [effectModes.currentCell] = this.resolveCurrentCellLights,
         [effectModes.activeCells] = this.resolveActiveCellsLights
     }
@@ -168,7 +168,7 @@ end
 
 ---@private
 ---@param actor tes3reference
-function this.resolveNpcLights(actor)
+function this.resolveActorLights(actor)
     local mobile = actor.mobile
     local source = mobile and mobile.torchSlot and mobile.torchSlot.object --[[@as tes3light]]
     this.tryAddLight(actor, source)

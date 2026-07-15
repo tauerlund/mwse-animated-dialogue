@@ -62,7 +62,7 @@ function this.initialize(services)
     local effectModes               = services.enums.effectModes
 
     this.resolveParticlesStrategies = {
-        [effectModes.actor] = this.resolveNpcParticles,
+        [effectModes.actor] = this.resolveActorParticles,
         [effectModes.currentCell] = this.resolveCurrentCellParticles,
         [effectModes.activeCells] = this.resolveActiveCellsParticles
     }
@@ -127,7 +127,7 @@ end
 
 ---@private
 ---@param actor tes3reference
-function this.resolveNpcParticles(actor)
+function this.resolveActorParticles(actor)
     this.controllers = this.particleResolver.resolve(actor.sceneNode --[[@as niNode]])
 end
 
