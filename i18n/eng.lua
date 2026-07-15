@@ -70,6 +70,11 @@ return {
     [keys.propsEnabled] = "Enable Props",
     [keys.propsEnabledDescription] =
     "Enables or disables actors holding props during dialogue (when configured)",
+    [keys.blacklistedActorsTitleLabel] = "Blacklist",
+    [keys.blacklistedActorsDescription] =
+    "Actors on the blacklist are excluded from this mod's functionality entirely.",
+    [keys.blacklistedActorsLeftLabel] = "Blacklisted",
+    [keys.blacklistedActorsRightLabel] = "Actors",
     [keys.playerPage] = "Player",
     [keys.playerPageDescription] =
     "Animates the player during dialogue, alongside the actor. Player animations apply in third person only; in first person the player's body is not visible and these settings do nothing.",

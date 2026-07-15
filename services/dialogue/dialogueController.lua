@@ -62,12 +62,18 @@ function this.onMenuDialogActivated(e)
     local pendingInfo = this.pendingInfo
     this.pendingInfo = nil
 
-    if not this.settings.enabled then
+    local settings = this.settings
+
+    if not settings.enabled then
         return
     end
 
     local reference = this.resolveActor()
     if not reference then
+        return
+    end
+
+    if settings.blacklistedActors[reference.baseObject.id:lower()] then
         return
     end
 
@@ -83,7 +89,7 @@ function this.onMenuDialogActivated(e)
     event.trigger(this.events.dialogueStarted, eventData)
 
     if pendingInfo then
-        this.emitDialogueInfo(pendingInfo.info, pendingInfo.text, reference)
+        this.triggerDialogueInfo(pendingInfo.info, pendingInfo.text, reference)
     end
 end
 
@@ -103,7 +109,7 @@ function this.onInfoGetText(e)
 
     local reference = this.resolveActor()
     if reference then
-        this.emitDialogueInfo(e.info, text, reference)
+        this.triggerDialogueInfo(e.info, text, reference)
         return
     end
 
@@ -114,7 +120,7 @@ end
 ---@param info tes3dialogueInfo
 ---@param text string
 ---@param actor tes3reference
-function this.emitDialogueInfo(info, text, actor)
+function this.triggerDialogueInfo(info, text, actor)
     ---@type dialogueInfoEventData
     local eventData = {
         info  = info,
