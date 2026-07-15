@@ -104,7 +104,7 @@ function this.onInfoGetText(e)
         return
     end
 
-    local text = e:loadOriginalText()
+    local text = e.text or e:loadOriginalText()
     e.text = text
 
     local reference = this.resolveActor()
