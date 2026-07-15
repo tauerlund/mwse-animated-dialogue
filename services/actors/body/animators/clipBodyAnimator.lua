@@ -327,7 +327,7 @@ function this:advanceTrack(track, delta)
     end
 
     if track.looping then
-        track.phase = track.start
+        track.phase = track.start + (track.phase - track.stop)
     else
         self:applyAnimation(self.revertTo, true)
     end
