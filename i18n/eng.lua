@@ -173,6 +173,10 @@ return {
     "Applies a depth of field effect during dialogue, keeping the actor in focus while blurring the background.",
     [keys.dofStrength] = "Blur Strength",
     [keys.dofStrengthDescription] = "Controls how strongly out-of-focus areas are blurred.",
+    [keys.letterboxCategory] = "Letterbox",
+    [keys.letterboxEnabled] = "Enable Letterbox",
+    [keys.letterboxEnabledDescription] =
+    "Eases cinematic black bars in at the top and bottom of the screen as dialogue starts, and removes them when it ends.",
     [keys.lightingParticlesCategory] = "Lighting & Particles",
     [keys.lightEnabled] = "Enable Light Animation",
     [keys.lightEnabledDescription] =

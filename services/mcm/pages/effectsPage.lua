@@ -38,6 +38,19 @@ function this.initialize(template, services)
         jump = 5,
     })
 
+    local letterboxCategory = page:createCategory({
+        label = translations.get(keys.letterboxCategory)
+    })
+
+    letterboxCategory:createOnOffButton({
+        label = translations.get(keys.letterboxEnabled),
+        description = translations.get(keys.letterboxEnabledDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "letterboxEnabled",
+            table = services.settings
+        }),
+    })
+
     local lightingParticlesCategory = page:createCategory({
         label = translations.get(keys.lightingParticlesCategory)
     })

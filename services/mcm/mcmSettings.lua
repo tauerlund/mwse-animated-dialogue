@@ -56,6 +56,7 @@ this.defaults = {
     transitionDuration = 0.5,
     dofEnabled = true,
     dofStrength = 3.0,
+    letterboxEnabled = true,
     swayEnabled = true,
     swayAmplitude = 0.3,
     swayFrequency = 0.1,

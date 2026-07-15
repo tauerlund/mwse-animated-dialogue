@@ -20,6 +20,10 @@ this.pauseRenderingInMenus = nil
 this.depthOfField = nil
 
 ---@private
+---@type mgeShaderHandle|nil
+this.letterbox = nil
+
+---@private
 ---@type settings
 this.settings = nil
 
@@ -73,6 +77,12 @@ function this.initialize(services)
         this.depthOfField.enabled = false
     end
 
+    this.letterbox = mge.shaders.load({ name = "animated-dialogue/letterbox" })
+
+    if this.letterbox then
+        this.letterbox.enabled = false
+    end
+
     this.eventRegistrar.register(this.eventHandlers.lifetime)
 
     return true, nil
@@ -97,15 +107,29 @@ function this.onDialogueStarted(e)
 
     mge.render.pauseRenderingInMenus = false
 
-    if this.depthOfField and this.settings.dofEnabled then
-        this.actor = e.dialogueState.actor
+    local dofActive = this.depthOfField and this.settings.dofEnabled
+    local letterboxActive = this.letterbox and this.settings.letterboxEnabled
+
+    if not dofActive and not letterboxActive then
+        return
+    end
+
+    this.actor = e.dialogueState.actor
+    this.dialogueState = e.dialogueState
+    this.animationTime = 0
+    this.animationDuration = this.cameraPresetResolver.resolve().animationDuration
+
+    if dofActive then
         this.depthOfField["focal_length"] = 0
         this.depthOfField.enabled = true
-        this.animationTime = 0
-        this.animationDuration = this.cameraPresetResolver.resolve().animationDuration
-        this.dialogueState = e.dialogueState
-        this.eventRegistrar.register(this.eventHandlers.dialogue)
     end
+
+    if letterboxActive then
+        this.letterbox["amount"] = 0
+        this.letterbox.enabled = true
+    end
+
+    this.eventRegistrar.register(this.eventHandlers.dialogue)
 end
 
 ---@private
@@ -118,6 +142,10 @@ function this.onDialogueEnded()
 
     if this.depthOfField then
         this.depthOfField.enabled = false
+    end
+
+    if this.letterbox then
+        this.letterbox.enabled = false
     end
 end
 
@@ -138,14 +166,20 @@ function this.onEnterFrame(e)
         t = math.ease.smoothstep(this.animationTime / duration)
     end
 
-    this.depthOfField["focal_length"] = t * settings.dofStrength
+    if this.depthOfField and settings.dofEnabled then
+        this.depthOfField["focal_length"] = t * settings.dofStrength
 
-    local animData = this.actor.animationData
-    local actorPos = animData and animData.headNode
-        and animData.headNode.worldTransform.translation
-        or this.actor.position
+        local animData = this.actor.animationData
+        local actorPos = animData and animData.headNode
+            and animData.headNode.worldTransform.translation
+            or this.actor.position
 
-    this.depthOfField["focus_distance"] = (tes3.getCameraPosition() - actorPos):length() * 0.0142
+        this.depthOfField["focus_distance"] = (tes3.getCameraPosition() - actorPos):length() * 0.0142
+    end
+
+    if this.letterbox and settings.letterboxEnabled then
+        this.letterbox["amount"] = t
+    end
 
     if this.animationTime >= duration and not settings.debuggingEnabled then
         this.eventRegistrar.unregister(this.eventHandlers.dialogue)
