@@ -73,7 +73,7 @@ function this.onMenuDialogActivated(e)
         return
     end
 
-    if settings.blacklistedActors[reference.baseObject.id:lower()] then
+    if this.isBlacklisted(reference) then
         return
     end
 
@@ -109,6 +109,10 @@ function this.onInfoGetText(e)
 
     local reference = this.resolveActor()
     if reference then
+        if this.isBlacklisted(reference) then
+            return
+        end
+
         this.triggerDialogueInfo(e.info, text, reference)
         return
     end
@@ -187,6 +191,13 @@ function this.resolveActor()
     end
 
     return reference
+end
+
+---@private
+---@param reference tes3reference
+---@return boolean
+function this.isBlacklisted(reference)
+    return this.settings.blacklistedActors[reference.baseObject.id:lower()] == true
 end
 
 ---@private
