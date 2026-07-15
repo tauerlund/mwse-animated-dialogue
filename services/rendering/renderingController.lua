@@ -157,7 +157,7 @@ function this.onEnterFrame(e)
 
     this.depthOfField["focus_distance"] = (tes3.getCameraPosition() - actorPos):length() * 0.0142
 
-    if this.animationTime >= duration then
+    if this.animationTime >= duration and not settings.debuggingEnabled then
         this.eventRegistrar.unregister(this.eventHandlers.dialogue)
     end
 end
