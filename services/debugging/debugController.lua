@@ -28,6 +28,10 @@ this.dialogueActive = false
 this.paused = false
 
 ---@private
+---@type dialogueState|nil
+this.dialogueState = nil
+
+---@private
 ---@type eventHandlers
 this.eventHandlers = nil
 
@@ -46,8 +50,6 @@ function this.initialize(services)
     this.eventHandlers = {
         [events.dialogueStarted] = this.onDialogueStarted,
         [events.dialogueEnded]   = this.onDialogueEnded,
-        [events.gamePaused]      = this.onGamePaused,
-        [events.gameUnpaused]    = this.onGameUnpaused,
         [tes3.event.keyDown]     = this.onKeyDown,
     }
 
@@ -66,6 +68,7 @@ end
 function this.onDialogueStarted(e)
     this.dialogueActive = true
     this.paused = false
+    this.dialogueState = e.dialogueState
 
     if not this.settings.debuggingEnabled then
         return
@@ -73,7 +76,7 @@ function this.onDialogueStarted(e)
 
     this.allowDialogueMenuUnfocus()
     this.debugStatusHud.show()
-    this.debugWindow.show({ actor = e.actor })
+    this.debugWindow.show({ actor = e.dialogueState.actor })
 end
 
 ---@private
@@ -97,20 +100,21 @@ end
 function this.onDialogueEnded()
     this.dialogueActive = false
     this.paused = false
+    this.dialogueState = nil
     this.debugStatusHud.hide()
     this.debugWindow.hide()
 end
 
 ---@private
-function this.onGamePaused()
-    this.paused = true
-    this.debugStatusHud.setPaused(true)
-end
+---@param paused boolean
+function this.setPaused(paused)
+    this.paused = paused
 
----@private
-function this.onGameUnpaused()
-    this.paused = false
-    this.debugStatusHud.setPaused(false)
+    if this.dialogueState then
+        this.dialogueState.paused = paused
+    end
+
+    this.debugStatusHud.setPaused(paused)
 end
 
 ---@private
@@ -137,26 +141,24 @@ end
 
 ---@private
 function this.togglePause()
-    if this.paused then
-        event.trigger(this.events.gameUnpaused)
-    else
-        event.trigger(this.events.gamePaused)
-    end
+    this.setPaused(not this.paused)
 end
 
 ---@private
 function this.stepFrame()
-    if not this.paused then
+    if not this.paused or not this.dialogueState then
         return
     end
 
-    event.trigger(this.events.gameUnpaused)
+    this.dialogueState.paused = false
     event.register(tes3.event.enterFrame, this.onStepFrame, { priority = -100, doOnce = true })
 end
 
 ---@private
 function this.onStepFrame()
-    event.trigger(this.events.gamePaused)
+    if this.dialogueState then
+        this.dialogueState.paused = true
+    end
 end
 
 ---@private

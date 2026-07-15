@@ -40,7 +40,8 @@ this.cameraPresetResolver = nil
 this.actor = nil
 
 ---@private
-this.paused = false
+---@type dialogueState
+this.dialogueState = nil
 
 ---@public
 ---@param services serviceCollection
@@ -59,8 +60,6 @@ function this.initialize(services)
         },
         dialogue = {
             [tes3.event.enterFrame] = this.onEnterFrame,
-            [events.gamePaused]     = this.onGamePaused,
-            [events.gameUnpaused]   = this.onGameUnpaused,
         }
     }
 
@@ -99,24 +98,14 @@ function this.onDialogueStarted(e)
     mge.render.pauseRenderingInMenus = false
 
     if this.depthOfField and this.settings.dofEnabled then
-        this.actor = e.actor
+        this.actor = e.dialogueState.actor
         this.depthOfField["focal_length"] = 0
         this.depthOfField.enabled = true
         this.animationTime = 0
         this.animationDuration = this.cameraPresetResolver.resolve().animationDuration
-        this.paused = false
+        this.dialogueState = e.dialogueState
         this.eventRegistrar.register(this.eventHandlers.dialogue)
     end
-end
-
----@private
-function this.onGamePaused()
-    this.paused = true
-end
-
----@private
-function this.onGameUnpaused()
-    this.paused = false
 end
 
 ---@private
@@ -125,6 +114,7 @@ function this.onDialogueEnded()
 
     this.eventRegistrar.unregister(this.eventHandlers.dialogue)
     this.actor = nil
+    this.dialogueState = nil
 
     if this.depthOfField then
         this.depthOfField.enabled = false
@@ -134,7 +124,7 @@ end
 ---@private
 ---@param e enterFrameEventData
 function this.onEnterFrame(e)
-    if this.paused then
+    if this.dialogueState.paused then
         return
     end
 

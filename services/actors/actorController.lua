@@ -57,7 +57,8 @@ this.playerController = nil
 this.lookAtModes = nil
 
 ---@private
-this.paused = false
+---@type dialogueState
+this.dialogueState = nil
 
 ---@public
 ---@param services serviceCollection
@@ -83,8 +84,6 @@ function this.initialize(services)
         },
         dialogue = {
             [tes3.event.enterFrame] = this.onEnterFrame,
-            [events.gamePaused]     = this.onGamePaused,
-            [events.gameUnpaused]   = this.onGameUnpaused,
         }
     }
 
@@ -111,10 +110,10 @@ function this.onDialogueStarted(e)
     this.animators = {}
     this.actorBodyAnimator = nil
 
-    this.addActorAnimators(e.actor)
-    this.addPlayerAnimators(e.actor)
+    this.addActorAnimators(e.dialogueState.actor)
+    this.addPlayerAnimators(e.dialogueState.actor)
 
-    this.paused = false
+    this.dialogueState = e.dialogueState
     this.eventRegistrar.register(this.eventHandlers.dialogue)
 end
 
@@ -246,6 +245,7 @@ function this.onDialogueEnded()
 
     this.animators = {}
     this.actorBodyAnimator = nil
+    this.dialogueState = nil
 end
 
 ---@private
@@ -259,19 +259,9 @@ function this.stopAnimators()
 end
 
 ---@private
-function this.onGamePaused()
-    this.paused = true
-end
-
----@private
-function this.onGameUnpaused()
-    this.paused = false
-end
-
----@private
 ---@param e enterFrameEventData
 function this.onEnterFrame(e)
-    if this.paused then
+    if this.dialogueState.paused then
         return
     end
 

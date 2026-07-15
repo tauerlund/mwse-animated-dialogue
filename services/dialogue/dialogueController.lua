@@ -29,6 +29,10 @@ this.spokenDialogueTypes = {
 ---@type { info: tes3dialogueInfo, text: string }|nil
 this.pendingInfo = nil
 
+---@private
+---@type dialogueState|nil
+this.dialogueState = nil
+
 ---@public
 ---@param services serviceCollection
 ---@return boolean,string|nil
@@ -82,9 +86,16 @@ function this.onMenuDialogActivated(e)
         this.onMenuDialogDestroyed
     )
 
+    ---@type dialogueState
+    local dialogueState = {
+        actor = reference,
+        paused = false
+    }
+    this.dialogueState = dialogueState
+
     ---@type dialogueStartedEventData
     local eventData = {
-        actor = reference
+        dialogueState = dialogueState
     }
     event.trigger(this.events.dialogueStarted, eventData)
 
@@ -140,6 +151,16 @@ function this.triggerDialogueInfo(info, text, actor)
 end
 
 ---@private
+---@param paused boolean
+function this.setPaused(paused)
+    if not this.dialogueState then
+        return
+    end
+
+    this.dialogueState.paused = paused
+end
+
+---@private
 ---@param e uiActivatedEventData
 function this.onMenuOptionsActivated(e)
     e.element:getContentElement():registerAfter(
@@ -147,7 +168,7 @@ function this.onMenuOptionsActivated(e)
         this.onMenuOptionsDestroyed
     )
 
-    event.trigger(this.events.gamePaused)
+    this.setPaused(true)
 end
 
 ---@private
@@ -158,7 +179,7 @@ function this.onMenuConsoleActivated(e)
         this.onMenuConsoleUpdated
     )
 
-    event.trigger(this.events.gamePaused)
+    this.setPaused(true)
 end
 
 ---@private
@@ -170,19 +191,20 @@ function this.onMenuConsoleUpdated(e)
 
     e.source:unregisterAfter(tes3.uiEvent.update, this.onMenuConsoleUpdated)
 
-    event.trigger(this.events.gameUnpaused)
+    this.setPaused(false)
 end
 
 ---@private
 ---@param _ uiEventEventData
 function this.onMenuOptionsDestroyed(_)
-    event.trigger(this.events.gameUnpaused)
+    this.setPaused(false)
 end
 
 ---@private
 ---@param _ uiEventEventData
 function this.onMenuDialogDestroyed(_)
     event.trigger(this.events.dialogueEnded)
+    this.dialogueState = nil
 end
 
 ---@private

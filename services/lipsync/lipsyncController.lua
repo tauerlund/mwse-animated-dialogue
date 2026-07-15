@@ -122,7 +122,7 @@ end
 ---@private
 ---@param event dialogueStartedEventData
 function this.onDialogueStarted(event)
-    this.actor = event.actor
+    this.actor = event.dialogueState.actor
     this.reset()
 end
 

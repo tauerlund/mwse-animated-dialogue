@@ -23,8 +23,8 @@ this.eventHandlers = {
 }
 
 ---@private
----@type boolean
-this.paused = false
+---@type dialogueState
+this.dialogueState = nil
 
 ---@private
 ---@type niTriShape[]
@@ -50,8 +50,6 @@ function this.initialize(services)
         },
         dialogue = {
             [tes3.event.enterFrame] = this.onEnterFrame,
-            [events.gamePaused] = this.onGamePaused,
-            [events.gameUnpaused] = this.onGameUnpaused,
         },
     }
 
@@ -78,8 +76,8 @@ function this.resolveCloudShapes(node)
 end
 
 ---@private
----@param _ dialogueStartedEventData
-function this.onDialogueStarted(_)
+---@param e dialogueStartedEventData
+function this.onDialogueStarted(e)
     if not this.settings.cloudsEnabled then
         return
     end
@@ -99,19 +97,9 @@ function this.onDialogueStarted(_)
     end
 
     this.cloudsSpeed = weatherController.currentWeather.cloudsSpeed
-    this.paused = false
+    this.dialogueState = e.dialogueState
 
     this.eventRegistrar.register(this.eventHandlers.dialogue)
-end
-
----@private
-function this.onGamePaused()
-    this.paused = true
-end
-
----@private
-function this.onGameUnpaused()
-    this.paused = false
 end
 
 ---@private
@@ -120,12 +108,13 @@ function this.onDialogueEnded()
 
     this.cloudShapes = {}
     this.cloudsSpeed = 0
+    this.dialogueState = nil
 end
 
 ---@private
 ---@param e enterFrameEventData
 function this.onEnterFrame(e)
-    if this.paused then
+    if this.dialogueState.paused then
         return
     end
 

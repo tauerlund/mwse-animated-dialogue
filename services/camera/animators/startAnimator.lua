@@ -94,7 +94,7 @@ end
 ---@private
 ---@param event dialogueStartedEventData
 function this.onDialogueStarted(event)
-    this.actor                   = event.actor
+    this.actor                   = event.dialogueState.actor
     this.activePreset            = this.cameraPresetResolver.resolve()
     this.startCameraPosition     = tes3.getCameraPosition()
     this.originalRotation        = tes3.worldController.worldCamera.cameraRoot.rotation:toQuaternion()

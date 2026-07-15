@@ -49,7 +49,8 @@ this.cameraStartAnimator = nil
 this.cameraSwayAnimator = nil
 
 ---@private
-this.paused = false
+---@type dialogueState
+this.dialogueState = nil
 
 ---@public
 ---@param services serviceCollection
@@ -70,8 +71,6 @@ function this.initialize(services)
         },
         dialogue = {
             [tes3.event.enterFrame]          = this.onEnterFrame,
-            [events.gamePaused]              = this.onGamePaused,
-            [events.gameUnpaused]            = this.onGameUnpaused,
             [events.settingsUpdated]         = this.onSettingsUpdated,
             [events.cameraPresetUpdated]     = this.onCameraPresetUpdated,
             [events.cameraAnimationReplayed] = this.onCameraAnimationReplayed,
@@ -96,8 +95,8 @@ function this.uninitialize()
 end
 
 ---@private
----@param _ dialogueStartedEventData
-function this.onDialogueStarted(_)
+---@param e dialogueStartedEventData
+function this.onDialogueStarted(e)
     if not this.settings.cameraEnabled then
         return
     end
@@ -111,7 +110,7 @@ function this.onDialogueStarted(_)
         table.insert(this.animators, this.cameraSwayAnimator)
     end
 
-    this.paused = false
+    this.dialogueState = e.dialogueState
     this.eventRegistrar.register(this.eventHandlers.dialogue)
 end
 
@@ -120,16 +119,7 @@ function this.onDialogueEnded()
     this.eventRegistrar.unregister(this.eventHandlers.dialogue)
     this.resetWrappers()
     this.animators = {}
-end
-
----@private
-function this.onGamePaused()
-    this.paused = true
-end
-
----@private
-function this.onGameUnpaused()
-    this.paused = false
+    this.dialogueState = nil
 end
 
 ---@private
@@ -151,7 +141,7 @@ end
 ---@private
 ---@param e enterFrameEventData
 function this.onEnterFrame(e)
-    if this.paused then
+    if this.dialogueState.paused then
         return
     end
 

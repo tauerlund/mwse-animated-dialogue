@@ -1,3 +1,3 @@
 ---@meta
 ---@class dialogueStartedEventData
----@field public actor tes3reference
+---@field public dialogueState dialogueState

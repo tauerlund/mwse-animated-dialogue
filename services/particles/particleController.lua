@@ -25,8 +25,8 @@ this.eventHandlers = {
 }
 
 ---@private
----@type boolean
-this.paused = false
+---@type dialogueState
+this.dialogueState = nil
 
 ---@private
 ---@type niParticleSystemController[]
@@ -54,8 +54,6 @@ function this.initialize(services)
         },
         dialogue = {
             [tes3.event.enterFrame] = this.onEnterFrame,
-            [events.gamePaused]     = this.onGamePaused,
-            [events.gameUnpaused]   = this.onGameUnpaused,
         }
     }
 
@@ -85,11 +83,11 @@ function this.onDialogueStarted(e)
     end
 
     this.controllers = {}
-    this.paused = false
+    this.dialogueState = e.dialogueState
 
     local resolve = this.resolveParticlesStrategies[this.settings.effectsMode]
     if resolve then
-        resolve(e.actor)
+        resolve(e.dialogueState.actor)
     end
 
     if #this.controllers == 0 then
@@ -103,22 +101,13 @@ end
 function this.onDialogueEnded()
     this.eventRegistrar.unregister(this.eventHandlers.dialogue)
     this.controllers = {}
-end
-
----@private
-function this.onGamePaused()
-    this.paused = true
-end
-
----@private
-function this.onGameUnpaused()
-    this.paused = false
+    this.dialogueState = nil
 end
 
 ---@private
 ---@param e enterFrameEventData
 function this.onEnterFrame(e)
-    if this.paused then
+    if this.dialogueState.paused then
         return
     end
 

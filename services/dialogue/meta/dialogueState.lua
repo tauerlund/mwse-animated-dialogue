@@ -1,0 +1,4 @@
+---@meta
+---@class dialogueState
+---@field public actor tes3reference
+---@field public paused boolean

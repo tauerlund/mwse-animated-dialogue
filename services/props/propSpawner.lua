@@ -61,7 +61,8 @@ this.bone = nil
 this.elapsed = 0
 
 ---@private
-this.paused = false
+---@type dialogueState
+this.dialogueState = nil
 
 ---@public
 ---@param services serviceCollection
@@ -79,8 +80,6 @@ function this.initialize(services)
         lifetime = {
             [events.dialogueStarted] = this.onDialogueStarted,
             [events.dialogueEnded]   = this.onDialogueEnded,
-            [events.gamePaused]      = this.onGamePaused,
-            [events.gameUnpaused]    = this.onGameUnpaused,
             [events.dialogueInfo]    = this.onDialogueInfo,
         },
         prop = {
@@ -100,9 +99,10 @@ end
 ---@private
 ---@param e dialogueStartedEventData
 function this.onDialogueStarted(e)
-    this.actor = e.actor
+    this.dialogueState = e.dialogueState
+    this.actor = e.dialogueState.actor
 
-    if this.pendingInfo and this.pendingInfo.actor == e.actor then
+    if this.pendingInfo and this.pendingInfo.actor == e.dialogueState.actor then
         this.onDialogueInfo(this.pendingInfo)
     end
 
@@ -114,17 +114,7 @@ function this.onDialogueEnded()
     this.despawn()
     this.actor = nil
     this.pendingInfo = nil
-    this.paused = false
-end
-
----@private
-function this.onGamePaused()
-    this.paused = true
-end
-
----@private
-function this.onGameUnpaused()
-    this.paused = false
+    this.dialogueState = nil
 end
 
 ---@private
@@ -186,7 +176,7 @@ end
 ---@private
 ---@param e enterFrameEventData
 function this.onEnterFrame(e)
-    if this.paused or not this.definition then
+    if this.dialogueState.paused or not this.definition then
         return
     end
 

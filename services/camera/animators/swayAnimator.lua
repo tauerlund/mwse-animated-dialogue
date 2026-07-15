@@ -62,7 +62,7 @@ end
 ---@private
 ---@param event dialogueStartedEventData
 function this.onDialogueStarted(event)
-    local actor          = event.actor
+    local actor          = event.dialogueState.actor
     local playerPosition = tes3.player.position
     local actorForward   = tes3vector3.new(playerPosition.x - actor.position.x, playerPosition.y - actor.position.y, 0)
         :normalized()
