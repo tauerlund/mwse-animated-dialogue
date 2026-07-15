@@ -123,7 +123,7 @@ function this.nextFreeId(base)
     return candidate
 end
 
----@private
+---@public
 ---@return cameraPreset
 function this.defaultPreset()
     return {

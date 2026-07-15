@@ -1,5 +1,3 @@
-local cameraAnchors = require("tauer.animated-dialogue.services.camera.presets.enums.cameraAnchors")
-
 ---@class cameraPresetResolver : initializedService
 local this = {}
 
@@ -16,19 +14,7 @@ this.cameraPresetLoader = nil
 
 ---@private
 ---@type cameraPreset
-this.fallbackPreset = {
-    id = "cinematic",
-    name = "Cinematic",
-    anchor = cameraAnchors.actor,
-    verticalAnchor = 1.0,
-    distance = 90,
-    horizontalOffset = 40,
-    verticalOffset = -15,
-    pitchOffset = -4,
-    yawOffset = -19,
-    rollOffset = 0,
-    animationDuration = 1.5,
-}
+this.fallbackPreset = nil
 
 ---@public
 ---@param services serviceCollection
@@ -36,6 +22,10 @@ this.fallbackPreset = {
 function this.initialize(services)
     this.settings = services.settings
     this.cameraPresetLoader = services.cameraPresetLoader
+
+    this.fallbackPreset = this.cameraPresetLoader.defaultPreset()
+    this.fallbackPreset.id = "fallback"
+    this.fallbackPreset.name = "Fallback"
 
     return true, nil
 end
