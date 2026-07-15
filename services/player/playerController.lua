@@ -80,7 +80,7 @@ function this.onDialogueEnded()
     this.hiddenNode = nil
 end
 
----@private
+---@public
 ---@return boolean
 function this.shouldHidePlayer()
     local mode = this.settings.hidePlayerMode

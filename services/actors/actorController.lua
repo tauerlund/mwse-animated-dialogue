@@ -49,6 +49,10 @@ this.headBobAnimator = nil
 this.lipsyncController = nil
 
 ---@private
+---@type playerController
+this.playerController = nil
+
+---@private
 ---@type lookAtModes
 this.lookAtModes = nil
 
@@ -67,6 +71,7 @@ function this.initialize(services)
     this.headLookAtAnimator    = services.headLookAtAnimator
     this.headBobAnimator       = services.headBobAnimator
     this.lipsyncController     = services.lipsyncController
+    this.playerController      = services.playerController
     this.lookAtModes           = services.enums.lookAtModes
 
     local events               = services.enums.events
@@ -189,6 +194,10 @@ end
 ---@param actor tes3reference
 function this.addPlayerAnimators(actor)
     if not tes3.is3rdPerson() then
+        return
+    end
+
+    if this.playerController.shouldHidePlayer() then
         return
     end
 
