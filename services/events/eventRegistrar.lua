@@ -51,18 +51,14 @@ function this.unregisterSingle(evt, entry)
 end
 
 ---Flattens an event entry into a list of sub-entries, each a callback or callbackWithOptions.
----Accepts a bare function, a single { handler, options } pair, a plain list of bare functions
----({ fn1, fn2 }), or an array of { handler, options } sub-entries ({ { fn1 }, { fn2, opts } }).
+---Accepts a bare function, a single { handler, options } pair, or an array of
+---{ handler, options } sub-entries ({ { fn1 }, { fn2, opts } }).
 ---@private
----@param entry callback|callbackWithOptions|callback[]|callbackWithOptions[]
+---@param entry callback|callbackWithOptions|callbackWithOptions[]
 ---@return (callback|callbackWithOptions)[]
 function this.normalize(entry)
     if type(entry) ~= "table" then
         return { entry }
-    end
-
-    if this.isFunctionList(entry) then
-        return entry
     end
 
     if type(entry[1]) == "table" then
@@ -70,23 +66,6 @@ function this.normalize(entry)
     end
 
     return { entry }
-end
-
----@private
----@param entry table
----@return boolean isFunctionList true when entry is a non-empty list of only functions
-function this.isFunctionList(entry)
-    if #entry == 0 then
-        return false
-    end
-
-    for _, value in ipairs(entry) do
-        if type(value) ~= "function" then
-            return false
-        end
-    end
-
-    return true
 end
 
 ---@private
