@@ -2,7 +2,7 @@
 local this = {}
 
 ---@type boolean
-this.suppressesTurn = true
+this.suppressesTurn = false
 
 ---@private
 ---@type settings
@@ -55,6 +55,7 @@ end
 function this.create()
     local instance = setmetatable({}, { __index = this })
 
+    instance.suppressesTurn = false
     instance.poseBlender = this.actorPoseBlender.create()
     instance.ticker = this.bodySkeletonTicker.create()
 
@@ -76,6 +77,8 @@ function this:begin(reference)
         poseBlender        = self.poseBlender,
         transitionDuration = self.settings.transitionDuration,
     })
+
+    self.suppressesTurn = true
 end
 
 ---@private
