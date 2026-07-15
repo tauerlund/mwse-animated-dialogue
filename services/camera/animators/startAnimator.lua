@@ -21,6 +21,10 @@ this.worldUp = tes3vector3.new(0, 0, 1)
 this.liveEaseRate = 8
 
 ---@private
+---@type number
+this.collisionPadding = 20
+
+---@private
 ---@type tes3reference|nil
 this.actor = nil
 
@@ -151,6 +155,7 @@ function this.computeTarget()
             + actorForward * preset.distance
             + actorRight * preset.horizontalOffset
             + this.worldUp * preset.verticalOffset
+        targetPosition = this.clampTargetToGeometry(aimPoint, targetPosition)
     else
         targetPosition = cameraPosition
         aimPoint = tes3vector3.new(actor.position.x, actor.position.y, cameraPosition.z)
@@ -162,6 +167,33 @@ function this.computeTarget()
 
     this.targetRotation     = this.computeTargetRotation(preset, lookDirection)
     this.targetDisplacement = displacement
+end
+
+---@private
+---@param aimPoint tes3vector3
+---@param targetPosition tes3vector3
+---@return tes3vector3
+function this.clampTargetToGeometry(aimPoint, targetPosition)
+    local toTarget = targetPosition - aimPoint
+    local distance = toTarget:length()
+    if distance < 0.001 then
+        return targetPosition
+    end
+
+    local direction = toTarget:normalized()
+    local result    = tes3.rayTest({
+        position = aimPoint,
+        direction = direction,
+        maxDistance = distance,
+        ignore = { this.actor, tes3.player },
+    })
+
+    if not result then
+        return targetPosition
+    end
+
+    local safeDistance = math.max(result.distance - this.collisionPadding, 0)
+    return aimPoint + direction * safeDistance
 end
 
 ---@private
