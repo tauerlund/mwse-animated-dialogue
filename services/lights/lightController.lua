@@ -203,7 +203,7 @@ function this.resolveCellLights(actor, cell)
         this.tryAddLight(ref, ref.object --[[@as tes3light]], origin, maxDist)
     end
 
-    for ref in cell:iterateReferences({ tes3.objectType.actor, tes3.objectType.creature }, false) do
+    for ref in cell:iterateReferences({ tes3.objectType.npc, tes3.objectType.creature }, false) do
         local mobile = ref.mobile
         local torch = mobile and mobile.torchSlot and mobile.torchSlot.object --[[@as tes3light]]
         if torch then
