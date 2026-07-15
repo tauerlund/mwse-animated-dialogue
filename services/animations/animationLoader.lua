@@ -49,6 +49,13 @@ function this.initialize(services)
 end
 
 ---@public
+---@param services serviceCollection
+---@return initializedService[]
+function this.dependencies(services)
+    return { services.animationValidator }
+end
+
+---@public
 ---@return baseAnimationConfiguration[]
 function this.getBaseConfigurations()
     return this.baseAnimationConfigurations
