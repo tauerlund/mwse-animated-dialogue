@@ -100,7 +100,8 @@ function this.loadBaseConfigurations()
         local id = this.removeExtension(file)
         local path = string.format("%s\\%s", this.baseAnimationsPath, id)
         local configuration = mwse.loadConfig(path) --[[@as baseAnimationConfiguration]]
-        if this.validator.validate(configuration) then
+
+        if this.validator.validateBaseConfiguration(configuration, id) then
             configuration.id = id
             table.insert(this.baseAnimationConfigurations, configuration)
         end
@@ -122,9 +123,20 @@ function this.loadOverrideConfigurations()
         local id = this.removeExtension(file)
         local path = string.format("%s\\%s", this.overrideAnimationsPath, id)
         local configurations = mwse.loadConfig(path) --[[@as overrideAnimationConfigurationFile]]
-        this.overrideAnimationFiles[file] = configurations
 
-        for _, configuration in ipairs(configurations) do
+        if this.validator.validateOverrideFile(configurations, file) then
+            this.overrideAnimationFiles[file] = configurations
+            this.registerOverrideConfigurations(file, configurations)
+        end
+    end
+end
+
+---@private
+---@param file string
+---@param configurations overrideAnimationConfigurationFile
+function this.registerOverrideConfigurations(file, configurations)
+    for _, configuration in ipairs(configurations) do
+        if this.validator.validateOverrideConfiguration(configuration, file) then
             configuration.source = file
             for _, dialogueId in ipairs(configuration.dialogueIds) do
                 if this.overrideAnimationConfigurations[dialogueId] then

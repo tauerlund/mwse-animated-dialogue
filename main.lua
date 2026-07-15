@@ -31,6 +31,7 @@ function this.initializeMod(_)
 		services.eventLogger,
 		services.cameraPresetLoader,
 		services.cameraPresetResolver,
+		services.animationValidator,
 		services.animationLoader,
 		services.animationResolver,
 		services.animationFilterer,

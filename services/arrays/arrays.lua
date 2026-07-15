@@ -15,6 +15,23 @@ function this.contains(strings, value)
 end
 
 ---@public
+---@param value any
+---@return boolean
+function this.isNonEmptyStringArray(value)
+	if type(value) ~= "table" or #value == 0 then
+		return false
+	end
+
+	for _, item in ipairs(value) do
+		if type(item) ~= "string" then
+			return false
+		end
+	end
+
+	return true
+end
+
+---@public
 ---@generic T
 ---@param items T[]
 ---@param weightSelector fun(item: T): number

@@ -1,0 +1,3 @@
+---@meta
+---@class overrideValidationRule : rule
+---@field public validate fun(configuration: overrideAnimationConfiguration):boolean, string|nil
