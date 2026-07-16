@@ -98,7 +98,7 @@ function this.update(state, delta)
 
     state.phase = state.phase + delta
     if state.phase >= state.stop then
-        state.phase = state.start
+        state.phase = state.start + (state.phase - state.stop)
     end
 end
 
