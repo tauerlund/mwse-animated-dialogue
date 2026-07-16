@@ -72,7 +72,7 @@ local this = {
 
     ruleLoader = require("tauer.animated-dialogue.services.rules.ruleLoader"),
 
-    startupReporter = require("tauer.animated-dialogue.services.startup.startupReporter"),
+    failureReporter = require("tauer.animated-dialogue.services.failures.failureReporter"),
 
     values = require("tauer.animated-dialogue.services.values.values"),
 

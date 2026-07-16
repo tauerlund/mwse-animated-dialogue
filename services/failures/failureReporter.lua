@@ -1,4 +1,4 @@
----@class startupReporter : initializedService
+---@class failureReporter : initializedService
 local this = {}
 
 ---@private
