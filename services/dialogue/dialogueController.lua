@@ -66,6 +66,10 @@ function this.onMenuDialogActivated(e)
     local pendingInfo = this.pendingInfo
     this.pendingInfo = nil
 
+    if not e.newlyCreated then
+        return
+    end
+
     local settings = this.settings
 
     if not settings.enabled then
