@@ -6,8 +6,13 @@ local this = {}
 ---@param actor tes3reference
 ---@return boolean
 function this.isMet(configuration, actor)
-    local beastOnly = configuration.conditions
-        and configuration.conditions.beast == true
+    local conditions = configuration.conditions
+    if conditions and conditions.race then
+        return true
+    end
+
+    local beastOnly = conditions
+        and conditions.beast == true
         or false
 
     if beastOnly then

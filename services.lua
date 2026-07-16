@@ -71,7 +71,7 @@ local this = {
 
     ruleLoader = require("tauer.animated-dialogue.services.rules.ruleLoader"),
 
-    arrays = require("tauer.animated-dialogue.services.arrays.arrays"),
+    values = require("tauer.animated-dialogue.services.values.values"),
 
     propSpawner = require("tauer.animated-dialogue.services.props.propSpawner"),
     propDefinitionValidator = require(

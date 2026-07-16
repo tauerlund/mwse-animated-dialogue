@@ -1,7 +1,16 @@
 ---@meta
 ---@class animationConditions
+---@field public actor? string[]
+---@field public faction? string[]
+---@field public factionRank? conditionRange
 ---@field public class? string[]
+---@field public specialization? ("combat"|"magic"|"stealth")[]
+---@field public race? string[]
 ---@field public sex? ("male"|"female")
 ---@field public beast? boolean
+---@field public interior? boolean
+---@field public weather? ("clear"|"cloudy"|"foggy"|"overcast"|"rain"|"thunder"|"ash"|"blight"|"snow"|"blizzard")[]
+---@field public timeOfDay? timeOfDayRange
+---@field public disposition? conditionRange
 ---@field public torchCompatible? boolean
 ---@field public shieldCompatible? boolean

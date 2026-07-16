@@ -1,4 +1,4 @@
----@class arrays : service
+---@class values : service
 local this = {}
 
 ---@public
@@ -26,6 +26,49 @@ function this.isNonEmptyStringArray(value)
 		if type(item) ~= "string" then
 			return false
 		end
+	end
+
+	return true
+end
+
+---@public
+---@param range conditionRange
+---@param value number
+---@return boolean withinRange
+function this.withinRange(range, value)
+	if range.min ~= nil and value < range.min then
+		return false
+	end
+
+	if range.max ~= nil and value > range.max then
+		return false
+	end
+
+	return true
+end
+
+---@public
+---@param value any
+---@return boolean
+function this.isValidRange(value)
+	if type(value) ~= "table" then
+		return false
+	end
+
+	if value.min == nil and value.max == nil then
+		return false
+	end
+
+	if value.min ~= nil and type(value.min) ~= "number" then
+		return false
+	end
+
+	if value.max ~= nil and type(value.max) ~= "number" then
+		return false
+	end
+
+	if value.min ~= nil and value.max ~= nil and value.min > value.max then
+		return false
 	end
 
 	return true

@@ -1,0 +1,4 @@
+---@meta
+---@class conditionRange
+---@field public min? number
+---@field public max? number

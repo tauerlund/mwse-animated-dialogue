@@ -2,20 +2,20 @@
 local this = {}
 
 ---@private
----@type arrays
-this.arrays = nil
+---@type values
+this.values = nil
 
 ---@public
 ---@param services serviceCollection
 function this.initialize(services)
-    this.arrays = services.arrays
+    this.values = services.values
 end
 
 ---@public
 ---@param configuration overrideAnimationConfiguration
 ---@return boolean, string|nil
 function this.validate(configuration)
-    if not this.arrays.isNonEmptyStringArray(configuration.dialogueIds) then
+    if not this.values.isNonEmptyStringArray(configuration.dialogueIds) then
         return false, "dialogueIds must be a non-empty array of strings"
     end
 

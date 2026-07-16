@@ -1,4 +1,4 @@
----@class classFilteringRule : animationFilteringRule
+---@class factionRankFilteringRule : animationFilteringRule
 local this = {}
 
 ---@private
@@ -16,12 +16,16 @@ end
 ---@param actor tes3reference
 ---@return boolean
 function this.isMet(configuration, actor)
-    local classes = configuration.conditions and configuration.conditions.class
-    if not classes then
+    local rank = configuration.conditions and configuration.conditions.factionRank
+    if not rank then
         return true
     end
 
-    return this.values.contains(classes, actor.baseObject.class.id)
+    if not actor.baseObject.faction then
+        return false
+    end
+
+    return this.values.withinRange(rank, actor.baseObject.factionRank)
 end
 
 return this

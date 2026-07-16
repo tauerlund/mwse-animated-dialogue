@@ -1,0 +1,4 @@
+---@meta
+---@class timeOfDayRange
+---@field public from number
+---@field public to number

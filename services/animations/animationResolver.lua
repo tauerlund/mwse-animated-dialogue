@@ -6,8 +6,8 @@ local this = {}
 this.animationFilterer = nil
 
 ---@private
----@type arrays
-this.arrays = nil
+---@type values
+this.values = nil
 
 ---@private
 ---@type baseAnimationConfiguration[]
@@ -25,7 +25,7 @@ this.logger = mwse.Logger.new()
 ---@return boolean, string|nil
 function this.initialize(services)
     this.animationFilterer = services.animationFilterer
-    this.arrays = services.arrays
+    this.values = services.values
 
     local animationLoader = services.animationLoader
 
@@ -104,7 +104,7 @@ function this.resolveBaseConfiguration(actor)
         return nil
     end
 
-    return this.arrays.weightedChoice(filtered, this.resolveWeight)
+    return this.values.weightedChoice(filtered, this.resolveWeight)
 end
 
 ---@private
