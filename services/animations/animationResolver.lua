@@ -10,10 +10,6 @@ this.animationFilterer = nil
 this.arrays = nil
 
 ---@private
----@type baseAnimationConfiguration
-this.configuration = nil
-
----@private
 ---@type baseAnimationConfiguration[]
 this.baseConfigurations = nil
 

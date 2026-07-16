@@ -1,12 +1,7 @@
 ---@class guiBuilder
 ---@field private element tes3uiElement
----@field private callbacks { [string]: function }
 local this = {}
 this.__index = this
-
----@private
----@type mwseLogger
-this.logger = mwse.Logger.new()
 
 ---@public
 ---@param parameters createMenuParameters
@@ -321,48 +316,10 @@ function this:withSize(parameters)
 end
 
 ---@public
----@param evt string
----@param callback fun(element: tes3uiElement, e: table|nil)
-function this:withCallback(evt, callback)
-	self.callbacks = self.callbacks or {}
-	if self.callbacks[evt] then
-		this.logger:warn("Callback for event '%s' already registered", evt)
-		return self
-	end
-
-	self.callbacks[evt] = function(e)
-		callback(self.element, e or nil)
-		self.element:updateLayout()
-	end
-
-	return self
-end
-
----@public
 ---@return tes3uiElement
 function this:build()
-	if self.callbacks then
-		for evt, callback in pairs(self.callbacks) do
-			self:registerCallback(evt, callback)
-		end
-	end
 	self.element:updateLayout()
 	return self.element
-end
-
----@private
----@param evt string
----@param callback fun(element: tes3uiElement, e: table|nil)
-function this:registerCallback(evt, callback)
-	if not event.isRegistered(evt, callback) then
-		event.register(evt, callback)
-	end
-
-	self.element:registerBefore(tes3.uiEvent.destroy, function()
-		if event.isRegistered(evt, callback) then
-			event.unregister(evt, callback)
-		end
-	end)
 end
 
 ---@private
