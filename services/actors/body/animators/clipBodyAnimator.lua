@@ -332,10 +332,12 @@ end
 ---@private
 ---@param track track
 function this:updateTrack(track)
+    local elapsed = track.phase - track.start
+
     for i = 1, track.count do
         track.controllers[i].target:update({
             controllers = true,
-            time        = track.phase
+            time        = elapsed
         })
     end
 

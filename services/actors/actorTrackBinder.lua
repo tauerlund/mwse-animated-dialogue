@@ -78,7 +78,18 @@ function this.bind(params)
     track.phase   = start
     track.looping = params.loop
 
+    this.applyGroupOffset(track, start)
+
     return track.count
+end
+
+---@private
+---@param track track
+---@param start number
+function this.applyGroupOffset(track, start)
+    for i = 1, track.count do
+        track.controllers[i].controller.phase = start
+    end
 end
 
 ---@public
