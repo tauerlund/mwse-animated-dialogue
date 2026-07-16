@@ -27,6 +27,7 @@ function this.initializeMod(_)
 
 	---@type initializedService[]
 	local initializedServices = {
+		services.startupReporter,
 		services.ruleLoader,
 		services.eventLogger,
 		services.cameraPresetValidator,

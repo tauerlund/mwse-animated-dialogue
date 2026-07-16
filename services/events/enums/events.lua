@@ -10,6 +10,8 @@ local this = {
 	propDespawned = "tauer.animatedDialogue.propDespawned",
 	animationStarted = "tauer.animatedDialogue.animationStarted",
 	animationEnded = "tauer.animatedDialogue.animationEnded",
+	validationFailed = "tauer.animatedDialogue.validationFailed",
+	initializationFailed = "tauer.animatedDialogue.initializationFailed",
 }
 
 return this

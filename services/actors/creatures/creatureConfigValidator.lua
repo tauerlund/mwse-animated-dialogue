@@ -6,6 +6,10 @@ local this = {}
 this.rules = nil
 
 ---@private
+---@type events
+this.events = nil
+
+---@private
 this.logger = mwse.Logger.new()
 
 ---@public
@@ -13,6 +17,7 @@ this.logger = mwse.Logger.new()
 ---@return boolean,string|nil
 function this.initialize(services)
     this.rules = services.ruleLoader.loadRules("services\\actors\\creatures\\validation-rules")
+    this.events = services.enums.events
 
     return true, nil
 end
@@ -31,11 +36,13 @@ end
 function this.validateFile(configurations, file)
     if type(configurations) ~= "table" then
         this.logger:warn("Skipping creature animation file '%s'; missing or malformed", file)
+        event.trigger(this.events.validationFailed)
         return false
     end
 
     if #configurations == 0 then
         this.logger:warn("Skipping creature animation file '%s'; it holds no entries", file)
+        event.trigger(this.events.validationFailed)
         return false
     end
 
@@ -50,6 +57,7 @@ function this.validateConfiguration(configuration, file)
     local ok, reason = this.applyRules(configuration)
     if not ok then
         this.logger:warn("Skipping creature entry in '%s': %s", file, reason)
+        event.trigger(this.events.validationFailed)
         return false
     end
 

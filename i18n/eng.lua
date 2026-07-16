@@ -266,4 +266,7 @@ return {
     [keys.debugSavePreset] = "Save Preset to %{id}.json",
     [keys.debugSavePresetConfirm] = "Overwrite %{id}.json with the current values?",
     [keys.debugPresetSaved] = "Saved preset to %{id}.json.",
+    [keys.validationFailed] = "Animated Dialogue: one or more configurations failed to load. Check mwse.log for details.",
+    [keys.initializationFailed] = "Animated Dialogue failed to initialize and is disabled. Check mwse.log for details.",
+    [keys.ok] = "OK",
 }

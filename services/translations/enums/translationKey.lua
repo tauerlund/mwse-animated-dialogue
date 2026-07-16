@@ -207,6 +207,9 @@ local this = {
     debugSavePreset = "debugSavePreset",
     debugSavePresetConfirm = "debugSavePresetConfirm",
     debugPresetSaved = "debugPresetSaved",
+    validationFailed = "validationFailed",
+    initializationFailed = "initializationFailed",
+    ok = "ok",
 }
 
 return this

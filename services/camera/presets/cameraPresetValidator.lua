@@ -6,6 +6,10 @@ local this = {}
 this.rules = nil
 
 ---@private
+---@type events
+this.events = nil
+
+---@private
 this.logger = mwse.Logger.new()
 
 ---@public
@@ -13,6 +17,7 @@ this.logger = mwse.Logger.new()
 ---@return boolean,string|nil
 function this.initialize(services)
     this.rules = services.ruleLoader.loadRules("services\\camera\\presets\\validation-rules")
+    this.events = services.enums.events
 
     return true, nil
 end
@@ -32,6 +37,7 @@ function this.validatePreset(preset, id)
     local ok, reason = this.applyRules(preset)
     if not ok then
         this.logger:warn("Skipping camera preset '%s': %s", id, reason)
+        event.trigger(this.events.validationFailed)
         return false
     end
 

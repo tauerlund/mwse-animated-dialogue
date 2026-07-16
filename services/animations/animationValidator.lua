@@ -10,6 +10,10 @@ this.baseRules = nil
 this.overrideRules = nil
 
 ---@private
+---@type events
+this.events = nil
+
+---@private
 this.logger = mwse.Logger.new()
 
 ---@public
@@ -18,6 +22,7 @@ this.logger = mwse.Logger.new()
 function this.initialize(services)
     this.baseRules = services.ruleLoader.loadRules("services\\animations\\validation-rules\\base")
     this.overrideRules = services.ruleLoader.loadRules("services\\animations\\validation-rules\\override")
+    this.events = services.enums.events
 
     return true, nil
 end
@@ -37,6 +42,7 @@ function this.validateBaseConfiguration(configuration, id)
     local ok, reason = this.applyRules(this.baseRules, configuration)
     if not ok then
         this.logger:warn("Skipping base animation configuration '%s': %s", id, reason)
+        event.trigger(this.events.validationFailed)
         return false
     end
 
@@ -50,6 +56,7 @@ end
 function this.validateOverrideFile(configurations, file)
     if type(configurations) ~= "table" then
         this.logger:warn("Skipping override animation file '%s'; missing or malformed", file)
+        event.trigger(this.events.validationFailed)
         return false
     end
 
@@ -64,6 +71,7 @@ function this.validateOverrideConfiguration(configuration, file)
     local ok, reason = this.applyRules(this.overrideRules, configuration)
     if not ok then
         this.logger:warn("Skipping override entry in '%s': %s", file, reason)
+        event.trigger(this.events.validationFailed)
         return false
     end
 

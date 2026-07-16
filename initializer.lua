@@ -23,6 +23,7 @@ function this.initialize(services, initializedServices)
 
     if not success then
         this.logger:error("Initialization failed. Reason: %s", reason)
+        event.trigger(services.enums.events.initializationFailed)
         this.uninitializeServices(initializedServices)
         return
     end
