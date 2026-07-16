@@ -70,10 +70,7 @@ function this.onDialogueStarted(e)
         return
     end
 
-    local weatherController = tes3.worldController and tes3.worldController.weatherController
-    if not weatherController then
-        return
-    end
+    local weatherController = tes3.worldController.weatherController
 
     local stormControllers = this.particleResolver.resolve(weatherController.sceneStormRoot)
     if #stormControllers == 0 then
