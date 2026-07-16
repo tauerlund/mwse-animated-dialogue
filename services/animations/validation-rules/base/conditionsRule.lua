@@ -64,6 +64,15 @@ function this.validate(configuration)
         return false, "conditions.beast must be a boolean"
     end
 
+    if conditions.weaponReadied ~= nil and type(conditions.weaponReadied) ~= "boolean" then
+        return false, "conditions.weaponReadied must be a boolean"
+    end
+
+    local weaponTypesValid, weaponTypesReason = this.validateWeaponTypes(conditions)
+    if not weaponTypesValid then
+        return false, weaponTypesReason
+    end
+
     if conditions.interior ~= nil and type(conditions.interior) ~= "boolean" then
         return false, "conditions.interior must be a boolean"
     end
@@ -115,6 +124,48 @@ function this.validateWeathers(conditions)
     end
 
     return true
+end
+
+---@private
+---@param conditions animationConditions
+---@return boolean, string|nil
+function this.validateWeaponTypes(conditions)
+    local weaponTypes = conditions.weaponType
+    if weaponTypes == nil then
+        return true
+    end
+
+    if not this.values.isNonEmptyStringArray(weaponTypes) then
+        return false, "conditions.weaponType must be a non-empty array of strings"
+    end
+
+    for _, weaponType in ipairs(weaponTypes) do
+        if not this.isWeaponType(weaponType) then
+            return false, string.format(
+                "conditions.weaponType contains '%s', which is not a weapon type name, 'handToHand' or 'spell'",
+                weaponType)
+        end
+    end
+
+    return true
+end
+
+---@private
+---@param weaponType string
+---@return boolean
+function this.isWeaponType(weaponType)
+    local name = weaponType:lower()
+    if name == "handtohand" or name == "spell" then
+        return true
+    end
+
+    for enumName in pairs(tes3.weaponType) do
+        if enumName:lower() == name then
+            return true
+        end
+    end
+
+    return false
 end
 
 ---@private
