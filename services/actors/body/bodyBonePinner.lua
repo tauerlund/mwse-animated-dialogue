@@ -1,4 +1,4 @@
----@class bonePinner
+---@class bodyBonePinner
 local this = {}
 
 ---@private
@@ -9,7 +9,7 @@ this.bonePrefix = "Bip"
 this.pins = nil
 
 ---@public
----@return bonePinner
+---@return bodyBonePinner
 function this.create()
     local instance = setmetatable({}, { __index = this })
 

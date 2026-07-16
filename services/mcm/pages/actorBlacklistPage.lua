@@ -24,6 +24,7 @@ function this.initialize(template, services)
                     local actors = {}
 
                     for actor in tes3.iterateObjects({ tes3.objectType.npc, tes3.objectType.creature }) do
+                        ---@cast actor +tes3npc, +tes3creature
                         if not actor.isInstance then
                             table.insert(actors, actor.id:lower())
                         end

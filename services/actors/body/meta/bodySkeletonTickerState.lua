@@ -4,6 +4,6 @@
 ---@field start number
 ---@field stop number
 ---@field phase number
----@field pinner bonePinner
+---@field pinner bodyBonePinner
 ---@field poseBlender actorPoseBlender|nil
 ---@field transitionDuration number

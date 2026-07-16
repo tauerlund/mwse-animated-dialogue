@@ -14,11 +14,11 @@ this.actorPoseBlender = nil
 this.actorTrackBinder = nil
 
 ---@private
----@type bonePinner
-this.bonePinner = nil
+---@type bodyBonePinner
+this.bodyBonePinner = nil
 
 ---@private
----@type bonePinner
+---@type bodyBonePinner
 this.pinner = nil
 
 ---@private
@@ -92,7 +92,7 @@ function this.initialize(services)
     this.settings          = services.settings
     this.actorPoseBlender  = services.actorPoseBlender
     this.actorTrackBinder  = services.actorTrackBinder
-    this.bonePinner        = services.bonePinner
+    this.bodyBonePinner    = services.bodyBonePinner
     this.animationResolver = services.animationResolver
     this.events            = services.enums.events
     this.eventRegistrar    = services.eventRegistrar
@@ -121,7 +121,7 @@ function this.create()
     instance.variationInterval = 0
     instance.eventHandlers = nil
     instance.poseBlender = this.actorPoseBlender.create()
-    instance.pinner = this.bonePinner.create()
+    instance.pinner = this.bodyBonePinner.create()
     instance.bodyTrack = this.actorTrackBinder.create()
     instance.torchTrack = this.actorTrackBinder.create()
 

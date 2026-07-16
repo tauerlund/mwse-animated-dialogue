@@ -39,7 +39,7 @@ local this = {
 
     lipsyncController = require("tauer.animated-dialogue.services.lipsync.lipsyncController"),
 
-    bonePinner = require("tauer.animated-dialogue.services.actors.body.bonePinner"),
+    bodyBonePinner = require("tauer.animated-dialogue.services.actors.body.bodyBonePinner"),
     bodySkeletonTicker = require("tauer.animated-dialogue.services.actors.body.bodySkeletonTicker"),
     clipBodyAnimator = require("tauer.animated-dialogue.services.actors.body.animators.clipBodyAnimator"),
     creatureBodyAnimator = require("tauer.animated-dialogue.services.actors.body.animators.creatureBodyAnimator"),

@@ -2,14 +2,14 @@
 local this = {}
 
 ---@private
----@type bonePinner
+---@type bodyBonePinner
 this.bonePinner = nil
 
 ---@public
 ---@param services serviceCollection
 ---@return boolean, string|nil
 function this.initialize(services)
-    this.bonePinner = services.bonePinner
+    this.bonePinner = services.bodyBonePinner
 
     return true, nil
 end
@@ -39,8 +39,8 @@ function this.begin(state, params)
     state.poseBlender        = params.poseBlender
     state.transitionDuration = params.transitionDuration or 0
 
-    local animationData = params.actor.animationData
-    local actorNode     = animationData and animationData.actorNode
+    local animationData      = params.actor.animationData
+    local actorNode          = animationData and animationData.actorNode
     state.pinner:capture(actorNode)
 
     -- Capture the pre-animation pose before the first tick drives the skeleton,
