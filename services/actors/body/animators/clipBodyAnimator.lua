@@ -261,7 +261,7 @@ function this:applyAnimation(animation, loop)
     })
 
     if count == 0 then
-        self:clearPlayback()
+        self:revertToIdle(animation)
         return
     end
 
@@ -274,6 +274,20 @@ function this:applyAnimation(animation, loop)
     if holdingTorch then
         self:applyTorchArm(animationData.actorNode)
     end
+end
+
+---@private
+---@param animation animationDefinition
+function this:revertToIdle(animation)
+    local idle = self.animationConfiguration and self.animationConfiguration.idle
+
+    if not idle or animation == idle then
+        self:clearPlayback()
+        return
+    end
+
+    self.revertTo = nil
+    self:applyAnimation(idle, true)
 end
 
 ---@private
