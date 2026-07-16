@@ -186,6 +186,10 @@ function this.onEnterFrame(e)
         this.attach(this.definition)
     end
 
+    if not this.definition then
+        return
+    end
+
     local despawnAfter = this.definition.despawnAfter
     if despawnAfter and this.elapsed >= despawnAfter then
         this.despawn()
@@ -203,7 +207,7 @@ function this.attach(prop)
     local bone = sceneNode:getObjectByName(prop.attachTo) --[[@as niNode|nil]]
     if not bone then
         this.logger:error("No bone '%s' on NPC for prop '%s'", prop.attachTo, prop.file)
-        this.definition = nil
+        this.despawn()
         return
     end
     this.bone = bone
@@ -211,7 +215,7 @@ function this.attach(prop)
     local node = this.nifLoader.load(prop.file)
     if not node then
         this.logger:error("Could not load prop mesh '%s' (file missing or failed to load)", prop.file)
-        this.definition = nil
+        this.despawn()
         return
     end
     this.node = node
