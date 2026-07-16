@@ -64,12 +64,7 @@ end
 ---@private
 ---@return tes3weatherControllerParticle[]|nil
 function this.getActiveParticles()
-    local weatherController = tes3.worldController and tes3.worldController.weatherController
-    if not weatherController then
-        return nil
-    end
-
-    local particles = weatherController.particlesActive
+    local particles = tes3.worldController.weatherController.particlesActive
     if not particles or #particles == 0 then
         return nil
     end

@@ -82,7 +82,7 @@ function this.onDialogueStarted(e)
         return
     end
 
-    local weatherController = tes3.getWorldController().weatherController
+    local weatherController = tes3.worldController.weatherController
 
     local cloudsNode = weatherController.sceneClouds
     if not cloudsNode then
