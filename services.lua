@@ -44,6 +44,7 @@ local this = {
     overrideBodyAnimator = require("tauer.animated-dialogue.services.actors.body.animators.overrideBodyAnimator"),
     bodyAnimatorSelector = require("tauer.animated-dialogue.services.actors.body.bodyAnimatorSelector"),
 
+    creatureConfigValidator = require("tauer.animated-dialogue.services.actors.creatures.creatureConfigValidator"),
     creatureConfigLoader = require("tauer.animated-dialogue.services.actors.creatures.creatureConfigLoader"),
     creatureAnimationResolver = require("tauer.animated-dialogue.services.actors.creatures.creatureAnimationResolver"),
 

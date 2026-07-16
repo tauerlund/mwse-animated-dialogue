@@ -21,6 +21,10 @@ this.fileType = ".json"
 this.fileLoader = nil
 
 ---@private
+---@type creatureConfigValidator
+this.validator = nil
+
+---@private
 ---@type { [string]: string } baseObject id -> tes3.animationGroup key name
 this.configurations = {}
 
@@ -29,10 +33,18 @@ this.configurations = {}
 ---@return boolean, string|nil
 function this.initialize(services)
     this.fileLoader = services.fileLoader
+    this.validator = services.creatureConfigValidator
 
     this.loadConfigurations()
 
     return true, nil
+end
+
+---@public
+---@param services serviceCollection
+---@return initializedService[]
+function this.dependencies(services)
+    return { services.creatureConfigValidator }
 end
 
 ---@public
@@ -61,26 +73,32 @@ function this.loadConfigurations()
         local id = (file:gsub("%.json$", ""))
         local path = string.format("%s\\%s", this.creaturesPath, id)
         local configurations = mwse.loadConfig(path) --[[@as creatureAnimationConfiguration[] ]]
-        this.registerConfigurations(configurations)
+
+        if this.validator.validateFile(configurations, file) then
+            this.registerConfigurations(configurations, file)
+        end
     end
 end
 
 ---@private
----@param configurations creatureAnimationConfiguration[]|nil
-function this.registerConfigurations(configurations)
-    if not configurations then
-        return
-    end
-
+---@param configurations creatureAnimationConfiguration[]
+---@param file string
+function this.registerConfigurations(configurations, file)
     for _, configuration in ipairs(configurations) do
-        if configuration.id and configuration.group then
-            if this.configurations[configuration.id] then
-                this.logger:warn("Duplicate creature config for '%s'; overwriting", configuration.id)
-            end
-
-            this.configurations[configuration.id] = configuration.group
+        if this.validator.validateConfiguration(configuration, file) then
+            this.registerConfiguration(configuration)
         end
     end
+end
+
+---@private
+---@param configuration creatureAnimationConfiguration
+function this.registerConfiguration(configuration)
+    if this.configurations[configuration.id] then
+        this.logger:warn("Duplicate creature config for '%s'; overwriting", configuration.id)
+    end
+
+    this.configurations[configuration.id] = configuration.group
 end
 
 return this

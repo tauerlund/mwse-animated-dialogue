@@ -1,0 +1,3 @@
+---@meta
+---@class creatureValidationRule : rule
+---@field public validate fun(configuration: creatureAnimationConfiguration):boolean, string|nil
