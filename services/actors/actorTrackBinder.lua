@@ -145,11 +145,13 @@ end
 function this.readMarkerKeys(keys, startMarker, stopMarker, start, stop)
     for i = 1, #keys do
         local key = keys[i]
-        local marker = key.text:lower():trim()
-        if marker == startMarker then
-            start = key.time
-        elseif marker == stopMarker then
-            stop = key.time
+        for line in key.text:gmatch("[^\r\n]+") do
+            local marker = line:lower():trim()
+            if marker == startMarker then
+                start = key.time
+            elseif marker == stopMarker then
+                stop = key.time
+            end
         end
     end
 
