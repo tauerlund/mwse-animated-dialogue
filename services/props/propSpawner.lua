@@ -41,24 +41,12 @@ this.actor = nil
 this.pendingInfo = nil
 
 ---@private
----@type propDefinition|nil
-this.definition = nil
+---@type propSlot|nil
+this.baseSlot = nil
 
 ---@private
----@type string|nil
-this.dialogueId = nil
-
----@private
----@type niNode|nil
-this.node = nil
-
----@private
----@type niNode|nil
-this.bone = nil
-
----@private
----@type number
-this.elapsed = 0
+---@type propSlot|nil
+this.overrideSlot = nil
 
 ---@private
 ---@type dialogueState
@@ -78,9 +66,10 @@ function this.initialize(services)
 
     this.eventHandlers     = {
         lifetime = {
-            [events.dialogueStarted] = this.onDialogueStarted,
-            [events.dialogueEnded]   = this.onDialogueEnded,
-            [events.dialogueInfo]    = this.onDialogueInfo,
+            [events.dialogueStarted]  = this.onDialogueStarted,
+            [events.dialogueEnded]    = this.onDialogueEnded,
+            [events.dialogueInfo]     = this.onDialogueInfo,
+            [events.animationStarted] = this.onAnimationStarted,
         },
         prop = {
             [tes3.event.enterFrame] = this.onEnterFrame,
@@ -111,10 +100,48 @@ end
 
 ---@private
 function this.onDialogueEnded()
-    this.despawn()
+    this.despawnBase()
+    this.despawnOverride()
+
     this.actor = nil
     this.pendingInfo = nil
     this.dialogueState = nil
+end
+
+---@private
+---@param e animationEventData
+function this.onAnimationStarted(e)
+    if not this.settings.propsEnabled then
+        return
+    end
+
+    if e.actor == tes3.player then
+        return
+    end
+
+    local configuration = e.configuration
+    if not configuration then
+        return
+    end
+
+    if this.baseSlot and this.baseSlot.sourceId == configuration.id then
+        return
+    end
+
+    this.despawnBase()
+
+    if not configuration.prop then
+        return
+    end
+
+    this.baseSlot = {
+        reference  = e.actor,
+        definition = configuration.prop,
+        sourceId   = configuration.id,
+        elapsed    = 0,
+    }
+
+    this.refreshFrameHandler()
 end
 
 ---@private
@@ -129,7 +156,7 @@ function this.onDialogueInfo(e)
         return
     end
 
-    this.despawn()
+    this.despawnOverride()
 
     local override = this.animationResolver.resolveOverride(e.info.id)
     local prop = override and override.prop
@@ -137,99 +164,220 @@ function this.onDialogueInfo(e)
         return
     end
 
-    this.spawn(prop, e.info.id)
+    this.overrideSlot = {
+        reference  = e.actor,
+        definition = prop,
+        sourceId   = e.info.id,
+        elapsed    = 0,
+    }
+
+    this.refreshFrameHandler()
 end
 
 ---@private
----@param prop propDefinition
----@param dialogueId string
-function this.spawn(prop, dialogueId)
-    this.definition = prop
-    this.dialogueId = dialogueId
-    this.elapsed    = 0
-
-    this.eventRegistrar.register(this.eventHandlers.prop)
-end
-
----@private
-function this.despawn()
-    local hadProp = this.node ~= nil
-
-    if this.node and this.bone then
-        this.bone:detachChild(this.node)
-        this.bone:update({ children = true })
+function this.refreshFrameHandler()
+    if this.baseSlot or this.overrideSlot then
+        this.eventRegistrar.register(this.eventHandlers.prop)
+        return
     end
-
-    this.node       = nil
-    this.bone       = nil
-    this.definition = nil
-    this.dialogueId = nil
-    this.elapsed    = 0
 
     this.eventRegistrar.unregister(this.eventHandlers.prop)
-
-    if hadProp then
-        event.trigger(this.events.propDespawned)
-    end
 end
 
 ---@private
 ---@param e enterFrameEventData
 function this.onEnterFrame(e)
-    if this.dialogueState.paused or not this.definition then
+    if this.dialogueState.paused then
         return
     end
 
-    this.elapsed = this.elapsed + e.delta
+    this.advanceSlot(this.baseSlot, e.delta)
+    this.advanceSlot(this.overrideSlot, e.delta)
 
-    if not this.node and this.elapsed >= (this.definition.spawnAfter or 0) then
-        this.attach(this.definition)
-    end
-
-    if not this.definition then
-        return
-    end
-
-    local despawnAfter = this.definition.despawnAfter
-    if despawnAfter and this.elapsed >= despawnAfter then
-        this.despawn()
+    if this.overrideSlot and this.hasExpired(this.overrideSlot) then
+        this.despawnOverride()
     end
 end
 
 ---@private
----@param prop propDefinition
-function this.attach(prop)
-    local sceneNode = this.actor and this.actor.sceneNode
+---@param slot propSlot|nil
+---@param delta number
+function this.advanceSlot(slot, delta)
+    if not slot then
+        return
+    end
+
+    slot.elapsed = slot.elapsed + delta
+
+    if slot.node then
+        return
+    end
+
+    if slot.elapsed >= (slot.definition.spawnAfter or 0) then
+        this.attach(slot)
+    end
+end
+
+---@private
+---@param slot propSlot
+---@return boolean
+function this.hasExpired(slot)
+    local despawnAfter = slot.definition.despawnAfter
+
+    return despawnAfter ~= nil and slot.elapsed >= despawnAfter
+end
+
+---@private
+---@param slot propSlot
+function this.attach(slot)
+    local sceneNode = slot.reference.sceneNode
     if not sceneNode then
         return
     end
 
-    local bone = sceneNode:getObjectByName(prop.attachTo) --[[@as niNode|nil]]
+    local definition = slot.definition
+
+    local bone = sceneNode:getObjectByName(definition.attachTo) --[[@as niNode|nil]]
     if not bone then
-        this.logger:error("No bone '%s' on NPC for prop '%s'", prop.attachTo, prop.file)
-        this.despawn()
+        this.logger:error("No bone '%s' on NPC for prop '%s'", definition.attachTo, definition.file)
+        this.despawnSlot(slot)
         return
     end
-    this.bone = bone
+    slot.bone = bone
 
-    local node = this.nifLoader.load(prop.file)
+    local node = this.nifLoader.load(definition.file)
     if not node then
-        this.logger:error("Could not load prop mesh '%s' (file missing or failed to load)", prop.file)
-        this.despawn()
+        this.logger:error("Could not load prop mesh '%s' (file missing or failed to load)", definition.file)
+        this.despawnSlot(slot)
         return
     end
-    this.node = node
+    slot.node = node
 
-    this.applyTransform(node, prop.transform)
+    this.applyTransform(node, definition.transform)
 
     bone:attachChild(node)
     bone:update({ children = true })
     node:updateProperties()
     node:updateEffects()
 
+    if slot == this.overrideSlot then
+        this.setBaseVisible(false)
+        this.triggerPropSpawned(slot)
+        return
+    end
+
+    if this.isOverrideVisible() then
+        node.appCulled = true
+        return
+    end
+
+    this.triggerPropSpawned(slot)
+end
+
+---@private
+---@return boolean
+function this.isOverrideVisible()
+    return this.overrideSlot ~= nil and this.overrideSlot.node ~= nil
+end
+
+---@private
+---@param visible boolean
+function this.setBaseVisible(visible)
+    local slot = this.baseSlot
+    if not slot or not slot.node then
+        return
+    end
+
+    local culled = not visible
+    if slot.node.appCulled == culled then
+        return
+    end
+
+    slot.node.appCulled = culled
+
+    if visible then
+        this.triggerPropSpawned(slot)
+        return
+    end
+
+    event.trigger(this.events.propDespawned)
+end
+
+---@private
+---@param slot propSlot
+function this.triggerPropSpawned(slot)
     ---@type propSpawnedEventData
-    local eventData = { node = node, dialogueId = this.dialogueId }
+    local eventData = { node = slot.node }
+
+    if slot == this.baseSlot then
+        eventData.baseConfigurationId = slot.sourceId
+    else
+        eventData.dialogueId = slot.sourceId
+    end
+
     event.trigger(this.events.propSpawned, eventData)
+end
+
+---@private
+function this.despawnBase()
+    local slot = this.baseSlot
+    if not slot then
+        return
+    end
+
+    local wasVisible = slot.node ~= nil and not slot.node.appCulled
+
+    this.detachSlot(slot)
+    this.baseSlot = nil
+
+    if wasVisible then
+        event.trigger(this.events.propDespawned)
+    end
+
+    this.refreshFrameHandler()
+end
+
+---@private
+function this.despawnOverride()
+    local slot = this.overrideSlot
+    if not slot then
+        return
+    end
+
+    local hadNode = slot.node ~= nil
+
+    this.detachSlot(slot)
+    this.overrideSlot = nil
+
+    if hadNode then
+        event.trigger(this.events.propDespawned)
+    end
+
+    this.setBaseVisible(true)
+    this.refreshFrameHandler()
+end
+
+---@private
+---@param slot propSlot
+function this.despawnSlot(slot)
+    if slot == this.baseSlot then
+        this.despawnBase()
+        return
+    end
+
+    this.despawnOverride()
+end
+
+---@private
+---@param slot propSlot
+function this.detachSlot(slot)
+    if slot.node and slot.bone then
+        slot.bone:detachChild(slot.node)
+        slot.bone:update({ children = true })
+    end
+
+    slot.node = nil
+    slot.bone = nil
 end
 
 ---@private

@@ -6,3 +6,4 @@
 ---@field public idle animationDefinition
 ---@field public talk? animationDefinition[]
 ---@field public variations? animationDefinition[]
+---@field public prop? propDefinition

@@ -74,6 +74,8 @@ local this = {
     arrays = require("tauer.animated-dialogue.services.arrays.arrays"),
 
     propSpawner = require("tauer.animated-dialogue.services.props.propSpawner"),
+    propDefinitionValidator = require(
+        "tauer.animated-dialogue.services.props.propDefinitionValidator"),
 
     guiBuilder = require("tauer.animated-dialogue.services.gui.guiBuilder"),
 
@@ -82,6 +84,8 @@ local this = {
     debugSectionBuilder = require("tauer.animated-dialogue.services.debugging.debugSectionBuilder"),
     debugTooltip = require("tauer.animated-dialogue.services.debugging.debugTooltip"),
     debugStatusHud = require("tauer.animated-dialogue.services.debugging.debugStatusHud"),
+    baseConfigurationSection = require(
+        "tauer.animated-dialogue.services.debugging.sections.baseConfigurationSection"),
     previewAnimationSection = require(
         "tauer.animated-dialogue.services.debugging.sections.previewAnimationSection"),
     triggerOverrideSection = require(

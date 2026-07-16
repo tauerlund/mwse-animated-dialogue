@@ -62,9 +62,39 @@ function this.getBaseConfigurations()
 end
 
 ---@public
+---@param id string
+---@return baseAnimationConfiguration|nil
+function this.getBaseConfiguration(id)
+    for _, configuration in ipairs(this.baseAnimationConfigurations) do
+        if configuration.id == id then
+            return configuration
+        end
+    end
+
+    return nil
+end
+
+---@public
 ---@return { [string]: overrideAnimationConfiguration}
 function this.getOverrideConfigurations()
     return this.overrideAnimationConfigurations
+end
+
+---@public
+---@param configuration baseAnimationConfiguration
+---@return boolean
+function this.saveBaseConfiguration(configuration)
+    local id = configuration.id
+
+    if not id or id == "" then
+        this.logger:error("Cannot save base animation configuration; missing id")
+        return false
+    end
+
+    local path = string.format("%s\\%s", this.baseAnimationsPath, id)
+    mwse.saveConfig(path, this.removeId(configuration))
+
+    return true
 end
 
 ---@public
@@ -154,6 +184,16 @@ function this.registerOverrideConfigurations(file, configurations)
             end
         end
     end
+end
+
+---@private
+---@param configuration baseAnimationConfiguration
+---@return baseAnimationConfiguration
+function this.removeId(configuration)
+    local copy = table.copy(configuration)
+    copy.id = nil
+
+    return copy
 end
 
 ---@private

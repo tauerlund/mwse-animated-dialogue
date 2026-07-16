@@ -3,3 +3,4 @@
 ---@field public animation? animationDefinition
 ---@field public dialogueId? string
 ---@field public configuration? overrideAnimationConfiguration
+---@field public baseConfiguration? baseAnimationConfiguration

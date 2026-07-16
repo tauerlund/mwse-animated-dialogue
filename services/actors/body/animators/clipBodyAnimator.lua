@@ -133,12 +133,25 @@ function this:begin(reference)
         return
     end
 
+    self:applyConfiguration(reference, configuration)
+end
+
+---@public
+---@param reference tes3reference
+---@param configuration baseAnimationConfiguration
+function this:applyConfiguration(reference, configuration)
     self.animationConfiguration = configuration
 
     self:play({
         actor     = reference,
         animation = configuration.idle,
     })
+end
+
+---@public
+---@return baseAnimationConfiguration|nil
+function this:getConfiguration()
+    return self.animationConfiguration
 end
 
 ---@private
@@ -220,7 +233,11 @@ end
 function this:setActiveAnimation(animation)
     if self.activeAnimation then
         ---@type animationEventData
-        local eventData = { animation = self.activeAnimation }
+        local eventData = {
+            animation     = self.activeAnimation,
+            actor         = self.actor,
+            configuration = self.animationConfiguration,
+        }
         event.trigger(self.events.animationEnded, eventData)
     end
 
@@ -228,7 +245,11 @@ function this:setActiveAnimation(animation)
 
     if animation then
         ---@type animationEventData
-        local eventData = { animation = animation }
+        local eventData = {
+            animation     = animation,
+            actor         = self.actor,
+            configuration = self.animationConfiguration,
+        }
         event.trigger(self.events.animationStarted, eventData)
     end
 end

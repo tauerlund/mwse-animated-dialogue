@@ -50,6 +50,10 @@ this.node = nil
 this.dialogueId = nil
 
 ---@private
+---@type string|nil
+this.baseConfigurationId = nil
+
+---@private
 ---@type eventHandlers
 this.eventHandlers = nil
 
@@ -105,20 +109,26 @@ function this.onPropSpawned(e)
 
     this.node = e.node
     this.dialogueId = e.dialogueId
+    this.baseConfigurationId = e.baseConfigurationId
     this.rebuild()
 end
 
 ---@private
 function this.onPropDespawned()
-    this.node = nil
-    this.dialogueId = nil
+    this.clearProp()
     this.rebuild()
 end
 
 ---@private
 function this.onDialogueEnded()
+    this.clearProp()
+end
+
+---@private
+function this.clearProp()
     this.node = nil
     this.dialogueId = nil
+    this.baseConfigurationId = nil
 end
 
 ---@private
@@ -303,7 +313,8 @@ function this.buildSaveButton(parent)
     end
 
     local button = this.guiBuilder.createButton({ parent = parent })
-        :withText(this.translations.get(this.translationKey.debugSaveTransform, { source = configuration.source }))
+        :withText(this.translations.get(this.translationKey.debugSaveTransform,
+            { source = this.resolveSourceName(configuration) }))
         :build()
 
     button:registerBefore(tes3.uiEvent.mouseClick, this.confirmSaveTransform)
@@ -317,7 +328,8 @@ function this.confirmSaveTransform()
     end
 
     tes3ui.showMessageMenu({
-        message = this.translations.get(this.translationKey.debugSaveTransformConfirm, { source = configuration.source }),
+        message = this.translations.get(this.translationKey.debugSaveTransformConfirm,
+            { source = this.resolveSourceName(configuration) }),
         cancels = true,
         leaveMenuMode = false,
         buttons = {
@@ -338,26 +350,63 @@ function this.saveTransform()
 
     configuration.prop.transform = this.readTransform()
 
-    if not this.animationLoader.saveOverrideConfiguration(configuration) then
+    if not this.saveConfiguration(configuration) then
         return
     end
 
-    tes3.messageBox(this.translations.get(this.translationKey.debugTransformSaved, { source = configuration.source }))
+    tes3.messageBox(this.translations.get(this.translationKey.debugTransformSaved,
+        { source = this.resolveSourceName(configuration) }))
 end
 
 ---@private
----@return overrideAnimationConfiguration|nil
+---@param configuration baseAnimationConfiguration|overrideAnimationConfiguration
+---@return boolean
+function this.saveConfiguration(configuration)
+    if configuration.source then
+        return this.animationLoader.saveOverrideConfiguration(configuration)
+    end
+
+    return this.animationLoader.saveBaseConfiguration(configuration)
+end
+
+---@private
+---@param configuration baseAnimationConfiguration|overrideAnimationConfiguration
+---@return string
+function this.resolveSourceName(configuration)
+    if configuration.source then
+        return configuration.source
+    end
+
+    return string.format("%s.json", configuration.id)
+end
+
+---@private
+---@return baseAnimationConfiguration|overrideAnimationConfiguration|nil
 function this.resolveConfiguration()
-    if not this.node or not this.dialogueId then
+    if not this.node then
         return nil
     end
 
-    local configuration = this.animationLoader.getOverrideConfigurations()[this.dialogueId]
+    local configuration = this.findConfiguration()
     if not configuration or not configuration.prop then
         return nil
     end
 
     return configuration
+end
+
+---@private
+---@return baseAnimationConfiguration|overrideAnimationConfiguration|nil
+function this.findConfiguration()
+    if this.dialogueId then
+        return this.animationLoader.getOverrideConfigurations()[this.dialogueId]
+    end
+
+    if this.baseConfigurationId then
+        return this.animationLoader.getBaseConfiguration(this.baseConfigurationId)
+    end
+
+    return nil
 end
 
 ---@private

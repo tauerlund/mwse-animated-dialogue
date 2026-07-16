@@ -3,7 +3,7 @@
 ---@class cameraPreset
 ---@field public id string
 ---@field public name string
----@field public anchor cameraAnchor
+---@field public anchor string
 ---@field public verticalAnchor number
 ---@field public distance number
 ---@field public horizontalOffset number

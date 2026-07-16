@@ -1,4 +1,4 @@
----@class propValidationRule : overrideValidationRule
+---@class basePropValidationRule : animationValidationRule
 local this = {}
 
 ---@private
@@ -12,7 +12,7 @@ function this.initialize(services)
 end
 
 ---@public
----@param configuration overrideAnimationConfiguration
+---@param configuration baseAnimationConfiguration
 ---@return boolean, string|nil
 function this.validate(configuration)
     local prop = configuration.prop
@@ -20,7 +20,16 @@ function this.validate(configuration)
         return true
     end
 
-    return this.propDefinitionValidator.validate(prop)
+    local ok, reason = this.propDefinitionValidator.validate(prop)
+    if not ok then
+        return false, reason
+    end
+
+    if prop.despawnAfter ~= nil then
+        return false, "prop.despawnAfter is not supported on base configurations"
+    end
+
+    return true
 end
 
 return this

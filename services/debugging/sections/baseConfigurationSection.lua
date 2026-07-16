@@ -1,4 +1,4 @@
----@class previewAnimationSection : debugSection
+---@class baseConfigurationSection : debugSection
 local this = {}
 
 ---@private
@@ -26,6 +26,10 @@ this.debugDropdown = nil
 this.debugTooltip = nil
 
 ---@private
+---@type animationLoader
+this.animationLoader = nil
+
+---@private
 ---@type actorController
 this.actorController = nil
 
@@ -50,8 +54,8 @@ this.actor = nil
 this.dropdown = nil
 
 ---@private
----@type baseAnimationConfiguration|nil
-this.configuration = nil
+---@type string|nil
+this.selectedId = nil
 
 ---@private
 ---@type eventHandlers
@@ -67,13 +71,14 @@ function this.initialize(services)
     this.debugSectionBuilder = services.debugSectionBuilder
     this.debugDropdown = services.debugDropdown
     this.debugTooltip = services.debugTooltip
+    this.animationLoader = services.animationLoader
     this.actorController = services.actorController
     this.translations = services.translations
     this.translationKey = services.enums.translationKey
 
     this.eventHandlers = {
         [this.events.settingsUpdated] = this.onSettingsUpdated,
-        [this.events.animationStarted] = this.onAnimationStarted,
+        [this.events.dialogueEnded] = this.onDialogueEnded,
     }
 
     this.eventRegistrar.register(this.eventHandlers)
@@ -100,30 +105,15 @@ function this.destroy()
     this.removeDropdown()
     this.block = nil
     this.actor = nil
-    this.configuration = nil
+end
+
+---@private
+function this.onDialogueEnded()
+    this.selectedId = nil
 end
 
 ---@private
 function this.onSettingsUpdated()
-    this.rebuild()
-end
-
----@private
----@param e animationEventData
-function this.onAnimationStarted(e)
-    if e.actor ~= this.actor then
-        return
-    end
-
-    if e.configuration == this.configuration then
-        return
-    end
-
-    this.rebuild()
-end
-
----@private
-function this.rebuild()
     if not this.block then
         return
     end
@@ -149,8 +139,6 @@ function this.buildContent()
     local translations = this.translations
     local keys = this.translationKey
 
-    this.configuration = nil
-
     if not this.settings.actorAnimEnabled then
         this.debugSectionBuilder.createHint({
             parent = this.createSection(),
@@ -160,44 +148,18 @@ function this.buildContent()
         return
     end
 
-    this.configuration = this.resolveConfiguration()
-    if not this.configuration then
-        this.debugSectionBuilder.createHint({
-            parent = this.createSection(),
-            text = translations.get(keys.debugNoActiveConfiguration),
-        })
-
-        return
-    end
-
-    local entries = this.buildEntries(this.configuration)
+    local entries = this.buildEntries()
     if #entries == 0 then
-        this.debugSectionBuilder.createHint({
-            parent = this.createSection(),
-            text = translations.get(keys.debugNoTalkAnimations, { id = this.configuration.id }),
-        })
-
         return
     end
 
     this.dropdown = this.debugDropdown.create({
         parent = this.createSection(),
-        hint = translations.get(keys.debugPreviewAnimationHint, { id = this.configuration.id }),
+        hint = translations.get(keys.debugBaseConfigurationHint),
         entries = entries,
-        onSelect = this.previewAnimation,
+        onSelect = this.applyConfiguration,
         onHelp = this.showTooltip,
     })
-end
-
----@private
----@return baseAnimationConfiguration|nil
-function this.resolveConfiguration()
-    local bodyAnimator = this.actorController.getActorBodyAnimator()
-    if not bodyAnimator or not bodyAnimator.getConfiguration then
-        return nil
-    end
-
-    return bodyAnimator:getConfiguration()
 end
 
 ---@private
@@ -205,31 +167,26 @@ end
 function this.createSection()
     return this.debugSectionBuilder.create({
         parent = this.block,
-        title = this.translations.get(this.translationKey.debugPreviewAnimation),
+        title = this.translations.get(this.translationKey.debugBaseConfiguration),
     })
 end
 
 ---@private
----@param configuration baseAnimationConfiguration
 ---@return debugAnimationEntry[]
-function this.buildEntries(configuration)
+function this.buildEntries()
     local entries = {}
 
-    if configuration.talk then
-        for i, talk in ipairs(configuration.talk) do
-            table.insert(entries, {
-                label = string.format("talk %d", i),
-                animation = talk,
-            })
-        end
-    end
+    for _, configuration in ipairs(this.animationLoader.getBaseConfigurations()) do
+        ---@type debugAnimationEntry
+        local entry = {
+            label = configuration.id,
+            baseConfiguration = configuration,
+        }
 
-    if configuration.variations then
-        for i, variation in ipairs(configuration.variations) do
-            table.insert(entries, {
-                label = string.format("variation %d", i),
-                animation = variation,
-            })
+        if configuration.id == this.selectedId then
+            table.insert(entries, 1, entry)
+        else
+            table.insert(entries, entry)
         end
     end
 
@@ -238,27 +195,25 @@ end
 
 ---@private
 ---@param entry debugAnimationEntry
-function this.previewAnimation(entry)
-    if not this.actor or not this.configuration then
+function this.applyConfiguration(entry)
+    if not this.actor then
         return
     end
 
     local bodyAnimator = this.actorController.getActorBodyAnimator()
-    if not bodyAnimator or not bodyAnimator.play then
+    if not bodyAnimator or not bodyAnimator.applyConfiguration then
         return
     end
 
-    bodyAnimator:play({
-        actor     = this.actor,
-        animation = entry.animation,
-        revertTo  = this.configuration.idle,
-    })
+    this.selectedId = entry.baseConfiguration.id
+
+    bodyAnimator:applyConfiguration(this.actor, entry.baseConfiguration)
 end
 
 ---@private
 ---@param entry debugAnimationEntry
 function this.showTooltip(entry)
-    this.debugTooltip.showJson(entry.animation)
+    this.debugTooltip.showJson(entry.baseConfiguration)
 end
 
 return this

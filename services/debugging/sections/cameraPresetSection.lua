@@ -201,7 +201,7 @@ end
 ---@param entry debugPresetEntry
 function this.selectPreset(entry)
     this.preset = entry.preset
-    this.announcePresetUpdated()
+    this.triggerCameraPresetUpdated()
     this.rebuild()
 end
 
@@ -212,7 +212,7 @@ function this.showTooltip(entry)
 end
 
 ---@private
-function this.announcePresetUpdated()
+function this.triggerCameraPresetUpdated()
     event.trigger(this.events.cameraPresetUpdated, { preset = this.preset })
 end
 
@@ -254,7 +254,7 @@ function this.toggleAnchor(button)
     end
 
     button.text = this.anchorLabel()
-    this.announcePresetUpdated()
+    this.triggerCameraPresetUpdated()
 end
 
 ---@private
@@ -266,11 +266,23 @@ function this.buildPositionSection(parent)
         parent = parent,
         title = this.translations.get(keys.positionCategory),
         sliders = {
-            this.createSlider({ label = keys.presetVerticalAnchor, min = 0, max = 1, step = 0.01, field =
-            "verticalAnchor" }),
+            this.createSlider({
+                label = keys.presetVerticalAnchor,
+                min = 0,
+                max = 1,
+                step = 0.01,
+                field =
+                "verticalAnchor"
+            }),
             this.createSlider({ label = keys.distance, min = 0, max = 300, step = 1, field = "distance" }),
-            this.createSlider({ label = keys.horizontalOffset, min = -150, max = 150, step = 1, field =
-            "horizontalOffset" }),
+            this.createSlider({
+                label = keys.horizontalOffset,
+                min = -150,
+                max = 150,
+                step = 1,
+                field =
+                "horizontalOffset"
+            }),
             this.createSlider({ label = keys.verticalOffset, min = -150, max = 150, step = 1, field = "verticalOffset" }),
         },
     })
@@ -327,7 +339,7 @@ function this.createSlider(params)
         default = preset[params.field],
         onChange = function(value)
             preset[params.field] = value
-            this.announcePresetUpdated()
+            this.triggerCameraPresetUpdated()
         end,
     }
 end

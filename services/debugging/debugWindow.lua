@@ -49,6 +49,7 @@ function this.initialize(services)
         {
             title = this.translations.get(this.translationKey.debugTabAnimations),
             sections = {
+                services.baseConfigurationSection,
                 services.previewAnimationSection,
                 services.triggerOverrideSection,
                 services.propTransformSection,

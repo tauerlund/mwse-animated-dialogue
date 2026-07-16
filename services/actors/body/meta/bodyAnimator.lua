@@ -5,6 +5,8 @@
 ---@field begin fun(self: bodyAnimator, reference: tes3reference)
 ---@field overridesLookAt? fun(self: bodyAnimator): boolean
 ---@field play? fun(self: bodyAnimator, params: clipBodyAnimator.play.param)
+---@field applyConfiguration? fun(self: bodyAnimator, reference: tes3reference, configuration: baseAnimationConfiguration)
+---@field getConfiguration? fun(self: bodyAnimator): baseAnimationConfiguration|nil
 ---@field stop fun(self: bodyAnimator)
 ---@field suppressesTurn? boolean
 ---@field preferredAnimationId? string|nil Base configuration id the clip strategy resolves ahead of the context-driven pick. Set between create and begin.

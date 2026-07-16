@@ -65,6 +65,7 @@ function this.initializeMod(_)
 		services.debugSectionBuilder,
 		services.debugTooltip,
 		services.debugStatusHud,
+		services.baseConfigurationSection,
 		services.previewAnimationSection,
 		services.triggerOverrideSection,
 		services.propTransformSection,

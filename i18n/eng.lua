@@ -235,13 +235,20 @@ return {
     [keys.debugHudStatusPaused] = "Status: Paused",
     [keys.debugWindowTitle] = "Animated Dialogue: Debug",
     [keys.debugTabAnimations] = "Animations",
+    [keys.debugBaseConfiguration] = "Base Configuration",
+    [keys.debugBaseConfigurationHint] =
+    "Adopt a base config on this NPC for the rest of the dialogue, replacing the one that was rolled.",
     [keys.debugPreviewAnimation] = "Preview Animation",
-    [keys.debugPreviewAnimationHint] = "Force a base clip onto this NPC.",
+    [keys.debugPreviewAnimationHint] = "Play a talk clip or variation from %{id}, one-shot, reverting to idle.",
+    [keys.debugNoActiveConfiguration] =
+    "No active base configuration. This actor isn't driven by a clip animation.",
+    [keys.debugNoTalkAnimations] = "%{id} has no talk animations or variations.",
     [keys.debugTriggerOverride] = "Trigger Override",
     [keys.debugTriggerOverrideHint] = "Simulate a dialogue line: override clip + prop.",
     [keys.debugActorAnimDisabledHint] = "Actor animations are disabled in the MCM.",
     [keys.debugPropSection] = "Prop Transform",
-    [keys.debugNoPropSpawned] = "No prop spawned. Trigger an override with a prop to edit its transform.",
+    [keys.debugNoPropSpawned] =
+    "No prop spawned. Trigger an override with a prop, or adopt a base configuration with one, to edit its transform.",
     [keys.debugTranslationSection] = "Translation",
     [keys.debugRotationSection] = "Rotation",
     [keys.debugScaleSection] = "Scale",

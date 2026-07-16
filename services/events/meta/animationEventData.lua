@@ -1,3 +1,5 @@
 ---@meta
 ---@class animationEventData
 ---@field public animation animationDefinition
+---@field public actor tes3reference
+---@field public configuration baseAnimationConfiguration|nil
