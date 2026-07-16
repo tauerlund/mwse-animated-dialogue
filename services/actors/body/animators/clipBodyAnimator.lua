@@ -457,6 +457,8 @@ function this:update(delta)
         return
     end
 
+    self:updateVariation(delta)
+
     self:updateTrack(self.bodyTrack)
     self:updateTrack(self.torchTrack)
 
@@ -475,8 +477,6 @@ function this:update(delta)
 
     self:advanceTrack(self.torchTrack, delta)
     self:advanceTrack(self.bodyTrack, delta)
-
-    self:updateVariation(delta)
 end
 
 return this
