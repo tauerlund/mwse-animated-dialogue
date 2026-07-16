@@ -15,6 +15,10 @@ this.fileType = ".json"
 this.fileLoader = nil
 
 ---@private
+---@type cameraPresetValidator
+this.validator = nil
+
+---@private
 ---@type { [string]: cameraPreset }
 this.presets = {}
 
@@ -23,11 +27,19 @@ this.presets = {}
 ---@return boolean, string|nil
 function this.initialize(services)
     this.fileLoader = services.fileLoader
+    this.validator = services.cameraPresetValidator
     this.presets = {}
 
     this.loadPresets()
 
     return true, nil
+end
+
+---@public
+---@param services serviceCollection
+---@return initializedService[]
+function this.dependencies(services)
+    return { services.cameraPresetValidator }
 end
 
 ---@public
@@ -154,8 +166,9 @@ function this.loadPresets()
 
     for _, file in ipairs(files) do
         local id = this.removeExtension(file)
-        local preset = mwse.loadConfig(string.format("%s\\%s", this.presetsPath, id), this.defaultPreset()) --[[@as cameraPreset]]
-        if preset then
+        local preset = mwse.loadConfig(string.format("%s\\%s", this.presetsPath, id)) --[[@as cameraPreset]]
+
+        if this.validator.validatePreset(preset, id) then
             preset.id = id
             this.presets[id] = preset
         end

@@ -29,6 +29,7 @@ function this.initializeMod(_)
 	local initializedServices = {
 		services.ruleLoader,
 		services.eventLogger,
+		services.cameraPresetValidator,
 		services.cameraPresetLoader,
 		services.cameraPresetResolver,
 		services.animationValidator,

@@ -1,0 +1,3 @@
+---@meta
+---@class cameraPresetValidationRule : rule
+---@field public validate fun(preset: cameraPreset):boolean, string|nil
