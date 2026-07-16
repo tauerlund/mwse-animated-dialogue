@@ -180,6 +180,15 @@ function this.buildEntries()
                 })
             end
         end
+
+        if configuration.variations then
+            for i, variation in ipairs(configuration.variations) do
+                table.insert(entries, {
+                    label = string.format("%s / variation %d", configuration.id, i),
+                    animation = variation,
+                })
+            end
+        end
     end
 
     return entries

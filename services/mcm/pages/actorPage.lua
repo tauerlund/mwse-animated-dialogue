@@ -75,6 +75,29 @@ function this.initialize(template, services)
         decimalPlaces = 0,
     })
 
+    bodyCategory:createOnOffButton({
+        label = translations.get(keys.actorIdleVariationEnabled),
+        description = translations.get(keys.actorIdleVariationEnabledDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "actorIdleVariationEnabled",
+            table = services.settings
+        }),
+    })
+
+    bodyCategory:createSlider({
+        label = translations.get(keys.actorIdleVariationInterval),
+        description = translations.get(keys.actorIdleVariationIntervalDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "actorIdleVariationInterval",
+            table = services.settings
+        }),
+        min = 3,
+        max = 30,
+        step = 1,
+        jump = 5,
+        decimalPlaces = 0,
+    })
+
     local headCategory = page:createCategory({
         label = translations.get(keys.headCategory)
     })
