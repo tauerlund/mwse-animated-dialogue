@@ -3,9 +3,9 @@ local this = {}
 
 ---@public
 ---@param configuration baseAnimationConfiguration
----@param actor tes3reference
+---@param _ tes3reference
 ---@return boolean
-function this.isMet(configuration, actor)
+function this.isMet(configuration, _)
     local timeOfDay = configuration.conditions and configuration.conditions.timeOfDay
     if not timeOfDay then
         return true
