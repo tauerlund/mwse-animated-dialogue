@@ -5,3 +5,4 @@
 ---@field public weight? number
 ---@field public idle animationDefinition
 ---@field public talk? animationDefinition[]
+---@field public variations? animationDefinition[]

@@ -65,6 +65,18 @@ this.torchTrack = nil
 ---@type animationDefinition
 this.torchArmAnimation = { file = "tauer\\ad\\torch.nif", group = "idle9" }
 
+---@private
+---@type number
+this.variationIntervalRandomness = 0.3
+
+---@private
+---@type number
+this.variationTimer = 0
+
+---@private
+---@type number
+this.variationInterval = 0
+
 ---@public
 ---@param services serviceCollection
 ---@return boolean,string|nil
@@ -96,6 +108,8 @@ function this.create()
     instance.animationConfiguration = nil
     instance.activeAnimation = nil
     instance.revertTo = nil
+    instance.variationTimer = 0
+    instance.variationInterval = 0
     instance.eventHandlers = nil
     instance.poseBlender = this.actorPoseBlender.create()
     instance.bodyTrack = this.actorTrackBinder.create()
@@ -253,6 +267,10 @@ function this:applyAnimation(animation, loop)
 
     self:setActiveAnimation(animation)
 
+    if loop then
+        self:resetVariationTimer()
+    end
+
     if holdingTorch then
         self:applyTorchArm(animationData.actorNode)
     end
@@ -333,6 +351,63 @@ function this:advanceTrack(track, delta)
     end
 end
 
+---@private
+function this:resetVariationTimer()
+    self.variationTimer = 0
+    self.variationInterval = self:rollVariationInterval()
+end
+
+---@private
+---@return number
+function this:rollVariationInterval()
+    local base = self.settings.actorIdleVariationInterval
+    local spread = base * self.variationIntervalRandomness
+    return base + (math.random() * 2 - 1) * spread
+end
+
+---@private
+---@return boolean
+function this:isIdling()
+    return self.activeAnimation ~= nil and self.bodyTrack.looping
+end
+
+---@private
+---@param delta number
+function this:updateVariation(delta)
+    if not self.settings.actorIdleVariationEnabled then
+        return
+    end
+
+    if not self.animationConfiguration then
+        return
+    end
+
+    local variations = self.animationConfiguration.variations
+    if not variations then
+        return
+    end
+
+    if not self:isIdling() then
+        return
+    end
+
+    self.variationTimer = self.variationTimer + delta
+    if self.variationTimer < self.variationInterval then
+        return
+    end
+
+    local variation = table.choice(variations)
+    if not variation then
+        return
+    end
+
+    self:play({
+        actor     = self.actor,
+        animation = variation,
+        revertTo  = self.animationConfiguration.idle,
+    })
+end
+
 ---@public
 ---@param delta number
 function this:update(delta)
@@ -363,6 +438,8 @@ function this:update(delta)
 
     self:advanceTrack(self.torchTrack, delta)
     self:advanceTrack(self.bodyTrack, delta)
+
+    self:updateVariation(delta)
 end
 
 return this

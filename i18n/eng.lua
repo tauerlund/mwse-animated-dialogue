@@ -23,6 +23,12 @@ return {
     [keys.actorTalkAnimChance] = "Talk Animation Chance",
     [keys.actorTalkAnimChanceDescription] =
     "The chance that a talking gesture plays on any given response, so actors do not gesture on every single line. Animations configured for a specific dialogue topic always play and ignore this setting.",
+    [keys.actorIdleVariationEnabled] = "Enable Idle Variations",
+    [keys.actorIdleVariationEnabledDescription] =
+    "Enables occasional idle variations (a weight shift, a glance away, a small gesture) played while an actor is idling between lines, so they do not hold a single pose. Requires actor animations to be enabled, and only affects actors whose animation set defines variations.",
+    [keys.actorIdleVariationInterval] = "Idle Variation Interval",
+    [keys.actorIdleVariationIntervalDescription] =
+    "The average number of seconds an actor idles before playing a variation. The actual wait is randomized around this value so actors do not move in unison.",
     [keys.actorTurnEnabled] = "Enable Actor Turning",
     [keys.actorTurnEnabledDescription] = "Enables or disables the actor turning to face the player when dialogue starts.",
     [keys.actorHeadMorphAnimEnabled] = "Enable Head Morph Animations",
