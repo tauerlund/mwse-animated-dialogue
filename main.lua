@@ -38,6 +38,7 @@ function this.initializeMod(_)
 		services.animationResolver,
 		services.animationFilterer,
 		services.dialogueController,
+		services.dialogueCircuitBreaker,
 		services.renderingController,
 		services.playerController,
 		services.actorController,

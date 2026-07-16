@@ -207,8 +207,19 @@ end
 ---@private
 ---@param _ uiEventEventData
 function this.onMenuDialogDestroyed(_)
-    event.trigger(this.events.dialogueEnded)
+    this.endDialogue()
+end
+
+---@public
+function this.endDialogue()
+    if not this.dialogueState then
+        return
+    end
+
     this.dialogueState = nil
+    this.pendingInfo = nil
+
+    event.trigger(this.events.dialogueEnded)
 end
 
 ---@private
