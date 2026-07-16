@@ -14,6 +14,14 @@ this.actorPoseBlender = nil
 this.actorTrackBinder = nil
 
 ---@private
+---@type bonePinner
+this.bonePinner = nil
+
+---@private
+---@type bonePinner
+this.pinner = nil
+
+---@private
 ---@type animationResolver
 this.animationResolver = nil
 
@@ -84,6 +92,7 @@ function this.initialize(services)
     this.settings          = services.settings
     this.actorPoseBlender  = services.actorPoseBlender
     this.actorTrackBinder  = services.actorTrackBinder
+    this.bonePinner        = services.bonePinner
     this.animationResolver = services.animationResolver
     this.events            = services.enums.events
     this.eventRegistrar    = services.eventRegistrar
@@ -112,6 +121,7 @@ function this.create()
     instance.variationInterval = 0
     instance.eventHandlers = nil
     instance.poseBlender = this.actorPoseBlender.create()
+    instance.pinner = this.bonePinner.create()
     instance.bodyTrack = this.actorTrackBinder.create()
     instance.torchTrack = this.actorTrackBinder.create()
 
@@ -127,6 +137,11 @@ function this:begin(reference)
         end
     }
     self.eventRegistrar.register(self.eventHandlers)
+
+    local animationData = reference.animationData
+    if animationData then
+        self.pinner:capture(animationData.actorNode)
+    end
 
     local configuration = self.animationResolver.resolveBase(reference, self.preferredAnimationId)
     if not configuration then
@@ -218,6 +233,7 @@ function this:stop()
     self:clearPlayback()
     self.animationConfiguration = nil
     self.poseBlender:reset()
+    self.pinner:reset()
 end
 
 ---@private
@@ -461,6 +477,8 @@ function this:update(delta)
 
     self:updateTrack(self.bodyTrack)
     self:updateTrack(self.torchTrack)
+
+    self.pinner:apply()
 
     animationData.actorNode:update({ children = true })
 

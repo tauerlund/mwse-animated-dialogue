@@ -1,0 +1,4 @@
+---@meta
+---@class bonePin
+---@field public node niNode
+---@field public translation tes3vector3

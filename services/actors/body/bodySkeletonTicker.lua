@@ -1,29 +1,31 @@
----@class bodySkeletonTicker
+---@class bodySkeletonTicker : initializedService
 local this = {}
 
 ---@private
-this.bonePrefix = "Bip"
+---@type bonePinner
+this.bonePinner = nil
+
+---@public
+---@param services serviceCollection
+---@return boolean, string|nil
+function this.initialize(services)
+    this.bonePinner = services.bonePinner
+
+    return true, nil
+end
 
 ---@public
 ---@return bodySkeletonTicker.state
 function this.create()
-    return { actor = nil, start = 0, stop = 0, phase = 0, pins = {}, poseBlender = nil, transitionDuration = 0 }
-end
-
----@private
----@param state bodySkeletonTicker.state
----@param actorNode niNode|nil
-function this.resolvePinnedNodes(state, actorNode)
-    if not actorNode then
-        return
-    end
-
-    for bone in actorNode:traverse({ prefix = this.bonePrefix }) do
-        state.pins[#state.pins + 1] = {
-            node = bone --[[@as niNode]],
-            translation = bone.translation:copy()
-        }
-    end
+    return {
+        actor              = nil,
+        start              = 0,
+        stop               = 0,
+        phase              = 0,
+        pinner             = this.bonePinner.create(),
+        poseBlender        = nil,
+        transitionDuration = 0,
+    }
 end
 
 ---@public
@@ -34,13 +36,12 @@ function this.begin(state, params)
     state.start              = params.start
     state.stop               = params.stop
     state.phase              = params.start
-    state.pins               = {}
     state.poseBlender        = params.poseBlender
     state.transitionDuration = params.transitionDuration or 0
 
     local animationData = params.actor.animationData
     local actorNode     = animationData and animationData.actorNode
-    this.resolvePinnedNodes(state, actorNode)
+    state.pinner:capture(actorNode)
 
     -- Capture the pre-animation pose before the first tick drives the skeleton,
     -- so the blend eases from the frozen dialogue-open pose into the clip.
@@ -56,11 +57,12 @@ function this.reset(state)
         state.poseBlender:reset()
     end
 
+    state.pinner:reset()
+
     state.actor              = nil
     state.start              = 0
     state.stop               = 0
     state.phase              = 0
-    state.pins               = {}
     state.poseBlender        = nil
     state.transitionDuration = 0
 end
@@ -84,12 +86,7 @@ function this.update(state, delta)
         time        = state.phase,
     })
 
-    for _, pin in ipairs(state.pins) do
-        local translation = pin.node.translation
-        translation.x = pin.translation.x
-        translation.y = pin.translation.y
-        pin.node.translation = translation
-    end
+    state.pinner:apply()
     animationData.actorNode:update({ children = true })
 
     if state.poseBlender and state.poseBlender:isActive() then

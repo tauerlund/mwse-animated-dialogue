@@ -44,6 +44,7 @@ function this.initializeMod(_)
 		services.actorController,
 		services.actorTurnAnimator,
 		services.actorTrackBinder,
+		services.bodySkeletonTicker,
 		services.creatureConfigValidator,
 		services.creatureConfigLoader,
 		services.creatureAnimationResolver,
