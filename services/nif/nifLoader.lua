@@ -2,6 +2,7 @@
 local this         = {}
 
 local ERROR_MARKER = "marker_error"
+local MESH_ROOT    = "Meshes\\"
 
 ---@public
 ---@param file string
@@ -13,6 +14,13 @@ function this.load(file)
     end
 
     return mesh:clone() --[[@as niNode]]
+end
+
+---@public
+---@param file string
+---@return boolean
+function this.exists(file)
+    return tes3.getFileExists(string.format("%s%s", MESH_ROOT, file))
 end
 
 ---@private

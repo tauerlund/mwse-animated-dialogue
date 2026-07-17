@@ -1,5 +1,18 @@
----@class propDefinitionValidator : service
+---@class propDefinitionValidator : initializedService
 local this = {}
+
+---@private
+---@type nifLoader
+this.nifLoader = nil
+
+---@public
+---@param services serviceCollection
+---@return boolean, string|nil
+function this.initialize(services)
+    this.nifLoader = services.nifLoader
+
+    return true, nil
+end
 
 ---@private
 ---@param value any
@@ -68,6 +81,10 @@ function this.validate(prop)
 
     if type(prop.file) ~= "string" or prop.file == "" then
         return false, "prop.file must be a non-empty string"
+    end
+
+    if not this.nifLoader.exists(prop.file) then
+        return false, string.format("prop.file '%s' does not exist", prop.file)
     end
 
     if type(prop.attachTo) ~= "string" or prop.attachTo == "" then

@@ -34,6 +34,8 @@ function this.initializeMod(_)
 		services.cameraPresetLoader,
 		services.cameraPresetResolver,
 		services.animationConditionsValidator,
+		services.animationDefinitionValidator,
+		services.propDefinitionValidator,
 		services.animationValidator,
 		services.animationLoader,
 		services.animationResolver,

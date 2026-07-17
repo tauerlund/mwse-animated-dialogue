@@ -1,5 +1,18 @@
----@class animationDefinitionValidator : service
+---@class animationDefinitionValidator : initializedService
 local this = {}
+
+---@private
+---@type nifLoader
+this.nifLoader = nil
+
+---@public
+---@param services serviceCollection
+---@return boolean, string|nil
+function this.initialize(services)
+    this.nifLoader = services.nifLoader
+
+    return true, nil
+end
 
 ---@public
 ---@param definition any
@@ -12,6 +25,10 @@ function this.validate(definition, label)
 
     if type(definition.file) ~= "string" or definition.file == "" then
         return false, string.format("%s.file must be a non-empty string", label)
+    end
+
+    if not this.nifLoader.exists(definition.file) then
+        return false, string.format("%s.file '%s' does not exist", label, definition.file)
     end
 
     if type(definition.group) ~= "string" or definition.group == "" then
