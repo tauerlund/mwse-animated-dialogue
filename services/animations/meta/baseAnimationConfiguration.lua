@@ -4,6 +4,7 @@
 ---@field public conditions? animationConditions
 ---@field public weight? number
 ---@field public idle animationDefinition
+---@field public greeting? animationDefinition[]
 ---@field public talk? animationDefinition[]
 ---@field public variations? animationDefinition[]
 ---@field public prop? propDefinition

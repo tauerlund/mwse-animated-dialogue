@@ -176,15 +176,11 @@ function this:onDialogueInfo(e)
         return
     end
 
-    if not self.settings.actorTalkAnimEnabled then
-        return
-    end
-
     if not self.animationConfiguration then
         return
     end
 
-    local animation = self:resolveTalkAnimation(e.info)
+    local animation = self:resolveInfoAnimation(e.info)
     if not animation then
         return
     end
@@ -199,10 +195,47 @@ end
 ---@private
 ---@param info tes3dialogueInfo
 ---@return animationDefinition|nil
-function this:resolveTalkAnimation(info)
+function this:resolveInfoAnimation(info)
+    return self:resolveOverrideAnimation(info)
+        or self:resolveGreetingAnimation(info)
+        or self:resolveTalkAnimation()
+end
+
+---@private
+---@param info tes3dialogueInfo
+---@return animationDefinition|nil
+function this:resolveOverrideAnimation(info)
+    if not self.settings.actorTalkAnimEnabled then
+        return nil
+    end
+
     local override = self.animationResolver.resolveOverride(info.id, self.actor)
-    if override then
-        return override.animation
+
+    return override and override.animation
+end
+
+---@private
+---@param info tes3dialogueInfo
+---@return animationDefinition|nil
+function this:resolveGreetingAnimation(info)
+    if not self.settings.actorGreetingEnabled then
+        return nil
+    end
+
+    if info.type ~= tes3.dialogueType.greeting then
+        return nil
+    end
+
+    local greeting = self.animationConfiguration.greeting
+
+    return greeting and table.choice(greeting)
+end
+
+---@private
+---@return animationDefinition|nil
+function this:resolveTalkAnimation()
+    if not self.settings.actorTalkAnimEnabled then
+        return nil
     end
 
     if math.random() >= self.settings.actorTalkAnimChance then

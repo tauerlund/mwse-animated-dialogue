@@ -23,6 +23,9 @@ return {
     [keys.actorTalkAnimChance] = "Talk Animation Chance",
     [keys.actorTalkAnimChanceDescription] =
     "The chance that a talking gesture plays on any given response, so actors do not gesture on every single line. Animations configured for a specific dialogue topic always play and ignore this setting.",
+    [keys.actorGreetingEnabled] = "Enable Greeting Animations",
+    [keys.actorGreetingEnabledDescription] =
+    "Enables a gesture played once as a conversation opens, in response to the actor's greeting (a bow, a salute, a wave). Requires actor animations to be enabled, and only affects actors whose animation set defines a greeting. An animation configured for the greeting topic itself takes precedence.",
     [keys.actorIdleVariationEnabled] = "Enable Idle Variations",
     [keys.actorIdleVariationEnabledDescription] =
     "Enables occasional idle variations (a weight shift, a glance away, a small gesture) played while an actor is idling between lines, so they do not hold a single pose. Requires actor animations to be enabled, and only affects actors whose animation set defines variations.",
@@ -239,10 +242,10 @@ return {
     [keys.debugBaseConfigurationHint] =
     "Adopt a base config on this NPC for the rest of the dialogue, replacing the one that was rolled.",
     [keys.debugPreviewAnimation] = "Preview Animation",
-    [keys.debugPreviewAnimationHint] = "Play a talk clip or variation from %{id}, one-shot, reverting to idle.",
+    [keys.debugPreviewAnimationHint] = "Play a greeting, talk clip or variation from %{id}, one-shot, reverting to idle.",
     [keys.debugNoActiveConfiguration] =
     "No active base configuration. This actor isn't driven by a clip animation.",
-    [keys.debugNoTalkAnimations] = "%{id} has no talk animations or variations.",
+    [keys.debugNoTalkAnimations] = "%{id} has no greeting, talk animations or variations.",
     [keys.debugTriggerOverride] = "Trigger Override",
     [keys.debugTriggerOverrideHint] = "Simulate a dialogue line: override clip + prop.",
     [keys.debugActorAnimDisabledHint] = "Actor animations are disabled in the MCM.",

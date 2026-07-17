@@ -23,6 +23,7 @@ this.defaults = {
     creatureAnimEnabled = true,
     actorTalkAnimEnabled = true,
     actorTalkAnimChance = 0.5,
+    actorGreetingEnabled = true,
     actorIdleVariationEnabled = true,
     actorIdleVariationInterval = 10,
     actorTurnEnabled = true,

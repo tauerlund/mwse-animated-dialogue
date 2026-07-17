@@ -215,6 +215,15 @@ end
 function this.buildEntries(configuration)
     local entries = {}
 
+    if configuration.greeting then
+        for i, greeting in ipairs(configuration.greeting) do
+            table.insert(entries, {
+                label = string.format("greeting %d", i),
+                animation = greeting,
+            })
+        end
+    end
+
     if configuration.talk then
         for i, talk in ipairs(configuration.talk) do
             table.insert(entries, {

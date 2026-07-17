@@ -76,6 +76,15 @@ function this.initialize(template, services)
     })
 
     bodyCategory:createOnOffButton({
+        label = translations.get(keys.actorGreetingEnabled),
+        description = translations.get(keys.actorGreetingEnabledDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "actorGreetingEnabled",
+            table = services.settings
+        }),
+    })
+
+    bodyCategory:createOnOffButton({
         label = translations.get(keys.actorIdleVariationEnabled),
         description = translations.get(keys.actorIdleVariationEnabledDescription),
         variable = mwse.mcm.createTableVariable({
