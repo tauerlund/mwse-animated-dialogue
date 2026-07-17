@@ -4,115 +4,115 @@ return {
     [keys.modName] = "Animated Dialogue",
     [keys.generalPage] = "General",
     [keys.modEnabled] = "Enabled",
-    [keys.modEnabledDescription] = "Enable or disable the Animated Dialogue mod.",
+    [keys.modEnabledDescription] = "Enables the mod.",
     [keys.disableInCombat] = "Disable During Combat",
     [keys.disableInCombatDescription] =
-    "Disables all dialogue animation when talking to an actor that is in combat, so fighting actors are not pulled into cinematic framing.",
+    "Disables dialogue animation when talking to an actor in combat.",
     [keys.limitDialogueDistance] = "Limit By Distance",
     [keys.limitDialogueDistanceDescription] =
-    "Disables all dialogue animation when the actor is not nearby, so remote conversations (e.g. telepathy rings) do not trigger cinematic framing on an actor you cannot see.",
+    "Disables dialogue animation when the actor is not nearby.",
     [keys.maxDialogueDistance] = "Maximum Distance",
     [keys.maxDialogueDistanceDescription] =
-    "The furthest an actor can be, in game units, for dialogue animation to trigger when Limit By Distance is enabled. Normal face-to-face conversation is well within this range.",
+    "The furthest an actor can be, in game units, for dialogue animation to trigger.",
     [keys.cameraPage] = "Camera",
     [keys.cameraEnabled] = "Enable Camera Animation",
-    [keys.cameraEnabledDescription] = "Enables or disables the camera animation during dialogue.",
+    [keys.cameraEnabledDescription] = "Enables the camera animation during dialogue.",
     [keys.actorPage] = "Actors",
     [keys.actorAnimEnabled] = "Enable Actor Animations",
-    [keys.actorAnimEnabledDescription] = "Enables or disables actor body animations during dialogue.",
+    [keys.actorAnimEnabledDescription] = "Enables actor body animations during dialogue.",
     [keys.actorNativeAnimEnabled] = "Preserve Custom NPC Animations",
     [keys.actorNativeAnimEnabledDescription] =
-    "For NPCs that already play their own custom animation (such as the performers added by Animated Morrowind), keeps that animation playing during dialogue instead of applying this mod's animations.",
+    "Keeps an NPC's own custom animation playing during dialogue instead of replacing it.",
     [keys.creatureAnimEnabled] = "Animate Creatures",
     [keys.creatureAnimEnabledDescription] =
-    "Keeps creatures animating during dialogue by playing a neutral idle, instead of freezing them. Creatures use their own animations; this mod's NPC body animations do not apply to them.",
+    "Keeps creatures animating during dialogue instead of freezing them.",
     [keys.actorTalkAnimEnabled] = "Enable Actor Talk Animations",
     [keys.actorTalkAnimEnabledDescription] =
-    "Enables or disables actor talking gesture animations played while responding during dialogue. Requires actor animations to be enabled.",
+    "Enables talking gestures played while an actor responds.",
     [keys.actorTalkAnimChance] = "Talk Animation Chance",
     [keys.actorTalkAnimChanceDescription] =
-    "The chance that a talking gesture plays on any given response, so actors do not gesture on every single line. Animations configured for a specific dialogue topic always play and ignore this setting.",
+    "The chance a talking gesture plays on a given response.",
     [keys.actorGreetingEnabled] = "Enable Greeting Animations",
     [keys.actorGreetingEnabledDescription] =
-    "Enables a gesture played once as a conversation opens, in response to the actor's greeting (a bow, a salute, a wave). Requires actor animations to be enabled, and only affects actors whose animation set defines a greeting. An animation configured for the greeting topic itself takes precedence.",
+    "Enables a gesture played once as a conversation opens.",
     [keys.actorIdleVariationEnabled] = "Enable Idle Variations",
     [keys.actorIdleVariationEnabledDescription] =
-    "Enables occasional idle variations (a weight shift, a glance away, a small gesture) played while an actor is idling between lines, so they do not hold a single pose. Requires actor animations to be enabled, and only affects actors whose animation set defines variations.",
+    "Enables occasional idle variations played while an actor is idling between lines.",
     [keys.actorIdleVariationInterval] = "Idle Variation Interval",
     [keys.actorIdleVariationIntervalDescription] =
-    "The average number of seconds an actor idles before playing a variation. The actual wait is randomized around this value so actors do not move in unison.",
+    "The average number of seconds an actor idles before playing a variation.",
     [keys.actorTurnEnabled] = "Enable Actor Turning",
-    [keys.actorTurnEnabledDescription] = "Enables or disables the actor turning to face the player when dialogue starts.",
+    [keys.actorTurnEnabledDescription] = "Turns the actor to face the player when dialogue starts.",
     [keys.actorHeadMorphAnimEnabled] = "Enable Head Morph Animations",
     [keys.actorHeadMorphAnimEnabledDescription] =
-    "Enables or disables actor head morph animations during dialogue. This includes blinking and lip syncing (for voiced dialogue).",
+    "Enables actor blinking and lip syncing during dialogue.",
     [keys.actorSimulatedVoiceEnabled] = "Simulate Voice",
     [keys.actorSimulatedVoiceEnabledDescription] =
-    "For lines that have no voiceover, synthesizes mouth and head movement from the response text so lip sync and head bob still play. Automatically stands aside on lines that do have a voiceover, so it is safe to leave on with a voice mod installed. Requires head morph and/or head bob to be enabled.",
+    "Synthesizes mouth and head movement from the response text for lines that have no voiceover.",
     [keys.actorSimulatedVoiceSpeed] = "Simulate Voice: Speed",
     [keys.actorSimulatedVoiceSpeedDescription] =
-    "Scales how quickly the simulated speech articulates. 1.0 is the default; higher shortens the words and pauses for faster, more clipped speech, lower slows it down.",
+    "Scales how quickly the simulated speech articulates.",
     [keys.actorSimulatedVoiceMaxDuration] = "Simulate Voice: Max Duration",
     [keys.actorSimulatedVoiceMaxDurationDescription] =
-    "The longest a simulated line will keep animating, in seconds. Longer responses are capped at this value so the mouth movement does not run on far past the point the player has read the line.",
+    "The longest a simulated line keeps animating, in seconds.",
     [keys.actorHeadLookAtModeFirstPerson] = "Head Look-At (First Person)",
     [keys.actorHeadLookAtModeFirstPersonDescription] =
-    "What the actor's head turns to look at while you are in first person.\n\nCamera: looks into the camera.\n\nPlayer: looks at the player's head.\n\nOff: the head is left to the body animation.\n\nWhat reads best depends on the camera preset the perspective uses: Player suits over-the-shoulder framings, Camera suits centered ones.",
+    "What the actor's head looks at in first person.\n\nCamera: looks into the camera.\n\nPlayer: looks at the player's head.\n\nOff: left to the body animation.",
     [keys.actorHeadLookAtModeThirdPerson] = "Head Look-At (Third Person)",
     [keys.actorHeadLookAtModeThirdPersonDescription] =
-    "What the actor's head turns to look at while you are in third person.\n\nCamera: looks into the camera.\n\nPlayer: looks at the player's head.\n\nOff: the head is left to the body animation.\n\nWhat reads best depends on the camera preset the perspective uses: Player suits over-the-shoulder framings, Camera suits centered ones.",
+    "What the actor's head looks at in third person.\n\nCamera: looks into the camera.\n\nPlayer: looks at the player's head.\n\nOff: left to the body animation.",
     [keys.actorHeadLookAtModeCamera] = "Camera",
     [keys.actorHeadLookAtModePlayer] = "Player",
     [keys.actorHeadLookAtModeOff] = "Off",
     [keys.actorHeadBobEnabled] = "Enable Head Bob",
     [keys.actorHeadBobEnabledDescription] =
-    "Enables or disables subtle procedural head movement while the actor is speaking a voiced line.",
+    "Enables subtle procedural head movement while the actor is speaking.",
     [keys.actorHeadBobNodEnabled] = "Head Bob: Nodding",
     [keys.actorHeadBobNodEnabledDescription] =
-    "Enables or disables the up-and-down nodding component of the head bob. Requires Head Bob to be enabled.",
+    "Enables the up-and-down nodding component of the head bob.",
     [keys.actorHeadBobYawEnabled] = "Head Bob: Turning",
     [keys.actorHeadBobYawEnabledDescription] =
-    "Enables or disables the side-to-side turning component of the head bob. Requires Head Bob to be enabled.",
+    "Enables the side-to-side turning component of the head bob.",
     [keys.actorHeadBobTiltEnabled] = "Head Bob: Tilting",
     [keys.actorHeadBobTiltEnabledDescription] =
-    "Enables or disables the tilting (roll) component of the head bob. Requires Head Bob to be enabled.",
+    "Enables the tilting (roll) component of the head bob.",
     [keys.actorHeadBobAmount] = "Head Bob: Amount",
     [keys.actorHeadBobAmountDescription] =
-    "Scales how far the head moves during the bob. 1.0 is the default; higher is more pronounced.",
+    "Scales how far the head moves during the bob.",
     [keys.actorHeadBobSpeed] = "Head Bob: Speed",
     [keys.actorHeadBobSpeedDescription] =
-    "Scales how quickly the head bobs. 1.0 is the default; higher is faster.",
+    "Scales how quickly the head bobs.",
     [keys.actorHeadBobRandomness] = "Head Bob: Randomness",
     [keys.actorHeadBobRandomnessDescription] =
-    "How organic versus mechanical the motion feels. 0 is a steady rhythm; higher blends in more random wander.",
+    "How much random wander is blended into the motion.",
     [keys.propsEnabled] = "Enable Props",
     [keys.propsEnabledDescription] =
-    "Enables or disables actors holding props during dialogue (when configured)",
+    "Enables actors holding props during dialogue.",
     [keys.blacklistedActorsTitleLabel] = "Blacklist",
     [keys.blacklistedActorsDescription] =
-    "Actors on the blacklist are excluded from this mod's functionality entirely.",
+    "Actors on the blacklist are excluded from this mod entirely.",
     [keys.blacklistedActorsLeftLabel] = "Blacklisted",
     [keys.blacklistedActorsRightLabel] = "Actors",
     [keys.playerPage] = "Player",
     [keys.playerPageDescription] =
-    "Animates the player during dialogue, alongside the actor. Player animations apply in third person only; in first person the player's body is not visible and these settings do nothing.",
+    "Animates the player during dialogue. Third person only.",
     [keys.playerAnimEnabled] = "Enable Player Animations",
     [keys.playerAnimEnabledDescription] =
-    "Animates the player's body during dialogue, using the same animations as actors. Third person only.",
+    "Animates the player's body during dialogue.",
     [keys.playerAnimation] = "Animation",
     [keys.playerAnimationDescription] =
-    "Which animation the player's body plays during dialogue. Context-driven picks one the same way actors do, based on sex, class, and equipment; a specific pick always plays, ignoring those conditions.",
+    "Which animation the player's body plays during dialogue.",
     [keys.playerAnimationContextDriven] = "Context-driven",
     [keys.playerTurnEnabled] = "Enable Player Turning",
     [keys.playerTurnEnabledDescription] =
-    "Turns the player to face the actor when dialogue starts, and restores the original facing when it ends.",
+    "Turns the player to face the actor during dialogue.",
     [keys.playerHeadLookAtEnabled] = "Enable Head Look-At",
     [keys.playerHeadLookAtEnabledDescription] =
     "Turns the player's head to look at the actor during dialogue.",
     [keys.visibilityCategory] = "Visibility",
     [keys.hidePlayerMode] = "Hide Player",
     [keys.hidePlayerModeDescription] =
-    "Hides the player's model while dialogue is open, so it does not clutter the shot.\n\nFirst Person: hides the first-person hands when dialogue starts in first person.\n\nThird Person: hides the player's body when dialogue starts in third person.\n\nAlways: hides in both perspectives.\n\nNever: leaves the player visible.",
+    "Hides the player's model while dialogue is open.\n\nFirst Person: hides the first-person hands when dialogue starts in first person.\n\nThird Person: hides the player's body when dialogue starts in third person.\n\nAlways: hides in both perspectives.\n\nNever: leaves the player visible.",
     [keys.hidePlayerModeFirstPerson] = "First Person",
     [keys.hidePlayerModeThirdPerson] = "Third Person",
     [keys.hidePlayerModeAlways] = "Always",
@@ -120,34 +120,34 @@ return {
     [keys.presetsCategory] = "Presets",
     [keys.cameraPresetFirstPerson] = "First Person Preset",
     [keys.cameraPresetFirstPersonDescription] =
-    "The camera preset used when dialogue starts while the player is in first person.",
+    "The camera preset used when dialogue starts in first person.",
     [keys.cameraPresetThirdPerson] = "Third Person Preset",
     [keys.cameraPresetThirdPersonDescription] =
-    "The camera preset used when dialogue starts while the player is in third person.",
+    "The camera preset used when dialogue starts in third person.",
     [keys.presetsPage] = "Presets",
     [keys.presetEditTarget] = "Editing Preset",
     [keys.presetEditTargetDescription] =
-    "Which preset the fields below edit. Changes apply live to the running game; use Save to write them to disk.",
+    "Which preset the fields below edit.",
     [keys.presetName] = "Name",
-    [keys.presetNameDescription] = "The display name shown for this preset in the dropdowns. Does not rename the file.",
+    [keys.presetNameDescription] = "The display name shown for this preset.",
     [keys.presetAnchor] = "Anchor",
     [keys.presetAnchorDescription] =
-    "Whose horizontal position the camera anchors to. Actor keeps the shot framed on the actor; Player places the camera relative to the player, for over-the-shoulder framing.",
+    "Whose horizontal position the camera anchors to.",
     [keys.presetAnchorActor] = "Actor",
     [keys.presetAnchorPlayer] = "Player",
     [keys.presetVerticalAnchor] = "Vertical Anchor",
     [keys.presetVerticalAnchorDescription] =
-    "The camera's height, blended between the player's eye level (0%) and the actor's head height (100%). Lower values keep the camera at your own eye line; higher values rise to meet a tall or standing actor and drop to a sitting one.",
+    "The camera's height, blended between the player's eye level (0%) and the actor's head height (100%).",
     [keys.presetActionsCategory] = "Actions",
     [keys.presetSave] = "Save",
-    [keys.presetSaveDescription] = "Writes the current preset's values to its file on disk.",
+    [keys.presetSaveDescription] = "Writes the current preset's values to its file.",
     [keys.presetSaveConfirm] = "Save this preset to disk, overwriting its file?",
     [keys.presetClone] = "Clone",
-    [keys.presetCloneDescription] = "Creates a copy of the current preset as a new, separate preset.",
+    [keys.presetCloneDescription] = "Creates a copy of the current preset.",
     [keys.presetNew] = "New",
     [keys.presetNewDescription] = "Creates a new preset with default values.",
     [keys.presetDelete] = "Delete",
-    [keys.presetDeleteDescription] = "Deletes the current preset's file from disk. This cannot be undone.",
+    [keys.presetDeleteDescription] = "Deletes the current preset's file.",
     [keys.presetDeleteConfirm] = "Delete this preset from disk? This cannot be undone.",
     [keys.presetDeleteLast] = "You cannot delete the last remaining preset.",
     [keys.presetNewName] = "New Preset",
@@ -160,90 +160,90 @@ return {
     [keys.propsCategory] = "Props",
     [keys.distance] = "Distance",
     [keys.distanceDescription] =
-    "The minimum distance the camera maintains from the actor's head during dialogue. If standing closer than this, the camera will pull back.",
+    "The minimum distance the camera keeps from the actor's head.",
     [keys.horizontalOffset] = "Horizontal Offset",
     [keys.horizontalOffsetDescription] =
-    "Shifts the camera left or right relative to the actor. Negative values move left, positive values move right.",
+    "Shifts the camera left or right relative to the actor.",
     [keys.verticalOffset] = "Vertical Offset",
     [keys.verticalOffsetDescription] =
-    "Shifts the camera up or down relative to the actor's head. Negative values move down, positive values move up.",
+    "Shifts the camera up or down relative to the actor's head.",
     [keys.pitchOffset] = "Pitch",
     [keys.pitchOffsetDescription] =
-    "Tilts the camera up or down relative to the actor's head. Positive values look down, negative values look up.",
+    "Tilts the camera up or down.",
     [keys.yawOffset] = "Yaw",
     [keys.yawOffsetDescription] =
-    "Rotates the camera left or right relative to the actor's head. Positive values shift the actor left in frame, negative values shift right.",
+    "Rotates the camera left or right.",
     [keys.rollOffset] = "Roll",
     [keys.rollOffsetDescription] =
-    "Rolls the camera around the look direction. Positive values tilt clockwise, negative values tilt counter-clockwise.",
+    "Rolls the camera around the look direction.",
     [keys.animationDuration] = "Duration",
-    [keys.animationDurationDescription] = "How long the camera zoom animation takes, in seconds.",
+    [keys.animationDurationDescription] = "How long the camera zoom takes, in seconds.",
     [keys.turnDuration] = "Turn Duration",
     [keys.turnDurationDescription] =
-    "How long the actor takes to turn and face the player when dialogue starts, in seconds.",
+    "How long the actor takes to turn and face the player, in seconds.",
     [keys.transitionDuration] = "Transition Duration",
     [keys.transitionDurationDescription] =
-    "How long the actor's body takes to ease into the dialogue animation when dialogue starts, in seconds. Set to 0 to snap instantly.",
+    "How long the actor's body takes to ease into the dialogue animation, in seconds.",
     [keys.effectsPage] = "Effects",
     [keys.dofCategory] = "Depth of Field",
     [keys.dofEnabled] = "Enable Depth of Field",
     [keys.dofEnabledDescription] =
-    "Applies a depth of field effect during dialogue, keeping the actor in focus while blurring the background.",
+    "Applies a depth of field effect during dialogue.",
     [keys.dofStrength] = "Blur Strength",
-    [keys.dofStrengthDescription] = "Controls how strongly out-of-focus areas are blurred.",
+    [keys.dofStrengthDescription] = "How strongly out-of-focus areas are blurred.",
     [keys.letterboxCategory] = "Letterbox",
     [keys.letterboxEnabled] = "Enable Letterbox",
     [keys.letterboxEnabledDescription] =
-    "Eases cinematic black bars in at the top and bottom of the screen as dialogue starts, and removes them when it ends.",
+    "Eases cinematic black bars in at the top and bottom of the screen during dialogue.",
     [keys.hudCategory] = "HUD",
     [keys.hideHudEnabled] = "Hide HUD",
     [keys.hideHudEnabledDescription] =
-    "Hides the heads-up display (health bars, minimap, equipped weapon and magic) while dialogue is open, and restores it when dialogue ends.",
+    "Hides the heads-up display while dialogue is open.",
     [keys.lightingParticlesCategory] = "Lighting & Particles",
     [keys.lightEnabled] = "Enable Light Animation",
     [keys.lightEnabledDescription] =
-    "Keeps flickering and pulsing lights (such as torches, candles, and braziers) animating during dialogue. Without this, they freeze while in menu mode.",
+    "Keeps flickering and pulsing lights animating during dialogue.",
     [keys.particlesEnabled] = "Enable Particle Effects",
     [keys.particlesEnabledDescription] =
-    "Keeps particle effects (such as the flame on a held torch) animating during dialogue. Without this, they remain frozen while in menu mode.",
+    "Keeps particle effects animating during dialogue.",
     [keys.effectsMode] = "Animation Mode",
     [keys.effectsModeDescription] =
-    "Actor: animates just the actor's lights and particle effects.\n\nCurrent cell: animates all lights and particle effects in the current cell, including placed world lights, fireplaces, and other actors' torches.\n\nActive cells: like Current cell, but also includes neighboring loaded cells (exteriors). Within the cell distance. May have a bigger performance impact.",
+    "Actor: animates just the actor's lights and particle effects.\n\nCurrent cell: animates all lights and particle effects in the current cell.\n\nActive cells: like Current cell, but also includes neighboring loaded cells.",
     [keys.effectsModeActor] = "Actor",
     [keys.effectsModeCurrentCell] = "Current cell",
     [keys.effectsModeActiveCells] = "Active cells",
     [keys.effectsCellDistance] = "Cell Distance",
     [keys.effectsCellDistanceDescription] =
-    "In the cell modes, the maximum distance (in game units) a light or particle effect may be from the actor to be animated. Anything beyond this remains frozen.",
+    "In the cell modes, the maximum distance a light or particle effect may be from the actor to animate.",
     [keys.weatherPage] = "Weather",
     [keys.precipitationEnabled] = "Enable Precipitation",
     [keys.precipitationEnabledDescription] =
-    "Keeps rain and snow falling during dialogue. Without this, precipitation freezes while in menu mode.",
+    "Keeps rain and snow falling during dialogue.",
     [keys.stormsEnabled] = "Enable Storms",
     [keys.stormsEnabledDescription] =
-    "Keeps ash, blight, and blizzard storms swirling during dialogue. Without this, storms freeze while in menu mode.",
+    "Keeps ash, blight, and blizzard storms swirling during dialogue.",
     [keys.cloudsEnabled] = "Enable Clouds",
     [keys.cloudsEnabledDescription] =
-    "Keeps clouds drifting across the sky during dialogue. Without this, clouds freeze while in menu mode.",
+    "Keeps clouds drifting across the sky during dialogue.",
     [keys.swayCategory] = "Sway",
     [keys.swayEnabled] = "Enable Camera Sway",
     [keys.swayEnabledDescription] =
-    "Adds a subtle oscillation to the camera during dialogue for a more cinematic, living feel.",
+    "Adds a subtle oscillation to the camera during dialogue.",
     [keys.swayAmplitude] = "Amplitude",
-    [keys.swayAmplitudeDescription] = "How far the camera sways, in degrees. Lower values are more subtle.",
+    [keys.swayAmplitudeDescription] = "How far the camera sways, in degrees.",
     [keys.swayFrequency] = "Frequency",
     [keys.swayFrequencyDescription] =
-    "How fast the camera sways, in cycles per second. Lower values give a slow, breathing-like motion.",
+    "How fast the camera sways, in cycles per second.",
     [keys.debuggingPage] = "Debugging",
     [keys.debugModeEnabled] = "Debugging Mode",
     [keys.debugModeEnabledDescription] =
-    "Development tool. Opens a debug window during dialogue with tabs for previewing animations, tuning prop transforms, and live-editing camera presets, and enables the pause key below. Leave off during normal play.",
+    "Development tool. During dialogue, opens a status HUD and a tabbed debug window: an Animations tab to adopt a base configuration on the actor, preview its greeting/talk/variation clips, trigger overrides, and tune prop transforms, and a Camera tab to live-edit and save camera presets. Also enables the pause and step keys below, which freeze the scene so props can be tuned against a still pose.",
     [keys.debugPauseKey] = "Pause / Unpause Key",
     [keys.debugPauseKeyDescription] =
-    "While debugging mode is on, this key freezes and unfreezes the dialogue scene (actor animation, particles, lights, and weather) so prop transforms can be tuned against a still pose. Only active during dialogue.",
+    "Freezes and unfreezes the dialogue scene. Only active during dialogue.",
     [keys.debugStepKey] = "Step Frame Key",
     [keys.debugStepKeyDescription] =
-    "While the scene is paused, this key advances it by a single frame. Hold to step continuously. Only active during dialogue.",
+    "While paused, advances the scene by a single frame. Only active during dialogue.",
     [keys.debugHudTitle] = "Debugging Mode",
     [keys.debugHudPause] = "Pause / Unpause: %{key}",
     [keys.debugHudStep] = "Step Frame: %{key}",
