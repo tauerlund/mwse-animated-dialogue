@@ -25,6 +25,20 @@ function this.initialize(template, services)
         }),
     })
 
+    bodyCategory:createSlider({
+        label = translations.get(keys.turnDuration),
+        description = translations.get(keys.turnDurationDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "turnDuration",
+            table = services.settings
+        }),
+        min = 0,
+        max = 5,
+        step = 0.1,
+        jump = 0.5,
+        decimalPlaces = 1,
+    })
+
     bodyCategory:createOnOffButton({
         label = translations.get(keys.actorAnimEnabled),
         description = translations.get(keys.actorAnimEnabledDescription),
@@ -32,6 +46,20 @@ function this.initialize(template, services)
             id = "actorAnimEnabled",
             table = services.settings
         }),
+    })
+
+    bodyCategory:createSlider({
+        label = translations.get(keys.transitionDuration),
+        description = translations.get(keys.transitionDurationDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "transitionDuration",
+            table = services.settings
+        }),
+        min = 0,
+        max = 5,
+        step = 0.1,
+        jump = 0.5,
+        decimalPlaces = 1,
     })
 
     bodyCategory:createOnOffButton({
@@ -280,38 +308,6 @@ function this.initialize(template, services)
             id = "propsEnabled",
             table = services.settings
         }),
-    })
-
-    local timingCategory = page:createCategory({
-        label = translations.get(keys.timingCategory)
-    })
-
-    timingCategory:createSlider({
-        label = translations.get(keys.turnDuration),
-        description = translations.get(keys.turnDurationDescription),
-        variable = mwse.mcm.createTableVariable({
-            id = "turnDuration",
-            table = services.settings
-        }),
-        min = 0,
-        max = 5,
-        step = 0.1,
-        jump = 0.5,
-        decimalPlaces = 1,
-    })
-
-    timingCategory:createSlider({
-        label = translations.get(keys.transitionDuration),
-        description = translations.get(keys.transitionDurationDescription),
-        variable = mwse.mcm.createTableVariable({
-            id = "transitionDuration",
-            table = services.settings
-        }),
-        min = 0,
-        max = 5,
-        step = 0.1,
-        jump = 0.5,
-        decimalPlaces = 1,
     })
 end
 
