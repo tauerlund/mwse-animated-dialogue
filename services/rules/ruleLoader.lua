@@ -30,7 +30,8 @@ function this.loadRules(directory)
 
 	local files = services.fileLoader.loadAll({
 		directory = fullPath,
-		fileType = ".lua"
+		fileType = ".lua",
+		requireNotEmpty = true
 	})
 
 	if not files then

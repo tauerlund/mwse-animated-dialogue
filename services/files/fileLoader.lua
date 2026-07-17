@@ -11,7 +11,12 @@ function this.loadAll(param)
     local directory = param.directory
 
     if not this.isDirectory(directory) then
+        if not param.requireNotEmpty then
+            return {}
+        end
+
         this.logger:error("%s is not a valid directory", directory)
+
         return nil
     end
 
@@ -24,7 +29,12 @@ function this.loadAll(param)
     end
 
     if table.empty(files) then
+        if not param.requireNotEmpty then
+            return {}
+        end
+
         this.logger:warn("Found no files at %s", directory)
+
         return nil
     end
 

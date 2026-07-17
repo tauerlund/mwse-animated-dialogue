@@ -62,7 +62,8 @@ end
 function this.loadConfigurations()
     local files = this.fileLoader.loadAll({
         directory = string.format("%s\\%s", this.basePath, this.creaturesPath),
-        fileType = this.fileType
+        fileType = this.fileType,
+        requireNotEmpty = false
     })
 
     if not files then

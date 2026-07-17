@@ -126,7 +126,8 @@ end
 function this.loadBaseConfigurations()
     local files = this.fileLoader.loadAll({
         directory = string.format("%s\\%s", this.basePath, this.baseAnimationsPath),
-        fileType = this.fileTypes.json
+        fileType = this.fileTypes.json,
+        requireNotEmpty = true
     })
 
     if not files then
@@ -149,7 +150,8 @@ end
 function this.loadOverrideConfigurations()
     local files = this.fileLoader.loadAll({
         directory = string.format("%s\\%s", this.basePath, this.overrideAnimationsPath),
-        fileType = this.fileTypes.json
+        fileType = this.fileTypes.json,
+        requireNotEmpty = false
     })
 
     if not files then

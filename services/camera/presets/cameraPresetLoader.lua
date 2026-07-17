@@ -157,7 +157,8 @@ end
 function this.loadPresets()
     local files = this.fileLoader.loadAll({
         directory = string.format("%s\\%s", this.basePath, this.presetsPath),
-        fileType = this.fileType
+        fileType = this.fileType,
+        requireNotEmpty = true
     })
 
     if not files then
