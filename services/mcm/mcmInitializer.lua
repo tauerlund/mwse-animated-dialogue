@@ -23,6 +23,9 @@ this.mcmSettings = nil
 ---@type events
 this.events = nil
 
+---@private
+this.headerImagePath = "textures\\tauer\\animated-dialogue\\header.tga"
+
 ---@public
 ---@param services serviceCollection
 ---@return boolean, string|nil
@@ -32,7 +35,7 @@ function this.initialize(services)
 
 	local template = mwse.mcm.createTemplate({
 		name = services.translations.get(services.constants.translationKey.modName),
-		--headerImagePath = this.headerImagePath,
+		headerImagePath = this.headerImagePath,
 		onClose = this.onClose
 	})
 
