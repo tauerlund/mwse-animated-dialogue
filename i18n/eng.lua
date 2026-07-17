@@ -186,6 +186,10 @@ return {
     [keys.letterboxEnabled] = "Enable Letterbox",
     [keys.letterboxEnabledDescription] =
     "Eases cinematic black bars in at the top and bottom of the screen as dialogue starts, and removes them when it ends.",
+    [keys.hudCategory] = "HUD",
+    [keys.hideHudEnabled] = "Hide HUD",
+    [keys.hideHudEnabledDescription] =
+    "Hides the heads-up display (health bars, minimap, equipped weapon and magic) while dialogue is open, and restores it when dialogue ends.",
     [keys.lightingParticlesCategory] = "Lighting & Particles",
     [keys.lightEnabled] = "Enable Light Animation",
     [keys.lightEnabledDescription] =

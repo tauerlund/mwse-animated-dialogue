@@ -30,6 +30,8 @@ local this = {
 
     playerController = require("tauer.animated-dialogue.services.player.playerController"),
 
+    hudController = require("tauer.animated-dialogue.services.hud.hudController"),
+
     actorController = require("tauer.animated-dialogue.services.actors.actorController"),
     actorPoseBlender = require("tauer.animated-dialogue.services.actors.actorPoseBlender"),
     actorTrackBinder = require("tauer.animated-dialogue.services.actors.actorTrackBinder"),

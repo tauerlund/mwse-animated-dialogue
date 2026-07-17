@@ -51,6 +51,19 @@ function this.initialize(template, services)
         }),
     })
 
+    local hudCategory = page:createCategory({
+        label = translations.get(keys.hudCategory)
+    })
+
+    hudCategory:createOnOffButton({
+        label = translations.get(keys.hideHudEnabled),
+        description = translations.get(keys.hideHudEnabledDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "hideHudEnabled",
+            table = services.settings
+        }),
+    })
+
     local lightingParticlesCategory = page:createCategory({
         label = translations.get(keys.lightingParticlesCategory)
     })

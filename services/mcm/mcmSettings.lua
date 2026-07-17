@@ -45,6 +45,7 @@ this.defaults = {
     playerTurnEnabled = true,
     playerHeadLookAtEnabled = true,
     hidePlayerMode = this.hidePlayerModes.never,
+    hideHudEnabled = true,
     propsEnabled = true,
     lightEnabled = true,
     particlesEnabled = true,

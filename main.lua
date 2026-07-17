@@ -44,6 +44,7 @@ function this.initializeMod(_)
 		services.dialogueCircuitBreaker,
 		services.renderingController,
 		services.playerController,
+		services.hudController,
 		services.actorController,
 		services.actorTurnAnimator,
 		services.actorTrackBinder,
