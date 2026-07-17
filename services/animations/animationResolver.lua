@@ -14,7 +14,7 @@ this.values = nil
 this.baseConfigurations = nil
 
 ---@private
----@type { [string]: overrideAnimationConfiguration }
+---@type { [string]: overrideAnimationConfiguration[] }
 this.overrideConfigurations = nil
 
 ---@private
@@ -59,9 +59,20 @@ end
 
 ---@public
 ---@param dialogueId string
+---@param actor tes3reference
 ---@return overrideAnimationConfiguration|nil
-function this.resolveOverride(dialogueId)
-    return this.overrideConfigurations[dialogueId]
+function this.resolveOverride(dialogueId, actor)
+    local configurations = this.overrideConfigurations[dialogueId]
+    if not configurations then
+        return nil
+    end
+
+    local filtered = this.animationFilterer.filter(configurations, actor)
+    if #filtered == 0 then
+        return nil
+    end
+
+    return this.values.weightedChoice(filtered, this.resolveWeight)
 end
 
 ---@private
@@ -108,7 +119,7 @@ function this.resolveBaseConfiguration(actor)
 end
 
 ---@private
----@param configuration baseAnimationConfiguration
+---@param configuration animationConfiguration
 ---@return number
 function this.resolveWeight(configuration)
     return configuration.weight or 1

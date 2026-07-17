@@ -2,7 +2,7 @@
 local this = {}
 
 ---@public
----@param configuration baseAnimationConfiguration
+---@param configuration animationConfiguration
 ---@param _ tes3reference
 ---@return boolean
 function this.isMet(configuration, _)

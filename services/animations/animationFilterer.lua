@@ -24,11 +24,11 @@ function this.dependencies(services)
 end
 
 ---@public
----@param configurations baseAnimationConfiguration[]
+---@param configurations animationConfiguration[]
 ---@param actor tes3reference
----@return baseAnimationConfiguration[]
+---@return animationConfiguration[]
 function this.filter(configurations, actor)
-    ---@type baseAnimationConfiguration[]
+    ---@type animationConfiguration[]
     local filtered = {}
 
     for i = 1, #configurations do
@@ -42,7 +42,7 @@ function this.filter(configurations, actor)
 end
 
 ---@private
----@param configuration baseAnimationConfiguration
+---@param configuration animationConfiguration
 ---@param actor tes3reference
 ---@return boolean
 function this.valid(configuration, actor)
@@ -50,7 +50,7 @@ function this.valid(configuration, actor)
         local rule = this.rules[i]
         if not rule.isMet(configuration, actor) then
             this.logger:debug("Animation '%s' not valid for '%s' because '%s' was violated",
-                configuration.id,
+                this.resolveId(configuration),
                 actor.baseObject.id,
                 rule.name)
 
@@ -59,6 +59,13 @@ function this.valid(configuration, actor)
     end
 
     return true
+end
+
+---@private
+---@param configuration animationConfiguration
+---@return string
+function this.resolveId(configuration)
+    return tostring(configuration.id or configuration.source)
 end
 
 return this

@@ -1,4 +1,4 @@
----@class conditionsValidationRule : animationValidationRule
+---@class overrideConditionsValidationRule : overrideValidationRule
 local this = {}
 
 ---@private
@@ -12,7 +12,7 @@ function this.initialize(services)
 end
 
 ---@public
----@param configuration baseAnimationConfiguration
+---@param configuration overrideAnimationConfiguration
 ---@return boolean, string|nil
 function this.validate(configuration)
     return this.animationConditionsValidator.validate(configuration.conditions)

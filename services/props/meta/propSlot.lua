@@ -2,7 +2,7 @@
 ---@class propSlot
 ---@field public reference tes3reference
 ---@field public definition propDefinition
----@field public sourceId string
+---@field public configuration animationConfiguration
 ---@field public elapsed number
 ---@field public node niNode|nil
 ---@field public bone niNode|nil

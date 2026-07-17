@@ -1,5 +1,4 @@
 ---@meta
 ---@class propSpawnedEventData
 ---@field public node niNode
----@field public dialogueId? string
----@field public baseConfigurationId? string
+---@field public configuration animationConfiguration The configuration the prop was spawned from.

@@ -24,7 +24,7 @@ this.overrideAnimationsPath = "animated-dialogue\\animations\\override"
 this.baseAnimationConfigurations = {}
 
 ---@private
----@type { [string]: overrideAnimationConfiguration }
+---@type { [string]: overrideAnimationConfiguration[] }
 this.overrideAnimationConfigurations = {}
 
 ---@private
@@ -75,7 +75,7 @@ function this.getBaseConfiguration(id)
 end
 
 ---@public
----@return { [string]: overrideAnimationConfiguration}
+---@return { [string]: overrideAnimationConfiguration[] }
 function this.getOverrideConfigurations()
     return this.overrideAnimationConfigurations
 end
@@ -178,14 +178,23 @@ function this.registerOverrideConfigurations(file, configurations)
         if this.validator.validateOverrideConfiguration(configuration, file) then
             configuration.source = file
             for _, dialogueId in ipairs(configuration.dialogueIds) do
-                if this.overrideAnimationConfigurations[dialogueId] then
-                    this.logger:warn("Duplicate override for dialogueId '%s'; overwriting previous entry", dialogueId)
-                end
-
-                this.overrideAnimationConfigurations[dialogueId] = configuration
+                table.insert(this.resolveDialogueConfigurations(dialogueId), configuration)
             end
         end
     end
+end
+
+---@private
+---@param dialogueId string
+---@return overrideAnimationConfiguration[]
+function this.resolveDialogueConfigurations(dialogueId)
+    local configurations = this.overrideAnimationConfigurations[dialogueId]
+    if not configurations then
+        configurations = {}
+        this.overrideAnimationConfigurations[dialogueId] = configurations
+    end
+
+    return configurations
 end
 
 ---@private

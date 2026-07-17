@@ -124,7 +124,7 @@ function this.onAnimationStarted(e)
         return
     end
 
-    if this.baseSlot and this.baseSlot.sourceId == configuration.id then
+    if this.baseSlot and this.baseSlot.configuration == configuration then
         return
     end
 
@@ -135,10 +135,10 @@ function this.onAnimationStarted(e)
     end
 
     this.baseSlot = {
-        reference  = e.actor,
-        definition = configuration.prop,
-        sourceId   = configuration.id,
-        elapsed    = 0,
+        reference     = e.actor,
+        definition    = configuration.prop,
+        configuration = configuration,
+        elapsed       = 0,
     }
 
     this.refreshFrameHandler()
@@ -158,17 +158,17 @@ function this.onDialogueInfo(e)
 
     this.despawnOverride()
 
-    local override = this.animationResolver.resolveOverride(e.info.id)
+    local override = this.animationResolver.resolveOverride(e.info.id, e.actor)
     local prop = override and override.prop
     if not prop then
         return
     end
 
     this.overrideSlot = {
-        reference  = e.actor,
-        definition = prop,
-        sourceId   = e.info.id,
-        elapsed    = 0,
+        reference     = e.actor,
+        definition    = prop,
+        configuration = override,
+        elapsed       = 0,
     }
 
     this.refreshFrameHandler()
@@ -307,13 +307,10 @@ end
 ---@param slot propSlot
 function this.triggerPropSpawned(slot)
     ---@type propSpawnedEventData
-    local eventData = { node = slot.node }
-
-    if slot == this.baseSlot then
-        eventData.baseConfigurationId = slot.sourceId
-    else
-        eventData.dialogueId = slot.sourceId
-    end
+    local eventData = {
+        node          = slot.node,
+        configuration = slot.configuration,
+    }
 
     event.trigger(this.events.propSpawned, eventData)
 end

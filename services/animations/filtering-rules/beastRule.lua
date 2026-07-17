@@ -2,13 +2,17 @@
 local this = {}
 
 ---@public
----@param configuration baseAnimationConfiguration
+---@param configuration animationConfiguration
 ---@param actor tes3reference
 ---@return boolean
 function this.isMet(configuration, actor)
     local conditions = configuration.conditions
     if conditions and conditions.race then
         return true
+    end
+
+    if actor.baseObject.objectType ~= tes3.objectType.npc then
+        return conditions == nil or conditions.beast == nil
     end
 
     local beastOnly = conditions

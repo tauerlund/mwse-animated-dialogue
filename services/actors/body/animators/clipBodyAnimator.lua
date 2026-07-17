@@ -200,7 +200,7 @@ end
 ---@param info tes3dialogueInfo
 ---@return animationDefinition|nil
 function this:resolveTalkAnimation(info)
-    local override = self.animationResolver.resolveOverride(info.id)
+    local override = self.animationResolver.resolveOverride(info.id, self.actor)
     if override then
         return override.animation
     end

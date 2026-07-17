@@ -12,13 +12,17 @@ function this.initialize(services)
 end
 
 ---@public
----@param configuration baseAnimationConfiguration
+---@param configuration animationConfiguration
 ---@param actor tes3reference
 ---@return boolean
 function this.isMet(configuration, actor)
     local specializations = configuration.conditions and configuration.conditions.specialization
     if not specializations then
         return true
+    end
+
+    if actor.baseObject.objectType ~= tes3.objectType.npc then
+        return false
     end
 
     local specialization = tes3.specializationName[actor.baseObject.class.specialization]

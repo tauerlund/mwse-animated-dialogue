@@ -37,7 +37,7 @@ function this.buildWeaponTypeNames()
 end
 
 ---@public
----@param configuration baseAnimationConfiguration
+---@param configuration animationConfiguration
 ---@param actor tes3reference
 ---@return boolean
 function this.isMet(configuration, actor)

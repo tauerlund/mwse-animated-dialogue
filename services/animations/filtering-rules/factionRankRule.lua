@@ -12,13 +12,17 @@ function this.initialize(services)
 end
 
 ---@public
----@param configuration baseAnimationConfiguration
+---@param configuration animationConfiguration
 ---@param actor tes3reference
 ---@return boolean
 function this.isMet(configuration, actor)
     local rank = configuration.conditions and configuration.conditions.factionRank
     if not rank then
         return true
+    end
+
+    if actor.baseObject.objectType ~= tes3.objectType.npc then
+        return false
     end
 
     if not actor.baseObject.faction then

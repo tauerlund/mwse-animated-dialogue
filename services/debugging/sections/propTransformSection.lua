@@ -46,12 +46,8 @@ this.block = nil
 this.node = nil
 
 ---@private
----@type string|nil
-this.dialogueId = nil
-
----@private
----@type string|nil
-this.baseConfigurationId = nil
+---@type animationConfiguration|nil
+this.configuration = nil
 
 ---@private
 ---@type eventHandlers
@@ -108,8 +104,7 @@ function this.onPropSpawned(e)
     end
 
     this.node = e.node
-    this.dialogueId = e.dialogueId
-    this.baseConfigurationId = e.baseConfigurationId
+    this.configuration = e.configuration
     this.rebuild()
 end
 
@@ -127,8 +122,7 @@ end
 ---@private
 function this.clearProp()
     this.node = nil
-    this.dialogueId = nil
-    this.baseConfigurationId = nil
+    this.configuration = nil
 end
 
 ---@private
@@ -359,7 +353,7 @@ function this.saveTransform()
 end
 
 ---@private
----@param configuration baseAnimationConfiguration|overrideAnimationConfiguration
+---@param configuration animationConfiguration
 ---@return boolean
 function this.saveConfiguration(configuration)
     if configuration.source then
@@ -370,7 +364,7 @@ function this.saveConfiguration(configuration)
 end
 
 ---@private
----@param configuration baseAnimationConfiguration|overrideAnimationConfiguration
+---@param configuration animationConfiguration
 ---@return string
 function this.resolveSourceName(configuration)
     if configuration.source then
@@ -381,32 +375,18 @@ function this.resolveSourceName(configuration)
 end
 
 ---@private
----@return baseAnimationConfiguration|overrideAnimationConfiguration|nil
+---@return animationConfiguration|nil
 function this.resolveConfiguration()
     if not this.node then
         return nil
     end
 
-    local configuration = this.findConfiguration()
+    local configuration = this.configuration
     if not configuration or not configuration.prop then
         return nil
     end
 
     return configuration
-end
-
----@private
----@return baseAnimationConfiguration|overrideAnimationConfiguration|nil
-function this.findConfiguration()
-    if this.dialogueId then
-        return this.animationLoader.getOverrideConfigurations()[this.dialogueId]
-    end
-
-    if this.baseConfigurationId then
-        return this.animationLoader.getBaseConfiguration(this.baseConfigurationId)
-    end
-
-    return nil
 end
 
 ---@private

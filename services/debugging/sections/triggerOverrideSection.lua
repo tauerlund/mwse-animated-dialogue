@@ -163,12 +163,13 @@ function this.buildEntries()
     local configurations = this.animationLoader.getOverrideConfigurations()
 
     for _, dialogueId in ipairs(this.collectDialogueIds()) do
-        local configuration = configurations[dialogueId]
-        table.insert(entries, {
-            label = string.format("%s (%s)", dialogueId, configuration.source or "?"),
-            dialogueId = dialogueId,
-            configuration = configuration,
-        })
+        for _, configuration in ipairs(configurations[dialogueId]) do
+            table.insert(entries, {
+                label = string.format("%s (%s)", dialogueId, configuration.source or "?"),
+                dialogueId = dialogueId,
+                configuration = configuration,
+            })
+        end
     end
 
     return entries

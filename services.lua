@@ -12,6 +12,8 @@ local this = {
         "tauer.animated-dialogue.services.animations.animationValidator"),
     animationDefinitionValidator = require(
         "tauer.animated-dialogue.services.animations.animationDefinitionValidator"),
+    animationConditionsValidator = require(
+        "tauer.animated-dialogue.services.animations.animationConditionsValidator"),
     animationFilterer = require(
         "tauer.animated-dialogue.services.animations.animationFilterer"),
     animationLoader = require("tauer.animated-dialogue.services.animations.animationLoader"),
