@@ -15,6 +15,9 @@ this.handToHandType = "handToHand"
 ---@private
 this.spellType = "spell"
 
+---@private
+this.shortBladeOneHandType = "shortBladeOneHand"
+
 ---@public
 ---@param services serviceCollection
 function this.initialize(services)
@@ -68,7 +71,7 @@ function this.resolveWeaponType(mobile)
         return this.handToHandType
     end
 
-    return this.weaponTypeNames[readiedWeapon.object.type]
+    return this.weaponTypeNames[readiedWeapon.object.type] or this.shortBladeOneHandType
 end
 
 return this
