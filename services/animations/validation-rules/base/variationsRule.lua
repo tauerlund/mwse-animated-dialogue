@@ -24,6 +24,10 @@ function this.validate(configuration)
         return false, "variations must be an array"
     end
 
+    if #variations == 0 then
+        return false, "variations must not be an empty array"
+    end
+
     for index, definition in ipairs(variations) do
         local ok, reason = this.animationDefinitionValidator.validate(definition, string.format("variations[%d]", index))
         if not ok then

@@ -24,6 +24,10 @@ function this.validate(configuration)
         return false, "talk must be an array"
     end
 
+    if #talk == 0 then
+        return false, "talk must not be an empty array"
+    end
+
     for index, definition in ipairs(talk) do
         local ok, reason = this.animationDefinitionValidator.validate(definition, string.format("talk[%d]", index))
         if not ok then
