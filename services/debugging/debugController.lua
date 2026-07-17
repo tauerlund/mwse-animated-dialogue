@@ -40,7 +40,7 @@ this.eventHandlers = nil
 ---@return boolean, string|nil
 function this.initialize(services)
     this.eventRegistrar = services.eventRegistrar
-    this.events = services.enums.events
+    this.events = services.constants.events
     this.settings = services.settings
     this.debugStatusHud = services.debugStatusHud
     this.debugWindow = services.debugWindow

@@ -58,14 +58,14 @@ this.eventHandlers = nil
 ---@return boolean, string|nil
 function this.initialize(services)
     this.eventRegistrar = services.eventRegistrar
-    this.events = services.enums.events
+    this.events = services.constants.events
     this.settings = services.settings
     this.guiBuilder = services.guiBuilder
     this.debugSectionBuilder = services.debugSectionBuilder
     this.debugSliderSection = services.debugSliderSection
     this.animationLoader = services.animationLoader
     this.translations = services.translations
-    this.translationKey = services.enums.translationKey
+    this.translationKey = services.constants.translationKey
 
     this.eventHandlers = {
         [this.events.propSpawned] = this.onPropSpawned,

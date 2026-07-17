@@ -19,10 +19,10 @@ this.translationKey = nil
 function this.initialize(template, services)
     this.animationLoader = services.animationLoader
     this.translations = services.translations
-    this.translationKey = services.enums.translationKey
+    this.translationKey = services.constants.translationKey
 
     local translations = services.translations
-    local keys = services.enums.translationKey
+    local keys = services.constants.translationKey
 
     local page = template:createSideBarPage({
         label = translations.get(keys.playerPage),
@@ -33,7 +33,7 @@ function this.initialize(template, services)
         label = translations.get(keys.visibilityCategory)
     })
 
-    local hidePlayerModes = services.enums.hidePlayerModes
+    local hidePlayerModes = services.constants.hidePlayerModes
 
     visibilityCategory:createCycleButton({
         label = translations.get(keys.hidePlayerMode),

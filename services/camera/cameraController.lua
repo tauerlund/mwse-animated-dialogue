@@ -62,7 +62,7 @@ function this.initialize(services)
     this.cameraSwayAnimator   = services.cameraSwayAnimator
     this.cameraPresetResolver = services.cameraPresetResolver
 
-    local events              = services.enums.events
+    local events              = services.constants.events
 
     this.eventHandlers       = {
         lifetime = {

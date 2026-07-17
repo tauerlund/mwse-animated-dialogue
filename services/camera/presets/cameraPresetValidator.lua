@@ -17,7 +17,7 @@ this.logger = mwse.Logger.new()
 ---@return boolean,string|nil
 function this.initialize(services)
     this.rules = services.ruleLoader.loadRules("services\\camera\\presets\\validation-rules")
-    this.events = services.enums.events
+    this.events = services.constants.events
 
     return true, nil
 end

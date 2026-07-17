@@ -6,7 +6,7 @@ local this = {}
 ---@param services serviceCollection
 function this.initialize(template, services)
     local translations = services.translations
-    local keys = services.enums.translationKey
+    local keys = services.constants.translationKey
 
     template:createExclusionsPage({
         label = translations.get(keys.blacklistedActorsTitleLabel),

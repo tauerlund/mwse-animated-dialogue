@@ -62,14 +62,14 @@ this.eventHandlers = nil
 ---@return boolean, string|nil
 function this.initialize(services)
     this.eventRegistrar = services.eventRegistrar
-    this.events = services.enums.events
+    this.events = services.constants.events
     this.settings = services.settings
     this.debugSectionBuilder = services.debugSectionBuilder
     this.debugDropdown = services.debugDropdown
     this.debugTooltip = services.debugTooltip
     this.actorController = services.actorController
     this.translations = services.translations
-    this.translationKey = services.enums.translationKey
+    this.translationKey = services.constants.translationKey
 
     this.eventHandlers = {
         [this.events.settingsUpdated] = this.onSettingsUpdated,

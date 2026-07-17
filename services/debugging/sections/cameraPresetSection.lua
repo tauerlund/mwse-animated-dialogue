@@ -77,9 +77,9 @@ this.eventHandlers = nil
 ---@return boolean, string|nil
 function this.initialize(services)
     this.eventRegistrar = services.eventRegistrar
-    this.events = services.enums.events
-    this.cameraAnchors = services.enums.cameraAnchors
-    this.cameraPresetRanges = services.enums.cameraPresetRanges
+    this.events = services.constants.events
+    this.cameraAnchors = services.constants.cameraAnchors
+    this.cameraPresetRanges = services.constants.cameraPresetRanges
     this.settings = services.settings
     this.guiBuilder = services.guiBuilder
     this.debugSectionBuilder = services.debugSectionBuilder
@@ -89,7 +89,7 @@ function this.initialize(services)
     this.cameraPresetLoader = services.cameraPresetLoader
     this.cameraPresetResolver = services.cameraPresetResolver
     this.translations = services.translations
-    this.translationKey = services.enums.translationKey
+    this.translationKey = services.constants.translationKey
 
     this.eventHandlers = {
         [this.events.settingsUpdated] = this.onSettingsUpdated,

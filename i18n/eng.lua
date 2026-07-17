@@ -1,4 +1,4 @@
-local keys = require("tauer.animated-dialogue.services.translations.enums.translationKey")
+local keys = require("tauer.animated-dialogue.services.translations.constants.translationKey")
 
 return {
     [keys.modName] = "Animated Dialogue",

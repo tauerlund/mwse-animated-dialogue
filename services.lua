@@ -104,22 +104,22 @@ local this = {
     debugWindow = require("tauer.animated-dialogue.services.debugging.debugWindow"),
     debugController = require("tauer.animated-dialogue.services.debugging.debugController"),
 
-    ---@class enums
-    enums = {
-        events = require("tauer.animated-dialogue.services.events.enums.events"),
-        translationKey = require("tauer.animated-dialogue.services.translations.enums.translationKey"),
-        effectModes = require("tauer.animated-dialogue.services.mcm.pages.enums.effectModes"),
-        lookAtModes = require("tauer.animated-dialogue.services.mcm.pages.enums.lookAtModes"),
-        hidePlayerModes = require("tauer.animated-dialogue.services.mcm.pages.enums.hidePlayerModes"),
-        cameraAnchors = require("tauer.animated-dialogue.services.camera.presets.enums.cameraAnchors"),
-        cameraPresetRanges = require("tauer.animated-dialogue.services.camera.presets.enums.cameraPresetRanges"),
+    ---@class constants
+    constants = {
+        events = require("tauer.animated-dialogue.services.events.constants.events"),
+        translationKey = require("tauer.animated-dialogue.services.translations.constants.translationKey"),
+        effectModes = require("tauer.animated-dialogue.services.mcm.pages.constants.effectModes"),
+        lookAtModes = require("tauer.animated-dialogue.services.mcm.pages.constants.lookAtModes"),
+        hidePlayerModes = require("tauer.animated-dialogue.services.mcm.pages.constants.hidePlayerModes"),
+        cameraAnchors = require("tauer.animated-dialogue.services.camera.presets.constants.cameraAnchors"),
+        cameraPresetRanges = require("tauer.animated-dialogue.services.camera.presets.constants.cameraPresetRanges"),
     }
 }
 
 ---@public
 ---@return service[]
 function this.unnamedServices()
-    return { this.enums, this.settings }
+    return { this.constants, this.settings }
 end
 
 return this

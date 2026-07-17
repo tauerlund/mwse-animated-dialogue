@@ -8,7 +8,7 @@ this.cameraAnchors = nil
 ---@public
 ---@param services serviceCollection
 function this.initialize(services)
-    this.cameraAnchors = services.enums.cameraAnchors
+    this.cameraAnchors = services.constants.cameraAnchors
 end
 
 ---@public

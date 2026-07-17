@@ -94,7 +94,7 @@ function this.initialize(services)
     this.actorTrackBinder  = services.actorTrackBinder
     this.bodyBonePinner    = services.bodyBonePinner
     this.animationResolver = services.animationResolver
-    this.events            = services.enums.events
+    this.events            = services.constants.events
     this.eventRegistrar    = services.eventRegistrar
 
     return true, nil

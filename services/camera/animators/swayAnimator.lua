@@ -43,7 +43,7 @@ function this.initialize(services)
     this.eventRegistrar = services.eventRegistrar
     this.settings       = services.settings
 
-    local events        = services.enums.events
+    local events        = services.constants.events
     this.eventHandlers  = {
         [events.dialogueStarted] = this.onDialogueStarted,
         [events.dialogueEnded]   = this.onDialogueEnded,

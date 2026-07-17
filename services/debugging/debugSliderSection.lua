@@ -24,7 +24,7 @@ function this.initialize(services)
     this.guiBuilder = services.guiBuilder
     this.debugSectionBuilder = services.debugSectionBuilder
     this.translations = services.translations
-    this.translationKey = services.enums.translationKey
+    this.translationKey = services.constants.translationKey
 
     return true, nil
 end

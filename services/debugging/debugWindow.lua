@@ -43,7 +43,7 @@ this.actor = nil
 function this.initialize(services)
     this.guiBuilder = services.guiBuilder
     this.translations = services.translations
-    this.translationKey = services.enums.translationKey
+    this.translationKey = services.constants.translationKey
 
     this.tabs = {
         {

@@ -82,7 +82,7 @@ this.eventHandlers = nil
 function this.initialize(services)
     this.eventRegistrar = services.eventRegistrar
     this.settings       = services.settings
-    this.events         = services.enums.events
+    this.events         = services.constants.events
 
     this.eventHandlers  = {
         [this.events.dialogueStarted] = this.onDialogueStarted,

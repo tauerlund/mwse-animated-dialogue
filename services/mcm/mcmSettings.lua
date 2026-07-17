@@ -5,13 +5,13 @@ local this = {}
 this.path = "animated-dialogue"
 
 ---@private
-this.effectModes = require("tauer.animated-dialogue.services.mcm.pages.enums.effectModes")
+this.effectModes = require("tauer.animated-dialogue.services.mcm.pages.constants.effectModes")
 
 ---@private
-this.lookAtModes = require("tauer.animated-dialogue.services.mcm.pages.enums.lookAtModes")
+this.lookAtModes = require("tauer.animated-dialogue.services.mcm.pages.constants.lookAtModes")
 
 ---@private
-this.hidePlayerModes = require("tauer.animated-dialogue.services.mcm.pages.enums.hidePlayerModes")
+this.hidePlayerModes = require("tauer.animated-dialogue.services.mcm.pages.constants.hidePlayerModes")
 
 ---@class settings
 this.defaults = {

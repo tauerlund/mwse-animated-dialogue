@@ -45,7 +45,7 @@ function this.initialize(services)
     this.particleResolver           = services.particleResolver
     this.particleAnimator           = services.particleAnimator
 
-    local events                    = services.enums.events
+    local events                    = services.constants.events
 
     this.eventHandlers              = {
         lifetime = {
@@ -57,7 +57,7 @@ function this.initialize(services)
         }
     }
 
-    local effectModes               = services.enums.effectModes
+    local effectModes               = services.constants.effectModes
 
     this.resolveParticlesStrategies = {
         [effectModes.actor] = this.resolveActorParticles,

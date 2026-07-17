@@ -32,9 +32,9 @@ this.previousAppCulled = false
 function this.initialize(services)
     this.eventRegistrar = services.eventRegistrar
     this.settings = services.settings
-    this.hidePlayerModes = services.enums.hidePlayerModes
+    this.hidePlayerModes = services.constants.hidePlayerModes
 
-    local events = services.enums.events
+    local events = services.constants.events
 
     this.eventHandlers = {
         lifetime = {

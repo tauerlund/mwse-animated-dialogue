@@ -19,7 +19,7 @@ this.logger = mwse.Logger.new()
 function this.initialize(services)
     this.eventRegistrar = services.eventRegistrar
 
-    local events = services.enums.events
+    local events = services.constants.events
 
     this.eventHandlers = {
         [events.dialogueStarted] = this.onDialogueStarted,

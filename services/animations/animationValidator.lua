@@ -22,7 +22,7 @@ this.logger = mwse.Logger.new()
 function this.initialize(services)
     this.baseRules = services.ruleLoader.loadRules("services\\animations\\validation-rules\\base")
     this.overrideRules = services.ruleLoader.loadRules("services\\animations\\validation-rules\\override")
-    this.events = services.enums.events
+    this.events = services.constants.events
 
     return true, nil
 end

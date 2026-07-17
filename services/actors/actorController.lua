@@ -73,9 +73,9 @@ function this.initialize(services)
     this.headBobAnimator       = services.headBobAnimator
     this.lipsyncController     = services.lipsyncController
     this.playerController      = services.playerController
-    this.lookAtModes           = services.enums.lookAtModes
+    this.lookAtModes           = services.constants.lookAtModes
 
-    local events               = services.enums.events
+    local events               = services.constants.events
 
     this.eventHandlers         = {
         lifetime = {

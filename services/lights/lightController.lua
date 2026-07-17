@@ -59,7 +59,7 @@ function this.initialize(services)
     this.eventRegistrar          = services.eventRegistrar
     this.settings                = services.settings
 
-    local events                 = services.enums.events
+    local events                 = services.constants.events
 
     this.eventHandlers           = {
         lifetime = {
@@ -71,7 +71,7 @@ function this.initialize(services)
         }
     }
 
-    local effectModes            = services.enums.effectModes
+    local effectModes            = services.constants.effectModes
 
     this.resolveLightsStrategies = {
         [effectModes.actor] = this.resolveActorLights,

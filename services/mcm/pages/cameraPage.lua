@@ -12,7 +12,7 @@ function this.initialize(template, services)
     this.cameraPresetLoader = services.cameraPresetLoader
 
     local translations = services.translations
-    local keys = services.enums.translationKey
+    local keys = services.constants.translationKey
 
     local page = template:createSideBarPage({
         label = translations.get(keys.cameraPage)

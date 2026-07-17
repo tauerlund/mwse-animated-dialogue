@@ -10,7 +10,7 @@ this.eventRegistrar = nil
 this.cameraPresetResolver = nil
 
 ---@private
-this.cameraAnchors = require("tauer.animated-dialogue.services.camera.presets.enums.cameraAnchors")
+this.cameraAnchors = require("tauer.animated-dialogue.services.camera.presets.constants.cameraAnchors")
 
 ---@private
 ---@type tes3vector3
@@ -70,7 +70,7 @@ function this.initialize(services)
     this.eventRegistrar       = services.eventRegistrar
     this.cameraPresetResolver = services.cameraPresetResolver
 
-    local events              = services.enums.events
+    local events              = services.constants.events
     this.eventHandlers        = {
         [events.dialogueStarted]     = this.onDialogueStarted,
         [events.dialogueEnded]       = this.onDialogueEnded,

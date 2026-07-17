@@ -1,5 +1,5 @@
-local cameraAnchors = require("tauer.animated-dialogue.services.camera.presets.enums.cameraAnchors")
-local ranges = require("tauer.animated-dialogue.services.camera.presets.enums.cameraPresetRanges")
+local cameraAnchors = require("tauer.animated-dialogue.services.camera.presets.constants.cameraAnchors")
+local ranges = require("tauer.animated-dialogue.services.camera.presets.constants.cameraPresetRanges")
 
 ---@class presetsPage : mcmPage
 local this = {}
@@ -47,7 +47,7 @@ function this.initialize(template, services)
     this.template = template
     this.loader = services.cameraPresetLoader
     this.translations = services.translations
-    this.keys = services.enums.translationKey
+    this.keys = services.constants.translationKey
     this.settings = services.settings
 
     this.editingId = this.resolveInitialId()

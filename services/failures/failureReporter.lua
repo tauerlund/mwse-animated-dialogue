@@ -31,11 +31,11 @@ this.initializationFailed = false
 function this.initialize(services)
     this.eventRegistrar = services.eventRegistrar
     this.translations = services.translations
-    this.translationKey = services.enums.translationKey
+    this.translationKey = services.constants.translationKey
     this.validationFailed = false
     this.initializationFailed = false
 
-    local events = services.enums.events
+    local events = services.constants.events
 
     this.eventHandlers = {
         lifetime = {

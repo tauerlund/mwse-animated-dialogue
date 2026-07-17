@@ -60,7 +60,7 @@ function this.initialize(services)
     this.settings          = services.settings
     this.animationResolver = services.animationResolver
     this.nifLoader         = services.nifLoader
-    this.events            = services.enums.events
+    this.events            = services.constants.events
 
     local events           = this.events
 

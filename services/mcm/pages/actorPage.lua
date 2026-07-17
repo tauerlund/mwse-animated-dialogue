@@ -6,7 +6,7 @@ local this = {}
 ---@param services serviceCollection
 function this.initialize(template, services)
     local translations = services.translations
-    local keys = services.enums.translationKey
+    local keys = services.constants.translationKey
 
     local page = template:createSideBarPage({
         label = translations.get(keys.actorPage)
@@ -157,7 +157,7 @@ function this.initialize(template, services)
         decimalPlaces = 0,
     })
 
-    local lookAtModes = services.enums.lookAtModes
+    local lookAtModes = services.constants.lookAtModes
 
     headCategory:createCycleButton({
         label = translations.get(keys.actorHeadLookAtModeFirstPerson),

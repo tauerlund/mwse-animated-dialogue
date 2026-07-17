@@ -28,10 +28,10 @@ this.events = nil
 ---@return boolean, string|nil
 function this.initialize(services)
 	this.mcmSettings = services.mcmSettings
-	this.events = services.enums.events
+	this.events = services.constants.events
 
 	local template = mwse.mcm.createTemplate({
-		name = services.translations.get(services.enums.translationKey.modName),
+		name = services.translations.get(services.constants.translationKey.modName),
 		--headerImagePath = this.headerImagePath,
 		onClose = this.onClose
 	})
