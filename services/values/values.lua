@@ -75,10 +75,9 @@ function this.isValidRange(value)
 end
 
 ---@public
----@generic T
----@param items T[]
----@param weightSelector fun(item: T): number
----@return T?
+---@param items any[]
+---@param weightSelector fun(item: any): number
+---@return any?
 function this.weightedChoice(items, weightSelector)
 	local total = 0
 	for _, item in ipairs(items) do

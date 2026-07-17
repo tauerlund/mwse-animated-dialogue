@@ -159,7 +159,11 @@ function this.onDialogueInfo(e)
     this.despawnOverride()
 
     local override = this.animationResolver.resolveOverride(e.info.id, e.actor)
-    local prop = override and override.prop
+    if not override then
+        return
+    end
+
+    local prop = override.prop
     if not prop then
         return
     end
