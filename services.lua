@@ -108,6 +108,7 @@ local this = {
         lookAtModes = require("tauer.animated-dialogue.services.mcm.pages.enums.lookAtModes"),
         hidePlayerModes = require("tauer.animated-dialogue.services.mcm.pages.enums.hidePlayerModes"),
         cameraAnchors = require("tauer.animated-dialogue.services.camera.presets.enums.cameraAnchors"),
+        cameraPresetRanges = require("tauer.animated-dialogue.services.camera.presets.enums.cameraPresetRanges"),
     }
 }
 

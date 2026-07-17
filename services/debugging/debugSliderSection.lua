@@ -56,7 +56,7 @@ end
 function this.createSliderRow(section, definition)
     local guiBuilder = this.guiBuilder
     local steps = math.round((definition.max - definition.min) / definition.step)
-    local defaultStep = math.round((definition.default - definition.min) / definition.step)
+    local defaultStep = this.resolveDefaultStep(definition, steps)
 
     local row = guiBuilder.createBlock({ parent = section })
         :withFlowDirection(tes3.flowDirection.topToBottom)
@@ -130,6 +130,16 @@ function this.createButtonRow(section, rows, onCopy)
     copyButton:registerBefore(tes3.uiEvent.mouseClick, function()
         os.setClipboardText(onCopy())
     end)
+end
+
+---@private
+---@param definition debugSliderDefinition
+---@param steps number
+---@return number
+function this.resolveDefaultStep(definition, steps)
+    local step = math.round((definition.default - definition.min) / definition.step)
+
+    return math.clamp(step, 0, steps)
 end
 
 ---@private

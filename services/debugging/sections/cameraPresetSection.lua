@@ -13,6 +13,10 @@ this.events = nil
 this.cameraAnchors = nil
 
 ---@private
+---@type cameraPresetRanges
+this.cameraPresetRanges = nil
+
+---@private
 ---@type settings
 this.settings = nil
 
@@ -75,6 +79,7 @@ function this.initialize(services)
     this.eventRegistrar = services.eventRegistrar
     this.events = services.enums.events
     this.cameraAnchors = services.enums.cameraAnchors
+    this.cameraPresetRanges = services.enums.cameraPresetRanges
     this.settings = services.settings
     this.guiBuilder = services.guiBuilder
     this.debugSectionBuilder = services.debugSectionBuilder
@@ -266,24 +271,10 @@ function this.buildPositionSection(parent)
         parent = parent,
         title = this.translations.get(keys.positionCategory),
         sliders = {
-            this.createSlider({
-                label = keys.presetVerticalAnchor,
-                min = 0,
-                max = 1,
-                step = 0.01,
-                field =
-                "verticalAnchor"
-            }),
-            this.createSlider({ label = keys.distance, min = 0, max = 300, step = 1, field = "distance" }),
-            this.createSlider({
-                label = keys.horizontalOffset,
-                min = -150,
-                max = 150,
-                step = 1,
-                field =
-                "horizontalOffset"
-            }),
-            this.createSlider({ label = keys.verticalOffset, min = -150, max = 150, step = 1, field = "verticalOffset" }),
+            this.createSlider({ label = keys.presetVerticalAnchor, step = 0.01, field = "verticalAnchor" }),
+            this.createSlider({ label = keys.distance, step = 1, field = "distance" }),
+            this.createSlider({ label = keys.horizontalOffset, step = 1, field = "horizontalOffset" }),
+            this.createSlider({ label = keys.verticalOffset, step = 1, field = "verticalOffset" }),
         },
     })
 end
@@ -297,9 +288,9 @@ function this.buildRotationSection(parent)
         parent = parent,
         title = this.translations.get(keys.rotationCategory),
         sliders = {
-            this.createSlider({ label = keys.pitchOffset, min = -45, max = 45, step = 0.5, field = "pitchOffset" }),
-            this.createSlider({ label = keys.yawOffset, min = -45, max = 45, step = 0.5, field = "yawOffset" }),
-            this.createSlider({ label = keys.rollOffset, min = -45, max = 45, step = 0.5, field = "rollOffset" }),
+            this.createSlider({ label = keys.pitchOffset, step = 0.5, field = "pitchOffset" }),
+            this.createSlider({ label = keys.yawOffset, step = 0.5, field = "yawOffset" }),
+            this.createSlider({ label = keys.rollOffset, step = 0.5, field = "rollOffset" }),
         },
     })
 end
@@ -313,15 +304,13 @@ function this.buildTimingSection(parent)
         parent = parent,
         title = this.translations.get(keys.timingCategory),
         sliders = {
-            this.createSlider({ label = keys.animationDuration, min = 0, max = 5, step = 0.1, field = "animationDuration" }),
+            this.createSlider({ label = keys.animationDuration, step = 0.1, field = "animationDuration" }),
         },
     })
 end
 
 ---@class cameraPresetSection.createSlider.param
 ---@field public label string
----@field public min number
----@field public max number
 ---@field public step number
 ---@field public field string
 
@@ -330,11 +319,12 @@ end
 ---@return debugSliderDefinition
 function this.createSlider(params)
     local preset = this.preset
+    local range = this.cameraPresetRanges[params.field]
 
     return {
         label = this.translations.get(params.label),
-        min = params.min,
-        max = params.max,
+        min = range.min,
+        max = range.max,
         step = params.step,
         default = preset[params.field],
         onChange = function(value)
