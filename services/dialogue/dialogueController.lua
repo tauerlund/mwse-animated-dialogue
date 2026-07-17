@@ -85,6 +85,10 @@ function this.onMenuDialogActivated(e)
         return
     end
 
+    if this.isInCombat(reference) then
+        return
+    end
+
     e.element:registerAfter(
         tes3.uiEvent.destroy,
         this.onMenuDialogDestroyed
@@ -125,6 +129,10 @@ function this.onInfoGetText(e)
     local reference = this.resolveActor()
     if reference then
         if this.isBlacklisted(reference) then
+            return
+        end
+
+        if this.isInCombat(reference) then
             return
         end
 
@@ -240,6 +248,18 @@ end
 ---@return boolean
 function this.isBlacklisted(reference)
     return this.settings.blacklistedActors[reference.baseObject.id:lower()] == true
+end
+
+---@private
+---@param reference tes3reference
+---@return boolean
+function this.isInCombat(reference)
+    if not this.settings.disableInCombat then
+        return false
+    end
+
+    local mobile = reference.mobile
+    return mobile ~= nil and mobile.inCombat
 end
 
 ---@private

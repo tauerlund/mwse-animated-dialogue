@@ -18,6 +18,12 @@ function this.initialize(template, services)
         variable = mwse.mcm.createTableVariable { id = "enabled", table = services.settings }
     }
 
+    page:createOnOffButton {
+        label = translations.get(keys.disableInCombat),
+        description = translations.get(keys.disableInCombatDescription),
+        variable = mwse.mcm.createTableVariable { id = "disableInCombat", table = services.settings }
+    }
+
     page:createLogLevelOptions {
         config = services.settings,
         configKey = "logLevel",

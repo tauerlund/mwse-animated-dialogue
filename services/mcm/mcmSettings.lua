@@ -16,6 +16,7 @@ this.hidePlayerModes = require("tauer.animated-dialogue.services.mcm.pages.const
 ---@class settings
 this.defaults = {
     enabled = true,
+    disableInCombat = false,
     blacklistedActors = {},
     cameraEnabled = true,
     actorAnimEnabled = true,

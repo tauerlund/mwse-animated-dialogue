@@ -5,6 +5,9 @@ return {
     [keys.generalPage] = "General",
     [keys.modEnabled] = "Enabled",
     [keys.modEnabledDescription] = "Enable or disable the Animated Dialogue mod.",
+    [keys.disableInCombat] = "Disable During Combat",
+    [keys.disableInCombatDescription] =
+    "Disables all dialogue animation when talking to an actor that is in combat, so fighting actors are not pulled into cinematic framing.",
     [keys.cameraPage] = "Camera",
     [keys.cameraEnabled] = "Enable Camera Animation",
     [keys.cameraEnabledDescription] = "Enables or disables the camera animation during dialogue.",
