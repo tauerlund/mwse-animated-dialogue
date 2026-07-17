@@ -171,6 +171,15 @@ function this.buildContent()
 
     this.preset = this.preset or this.cameraPresetResolver.resolve()
 
+    if not this.preset then
+        this.debugSectionBuilder.createHint({
+            parent = section,
+            text = this.translations.get(this.translationKey.debugCameraNoPresetHint),
+        })
+
+        return
+    end
+
     this.dropdown = this.debugDropdown.create({
         parent = section,
         entries = this.buildEntries(),

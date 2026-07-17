@@ -100,9 +100,15 @@ function this.onDialogueStarted(e)
     if not this.settings.cameraEnabled then
         return
     end
+
+    local preset = this.cameraPresetResolver.resolve()
+    if not preset then
+        return
+    end
+
     this.setupWrappers()
     this.animationTime = 0
-    this.animationDuration = this.cameraPresetResolver.resolve().animationDuration
+    this.animationDuration = preset.animationDuration
 
     this.animators = { this.cameraStartAnimator }
 
@@ -124,7 +130,12 @@ end
 
 ---@private
 function this.onSettingsUpdated()
-    this.animationDuration = this.cameraPresetResolver.resolve().animationDuration
+    local preset = this.cameraPresetResolver.resolve()
+    if not preset then
+        return
+    end
+
+    this.animationDuration = preset.animationDuration
 end
 
 ---@private

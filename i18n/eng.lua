@@ -262,6 +262,7 @@ return {
     [keys.debugTabCamera] = "Camera",
     [keys.debugCameraPreset] = "Camera Preset",
     [keys.debugCameraDisabledHint] = "Camera animation is disabled in the MCM.",
+    [keys.debugCameraNoPresetHint] = "The selected camera preset could not be found, so the camera is not animating. Pick an existing preset in the MCM.",
     [keys.debugReplay] = "Replay",
     [keys.debugSavePreset] = "Save Preset to %{id}.json",
     [keys.debugSavePresetConfirm] = "Overwrite %{id}.json with the current values?",

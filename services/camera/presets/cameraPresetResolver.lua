@@ -12,20 +12,12 @@ this.settings = nil
 ---@type cameraPresetLoader
 this.cameraPresetLoader = nil
 
----@private
----@type cameraPreset
-this.fallbackPreset = nil
-
 ---@public
 ---@param services serviceCollection
 ---@return boolean, string|nil
 function this.initialize(services)
     this.settings = services.settings
     this.cameraPresetLoader = services.cameraPresetLoader
-
-    this.fallbackPreset = this.cameraPresetLoader.defaultPreset()
-    this.fallbackPreset.id = "fallback"
-    this.fallbackPreset.name = "Fallback"
 
     return true, nil
 end
@@ -38,7 +30,7 @@ function this.dependencies(services)
 end
 
 ---@public
----@return cameraPreset
+---@return cameraPreset|nil
 function this.resolve()
     local id = this.resolveId()
 
@@ -47,8 +39,8 @@ function this.resolve()
         return preset
     end
 
-    this.logger:warn("Camera preset '%s' not found; falling back to '%s'", id, this.fallbackPreset.id)
-    return this.fallbackPreset
+    this.logger:warn("Camera preset '%s' not found; camera animation disabled for this dialogue", id)
+    return nil
 end
 
 ---@private

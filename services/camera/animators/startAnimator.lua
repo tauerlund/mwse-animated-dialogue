@@ -98,8 +98,13 @@ end
 ---@private
 ---@param event dialogueStartedEventData
 function this.onDialogueStarted(event)
+    local preset = this.cameraPresetResolver.resolve()
+    if not preset then
+        return
+    end
+
     this.actor                   = event.dialogueState.actor
-    this.activePreset            = this.cameraPresetResolver.resolve()
+    this.activePreset            = preset
     this.startCameraPosition     = tes3.getCameraPosition()
     this.originalRotation        = tes3.worldController.worldCamera.cameraRoot.rotation:toQuaternion()
     this.cameraRootLocalPosition = tes3.worldController.worldCamera.cameraRoot.translation:copy()
@@ -115,7 +120,12 @@ function this.onSettingsUpdated()
         return
     end
 
-    this.activePreset = this.cameraPresetResolver.resolve()
+    local preset = this.cameraPresetResolver.resolve()
+    if not preset then
+        return
+    end
+
+    this.activePreset = preset
     this.computeTarget()
 end
 

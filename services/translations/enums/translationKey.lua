@@ -203,6 +203,7 @@ local this = {
     debugTabCamera = "debugTabCamera",
     debugCameraPreset = "debugCameraPreset",
     debugCameraDisabledHint = "debugCameraDisabledHint",
+    debugCameraNoPresetHint = "debugCameraNoPresetHint",
     debugReplay = "debugReplay",
     debugSavePreset = "debugSavePreset",
     debugSavePresetConfirm = "debugSavePresetConfirm",

@@ -36,6 +36,9 @@ this.animationTime = 0
 this.animationDuration = 0
 
 ---@private
+this.fallbackRampDuration = 1.5
+
+---@private
 ---@type cameraPresetResolver
 this.cameraPresetResolver = nil
 
@@ -117,7 +120,7 @@ function this.onDialogueStarted(e)
     this.actor = e.dialogueState.actor
     this.dialogueState = e.dialogueState
     this.animationTime = 0
-    this.animationDuration = this.cameraPresetResolver.resolve().animationDuration
+    this.animationDuration = this.resolveRampDuration()
 
     if dofActive then
         this.depthOfField["focal_length"] = 0
@@ -130,6 +133,17 @@ function this.onDialogueStarted(e)
     end
 
     this.eventRegistrar.register(this.eventHandlers.dialogue)
+end
+
+---@private
+---@return number
+function this.resolveRampDuration()
+    local preset = this.cameraPresetResolver.resolve()
+    if not preset then
+        return this.fallbackRampDuration
+    end
+
+    return preset.animationDuration
 end
 
 ---@private
