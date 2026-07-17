@@ -89,6 +89,10 @@ function this.onMenuDialogActivated(e)
         return
     end
 
+    if this.isOutOfRange(reference) then
+        return
+    end
+
     e.element:registerAfter(
         tes3.uiEvent.destroy,
         this.onMenuDialogDestroyed
@@ -133,6 +137,10 @@ function this.onInfoGetText(e)
         end
 
         if this.isInCombat(reference) then
+            return
+        end
+
+        if this.isOutOfRange(reference) then
             return
         end
 
@@ -260,6 +268,24 @@ function this.isInCombat(reference)
 
     local mobile = reference.mobile
     return mobile ~= nil and mobile.inCombat
+end
+
+---@private
+---@param reference tes3reference
+---@return boolean
+function this.isOutOfRange(reference)
+    if not this.settings.limitDialogueDistance then
+        return false
+    end
+
+    for _, cell in ipairs(tes3.getActiveCells()) do
+        if cell == reference.cell then
+            return reference.position:distance(tes3.player.position)
+                > this.settings.maxDialogueDistance
+        end
+    end
+
+    return true
 end
 
 ---@private

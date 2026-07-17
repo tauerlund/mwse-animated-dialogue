@@ -8,6 +8,12 @@ return {
     [keys.disableInCombat] = "Disable During Combat",
     [keys.disableInCombatDescription] =
     "Disables all dialogue animation when talking to an actor that is in combat, so fighting actors are not pulled into cinematic framing.",
+    [keys.limitDialogueDistance] = "Limit By Distance",
+    [keys.limitDialogueDistanceDescription] =
+    "Disables all dialogue animation when the actor is not nearby, so remote conversations (e.g. telepathy rings) do not trigger cinematic framing on an actor you cannot see.",
+    [keys.maxDialogueDistance] = "Maximum Distance",
+    [keys.maxDialogueDistanceDescription] =
+    "The furthest an actor can be, in game units, for dialogue animation to trigger when Limit By Distance is enabled. Normal face-to-face conversation is well within this range.",
     [keys.cameraPage] = "Camera",
     [keys.cameraEnabled] = "Enable Camera Animation",
     [keys.cameraEnabledDescription] = "Enables or disables the camera animation during dialogue.",

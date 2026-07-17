@@ -24,6 +24,22 @@ function this.initialize(template, services)
         variable = mwse.mcm.createTableVariable { id = "disableInCombat", table = services.settings }
     }
 
+    page:createOnOffButton {
+        label = translations.get(keys.limitDialogueDistance),
+        description = translations.get(keys.limitDialogueDistanceDescription),
+        variable = mwse.mcm.createTableVariable { id = "limitDialogueDistance", table = services.settings }
+    }
+
+    page:createSlider {
+        label = translations.get(keys.maxDialogueDistance),
+        description = translations.get(keys.maxDialogueDistanceDescription),
+        variable = mwse.mcm.createTableVariable { id = "maxDialogueDistance", table = services.settings },
+        min = 256,
+        max = 8192,
+        step = 128,
+        jump = 512,
+    }
+
     page:createLogLevelOptions {
         config = services.settings,
         configKey = "logLevel",
