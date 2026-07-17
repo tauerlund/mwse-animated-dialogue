@@ -5,7 +5,7 @@ An MWSE Lua mod that adds cinematic animations to dialogue with NPCs and creatur
 ## :link: Dependencies
 
 - [mwse](https://github.com/MWSE/MWSE)
-- MGE XE
+- [MGE XE](https://www.nexusmods.com/morrowind/mods/41102) or [MGE XE UF](https://www.nexusmods.com/morrowind/mods/57200)
 
 ## :white_check_mark: Features
 
