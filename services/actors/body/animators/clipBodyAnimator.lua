@@ -122,6 +122,7 @@ function this.create()
     instance.eventHandlers = nil
     instance.poseBlender = this.actorPoseBlender.create()
     instance.pinner = this.bodyBonePinner.create()
+    instance.pinner.includeVertical = true
     instance.bodyTrack = this.actorTrackBinder.create()
     instance.torchTrack = this.actorTrackBinder.create()
 
@@ -508,10 +509,9 @@ function this:update(delta)
 
     self:updateVariation(delta)
 
+    self.pinner:apply()
     self:updateTrack(self.bodyTrack)
     self:updateTrack(self.torchTrack)
-
-    self.pinner:apply()
 
     animationData.actorNode:update({ children = true })
 

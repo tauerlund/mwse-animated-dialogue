@@ -9,11 +9,16 @@ this.bonePrefix = "Bip"
 this.pins = nil
 
 ---@public
+---@type boolean
+this.includeVertical = false
+
+---@public
 ---@return bodyBonePinner
 function this.create()
     local instance = setmetatable({}, { __index = this })
 
     instance.pins = {}
+    instance.includeVertical = false
 
     return instance
 end
@@ -42,6 +47,9 @@ function this:apply()
         local translation = pin.node.translation
         translation.x = pin.translation.x
         translation.y = pin.translation.y
+        if self.includeVertical then
+            translation.z = pin.translation.z
+        end
         pin.node.translation = translation
     end
 end
