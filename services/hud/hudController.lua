@@ -17,8 +17,8 @@ this.eventHandlers = {
 }
 
 ---@private
----@type tes3uiElement|nil
-this.hiddenMenu = nil
+---@type boolean
+this.hidden = false
 
 ---@private
 ---@type boolean
@@ -61,19 +61,25 @@ function this.onDialogueStarted()
         return
     end
 
-    this.hiddenMenu = menu
     this.previousVisible = menu.visible
     menu.visible = false
+    this.hidden = true
 end
 
 ---@private
 function this.onDialogueEnded()
-    if not this.hiddenMenu then
+    if not this.hidden then
         return
     end
 
-    this.hiddenMenu.visible = this.previousVisible
-    this.hiddenMenu = nil
+    this.hidden = false
+
+    local menu = tes3ui.findMenu(MENU_MULTI)
+    if not menu then
+        return
+    end
+
+    menu.visible = this.previousVisible
 end
 
 return this
