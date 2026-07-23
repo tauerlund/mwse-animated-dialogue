@@ -76,7 +76,13 @@ function this:begin(reference)
     self.morphers = {}
     self.eventHandlers = {
         [tes3.event.bodyPartsUpdated] = function(e)
-            self:onBodyPartsUpdated(e)
+            self:invalidateFor(e.reference)
+        end,
+        [tes3.event.removedEquipmentBodyParts] = function(e)
+            self:invalidateFor(e.reference)
+        end,
+        [tes3.event.equipped] = function(e)
+            self:invalidateFor(e.reference)
         end
     }
     self.eventRegistrar.register(self.eventHandlers)
@@ -89,9 +95,9 @@ function this:stop()
 end
 
 ---@private
----@param e bodyPartsUpdatedEventData
-function this:onBodyPartsUpdated(e)
-    if e.reference ~= self.actor then
+---@param reference tes3reference the reference whose body parts changed
+function this:invalidateFor(reference)
+    if reference ~= self.actor then
         return
     end
 
