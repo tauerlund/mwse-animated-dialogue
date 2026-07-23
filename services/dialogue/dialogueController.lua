@@ -194,10 +194,12 @@ end
 ---@private
 ---@param e uiActivatedEventData
 function this.onMenuConsoleActivated(e)
-    e.element:registerAfter(
-        tes3.uiEvent.update,
-        this.onMenuConsoleUpdated
-    )
+    if e.newlyCreated then
+        e.element:registerAfter(
+            tes3.uiEvent.update,
+            this.onMenuConsoleUpdated
+        )
+    end
 
     this.setPaused(true)
 end
@@ -208,8 +210,6 @@ function this.onMenuConsoleUpdated(e)
     if e.source.visible then
         return
     end
-
-    e.source:unregisterAfter(tes3.uiEvent.update, this.onMenuConsoleUpdated)
 
     this.setPaused(false)
 end
