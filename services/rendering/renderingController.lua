@@ -16,6 +16,10 @@ this.eventHandlers = {
 this.pauseRenderingInMenus = nil
 
 ---@private
+---@type integer
+this.shadows = nil
+
+---@private
 ---@type mgeShaderHandle|nil
 this.depthOfField = nil
 
@@ -107,8 +111,10 @@ end
 ---@param e dialogueStartedEventData
 function this.onDialogueStarted(e)
     this.pauseRenderingInMenus = mge.render.pauseRenderingInMenus
+    this.shadows = tes3.worldController.shadows
 
     mge.render.pauseRenderingInMenus = false
+    tes3.worldController.shadows = 0
 
     local dofActive = this.depthOfField and this.settings.dofEnabled
     local letterboxActive = this.letterbox and this.settings.letterboxEnabled
@@ -149,6 +155,7 @@ end
 ---@private
 function this.onDialogueEnded()
     mge.render.pauseRenderingInMenus = this.pauseRenderingInMenus
+    tes3.worldController.shadows = this.shadows
 
     this.eventRegistrar.unregister(this.eventHandlers.dialogue)
     this.actor = nil
