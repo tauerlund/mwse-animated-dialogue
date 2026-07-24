@@ -1,4 +1,4 @@
----@class weaponTypeFilteringRule : animationFilteringRule
+---@class weaponTypeFilteringRule : conditionFilteringRule
 local this = {}
 
 ---@private
@@ -37,7 +37,7 @@ function this.buildWeaponTypeNames()
 end
 
 ---@public
----@param configuration animationConfiguration
+---@param configuration filterableConfiguration
 ---@param actor tes3reference
 ---@return boolean
 function this.isMet(configuration, actor)

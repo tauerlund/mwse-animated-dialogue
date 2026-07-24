@@ -1,5 +1,5 @@
 ---@meta
----@class animationConditions
+---@class conditions
 ---@field public actor? string[]
 ---@field public faction? string[]
 ---@field public factionRank? conditionRange
@@ -7,8 +7,8 @@
 ---@field public specialization? ("combat"|"magic"|"stealth")[]
 ---@field public race? string[]
 ---@field public sex? ("male"|"female")
----@field public beast? boolean
----@field public weaponReadied? boolean
+---@field public beast? boolean Animation-only. Absence rejects beast races, so it is filtered by services/animations/filtering-rules.
+---@field public weaponReadied? boolean Animation-only. Absence rejects readied actors, so it is filtered by services/animations/filtering-rules.
 ---@field public weaponType? ("shortBladeOneHand"|"longBladeOneHand"|"longBladeTwoClose"|"bluntOneHand"|"bluntTwoClose"|"bluntTwoWide"|"spearTwoWide"|"axeOneHand"|"axeTwoHand"|"marksmanBow"|"marksmanCrossbow"|"marksmanThrown"|"arrow"|"bolt"|"handToHand"|"spell")[]
 ---@field public interior? boolean
 ---@field public weather? ("clear"|"cloudy"|"foggy"|"overcast"|"rain"|"thunder"|"ash"|"blight"|"snow"|"blizzard")[]

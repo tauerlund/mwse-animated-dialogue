@@ -1,4 +1,4 @@
----@class specializationFilteringRule : animationFilteringRule
+---@class specializationFilteringRule : conditionFilteringRule
 local this = {}
 
 ---@private
@@ -12,7 +12,7 @@ function this.initialize(services)
 end
 
 ---@public
----@param configuration animationConfiguration
+---@param configuration filterableConfiguration
 ---@param actor tes3reference
 ---@return boolean
 function this.isMet(configuration, actor)

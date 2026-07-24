@@ -1,0 +1,5 @@
+---@meta
+---@class conditionFilterer.applyRules.param
+---@field public configurations filterableConfiguration[]
+---@field public actor tes3reference
+---@field public rules conditionFilteringRule[]

@@ -8,6 +8,11 @@ local this = {
     nifLoader = require("tauer.animated-dialogue.services.nif.nifLoader"),
     nodeResolver = require("tauer.animated-dialogue.services.nodes.nodeResolver"),
 
+    conditionsValidator = require(
+        "tauer.animated-dialogue.services.conditions.conditionsValidator"),
+    conditionFilterer = require(
+        "tauer.animated-dialogue.services.conditions.conditionFilterer"),
+
     animationValidator = require(
         "tauer.animated-dialogue.services.animations.animationValidator"),
     animationDefinitionValidator = require(

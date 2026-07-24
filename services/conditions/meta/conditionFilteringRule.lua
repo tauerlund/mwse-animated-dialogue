@@ -1,0 +1,3 @@
+---@meta
+---@class conditionFilteringRule : rule
+---@field public isMet fun(configuration: filterableConfiguration, actor: tes3reference):boolean

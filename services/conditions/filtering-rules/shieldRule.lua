@@ -1,8 +1,8 @@
----@class shieldFilteringRule : animationFilteringRule
+---@class shieldFilteringRule : conditionFilteringRule
 local this = {}
 
 ---@public
----@param configuration animationConfiguration
+---@param configuration filterableConfiguration
 ---@param actor tes3reference
 ---@return boolean
 function this.isMet(configuration, actor)
