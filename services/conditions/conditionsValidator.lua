@@ -85,6 +85,14 @@ function this.validate(conditions)
         return false, "conditions.disposition must be a table with a numeric 'min' and/or 'max', where min is not greater than max"
     end
 
+    if conditions.health ~= nil and not this.values.isValidRange(conditions.health) then
+        return false, "conditions.health must be a table with a numeric 'min' and/or 'max' fraction of base health (0 to 1, not raw points), where min is not greater than max"
+    end
+
+    if conditions.fatigue ~= nil and not this.values.isValidRange(conditions.fatigue) then
+        return false, "conditions.fatigue must be a table with a numeric 'min' and/or 'max' fraction of base fatigue (0 to 1, not raw points), where min is not greater than max"
+    end
+
     if conditions.torchCompatible ~= nil and type(conditions.torchCompatible) ~= "boolean" then
         return false, "conditions.torchCompatible must be a boolean"
     end

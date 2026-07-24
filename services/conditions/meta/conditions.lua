@@ -14,5 +14,7 @@
 ---@field public weather? ("clear"|"cloudy"|"foggy"|"overcast"|"rain"|"thunder"|"ash"|"blight"|"snow"|"blizzard")[]
 ---@field public timeOfDay? timeOfDayRange
 ---@field public disposition? conditionRange
+---@field public health? conditionRange A fraction of the actor's base health, 0..1 — not raw points.
+---@field public fatigue? conditionRange A fraction of the actor's base fatigue, 0..1 — not raw points.
 ---@field public torchCompatible? boolean
 ---@field public shieldCompatible? boolean
