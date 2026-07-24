@@ -1,0 +1,4 @@
+---@meta
+---@class debugVoiceEntry : debugDropdownEntry
+---@field public configuration voiceConfiguration
+---@field public sound string

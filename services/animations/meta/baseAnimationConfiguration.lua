@@ -1,7 +1,7 @@
 ---@meta
 ---@class baseAnimationConfiguration
 ---@field public id string
----@field public conditions? animationConditions
+---@field public conditions? conditions
 ---@field public weight? number
 ---@field public idle animationDefinition
 ---@field public greeting? animationDefinition[]

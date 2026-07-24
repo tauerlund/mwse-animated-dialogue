@@ -1,0 +1,5 @@
+---@meta
+---@class soundPlayer.say.param
+---@field public reference tes3reference
+---@field public file string Path below Data Files\Sound, e.g. "vo\\ad\\d\\m\\hmm01.mp3".
+---@field public pitch? number

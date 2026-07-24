@@ -25,6 +25,7 @@ An MWSE Lua mod that adds cinematic animations to dialogue with NPCs and creatur
 - Their head turns to look at you (or the camera).
 - Fully compatible with (but doesn't require) Voices of Vvardenfell: NPC mouths sync to the real voice audio when it's installed.
 - Falls back to a simulated lipsync system for unvoiced lines, so NPCs still look like they're speaking.
+- Unvoiced NPCs can make short generic sounds ("Hmm.", "Ah.") as they talk, so text-only conversations aren't silent. Which sound plays depends on who's speaking and what they're saying, and one never plays over a real voiced line.
 - Small idle gestures (glances, weight shifts) can play occasionally to avoid a frozen look during pauses.
 - Props (pipes, mugs, books, etc.) can be spawned on different body parts.
 - NPCs with their own custom animations (such as from mods like Animated Morrowind) keep playing them instead of being overridden.
@@ -49,17 +50,18 @@ An MWSE Lua mod that adds cinematic animations to dialogue with NPCs and creatur
 #### Configuration
 
 - Every feature above can be toggled independently in the MCM.
-- Debug mode with an in-game tool for previewing animations, triggering specific gestures, tuning camera presets, adjusting prop positions, and dialling in the fill light live.
+- Debug mode with an in-game tool for previewing animations, triggering specific gestures, tuning camera presets, adjusting prop positions, playing voice lines, and changing the fill light live.
 
 ## :wrench: For Modders
 
-Actor animations aren't hardcoded — they're driven by JSON config files, so anyone can add or edit them:
+Actor animations and voice lines aren't hardcoded — they're driven by JSON config files, so anyone can add or edit them:
 
 - **Base configs** define an actor's idle pose, greeting, talk clips, gestures, and carried props.
 - **Override configs** trigger a specific animation and/or prop on a specific dialogue line.
 - **Creature configs** map a creature to the idle animation group it should use.
+- **Voice configs** define pools of generic sounds for unvoiced NPCs.
 
-Each config can be restricted with conditions, so different actors and situations can use different animations. A tutorial on writing your own configs is coming later.
+Each config can be restricted with conditions, so different actors and situations can use different animations. Conditions cover who the actor is (race, sex, class, faction, disposition and more) and what's going on around them (weather, time of day, indoors or out). Voice configs can additionally match the line itself — keywords in the text, the topic, or whether it's a question. A tutorial on writing your own configs is coming later.
 
 ## :beetle: Bugs
 

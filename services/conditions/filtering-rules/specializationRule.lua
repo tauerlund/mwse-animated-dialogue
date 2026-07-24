@@ -1,4 +1,4 @@
----@class factionRankFilteringRule : animationFilteringRule
+---@class specializationFilteringRule : conditionFilteringRule
 local this = {}
 
 ---@private
@@ -12,12 +12,12 @@ function this.initialize(services)
 end
 
 ---@public
----@param configuration animationConfiguration
+---@param configuration filterableConfiguration
 ---@param actor tes3reference
 ---@return boolean
 function this.isMet(configuration, actor)
-    local rank = configuration.conditions and configuration.conditions.factionRank
-    if not rank then
+    local specializations = configuration.conditions and configuration.conditions.specialization
+    if not specializations then
         return true
     end
 
@@ -25,11 +25,12 @@ function this.isMet(configuration, actor)
         return false
     end
 
-    if not actor.baseObject.faction then
+    local specialization = tes3.specializationName[actor.baseObject.class.specialization]
+    if not specialization then
         return false
     end
 
-    return this.values.withinRange(rank, actor.baseObject.factionRank)
+    return this.values.contains(specializations, specialization)
 end
 
 return this

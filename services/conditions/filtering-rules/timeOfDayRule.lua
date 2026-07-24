@@ -1,8 +1,8 @@
----@class timeOfDayFilteringRule : animationFilteringRule
+---@class timeOfDayFilteringRule : conditionFilteringRule
 local this = {}
 
 ---@public
----@param configuration animationConfiguration
+---@param configuration filterableConfiguration
 ---@param _ tes3reference
 ---@return boolean
 function this.isMet(configuration, _)

@@ -8,6 +8,11 @@ local this = {
     nifLoader = require("tauer.animated-dialogue.services.nif.nifLoader"),
     nodeResolver = require("tauer.animated-dialogue.services.nodes.nodeResolver"),
 
+    conditionsValidator = require(
+        "tauer.animated-dialogue.services.conditions.conditionsValidator"),
+    conditionFilterer = require(
+        "tauer.animated-dialogue.services.conditions.conditionFilterer"),
+
     animationValidator = require(
         "tauer.animated-dialogue.services.animations.animationValidator"),
     animationDefinitionValidator = require(
@@ -18,6 +23,13 @@ local this = {
         "tauer.animated-dialogue.services.animations.animationFilterer"),
     animationLoader = require("tauer.animated-dialogue.services.animations.animationLoader"),
     animationResolver = require("tauer.animated-dialogue.services.animations.animationResolver"),
+
+    soundPlayer = require("tauer.animated-dialogue.services.sound.soundPlayer"),
+
+    voiceValidator = require("tauer.animated-dialogue.services.voice.voiceValidator"),
+    voiceLoader = require("tauer.animated-dialogue.services.voice.voiceLoader"),
+    voiceResolver = require("tauer.animated-dialogue.services.voice.voiceResolver"),
+    voiceController = require("tauer.animated-dialogue.services.voice.voiceController"),
 
     dialogueController = require("tauer.animated-dialogue.services.dialogue.dialogueController"),
     dialogueCircuitBreaker = require("tauer.animated-dialogue.services.dialogue.dialogueCircuitBreaker"),
@@ -103,6 +115,7 @@ local this = {
     propTransformSection = require("tauer.animated-dialogue.services.debugging.sections.propTransformSection"),
     cameraPresetSection = require("tauer.animated-dialogue.services.debugging.sections.cameraPresetSection"),
     fillLightSection = require("tauer.animated-dialogue.services.debugging.sections.fillLightSection"),
+    voiceLineSection = require("tauer.animated-dialogue.services.debugging.sections.voiceLineSection"),
     debugWindow = require("tauer.animated-dialogue.services.debugging.debugWindow"),
     debugController = require("tauer.animated-dialogue.services.debugging.debugController"),
 

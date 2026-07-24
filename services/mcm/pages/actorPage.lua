@@ -297,6 +297,61 @@ function this.initialize(template, services)
         decimalPlaces = 1,
     })
 
+    local voiceCategory = page:createCategory({
+        label = translations.get(keys.voiceCategory)
+    })
+
+    voiceCategory:createOnOffButton({
+        label = translations.get(keys.voiceLinesEnabled),
+        description = translations.get(keys.voiceLinesEnabledDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "voiceLinesEnabled",
+            table = services.settings
+        }),
+    })
+
+    voiceCategory:createPercentageSlider({
+        label = translations.get(keys.voiceLineChance),
+        description = translations.get(keys.voiceLineChanceDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "voiceLineChance",
+            table = services.settings
+        }),
+        min = 0,
+        max = 1,
+        step = 0.01,
+        jump = 0.1,
+        decimalPlaces = 0,
+    })
+
+    voiceCategory:createSlider({
+        label = translations.get(keys.voiceLineInterval),
+        description = translations.get(keys.voiceLineIntervalDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "voiceLineInterval",
+            table = services.settings
+        }),
+        min = 0,
+        max = 30,
+        step = 0.5,
+        jump = 2,
+        decimalPlaces = 1,
+    })
+
+    voiceCategory:createSlider({
+        label = translations.get(keys.voiceLineMinimumDelay),
+        description = translations.get(keys.voiceLineMinimumDelayDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "voiceLineMinimumDelay",
+            table = services.settings
+        }),
+        min = 0,
+        max = 3,
+        step = 0.05,
+        jump = 0.25,
+        decimalPlaces = 2,
+    })
+
     local propsCategory = page:createCategory({
         label = translations.get(keys.propsCategory)
     })

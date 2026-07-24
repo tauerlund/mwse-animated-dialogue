@@ -1,0 +1,24 @@
+---@meta
+---@class conditions
+---@field public actor? string[]
+---@field public faction? string[]
+---@field public factionRank? conditionRange
+---@field public class? string[]
+---@field public specialization? ("combat"|"magic"|"stealth")[]
+---@field public race? string[]
+---@field public sex? ("male"|"female")
+---@field public beast? boolean Animation-only. Absence rejects beast races, so it is filtered by services/animations/filtering-rules.
+---@field public weaponReadied? boolean Animation-only. Absence rejects readied actors, so it is filtered by services/animations/filtering-rules.
+---@field public weaponType? ("shortBladeOneHand"|"longBladeOneHand"|"longBladeTwoClose"|"bluntOneHand"|"bluntTwoClose"|"bluntTwoWide"|"spearTwoWide"|"axeOneHand"|"axeTwoHand"|"marksmanBow"|"marksmanCrossbow"|"marksmanThrown"|"arrow"|"bolt"|"handToHand"|"spell")[]
+---@field public interior? boolean
+---@field public weather? ("clear"|"cloudy"|"foggy"|"overcast"|"rain"|"thunder"|"ash"|"blight"|"snow"|"blizzard")[]
+---@field public timeOfDay? timeOfDayRange
+---@field public disposition? conditionRange
+---@field public health? conditionRange A fraction of the actor's base health, 0..1 — not raw points.
+---@field public fatigue? conditionRange A fraction of the actor's base fatigue, 0..1 — not raw points.
+---@field public torchCompatible? boolean
+---@field public shieldCompatible? boolean
+---@field public keywords? string[] Voice-only. Describes the line, not the actor, so it is filtered by services/voice/filtering-rules.
+---@field public dialogueIds? string[] Voice-only. Describes the line, not the actor, so it is filtered by services/voice/filtering-rules.
+---@field public dialogueTypes? ("greeting"|"topic"|"service")[] Voice-only. Describes the line, not the actor, so it is filtered by services/voice/filtering-rules.
+---@field public punctuation? ("question"|"exclamation"|"statement")[] Voice-only. Describes the line, not the actor, so it is filtered by services/voice/filtering-rules.

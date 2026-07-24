@@ -1,4 +1,4 @@
----@class classFilteringRule : animationFilteringRule
+---@class healthFilteringRule : conditionFilteringRule
 local this = {}
 
 ---@private
@@ -12,20 +12,21 @@ function this.initialize(services)
 end
 
 ---@public
----@param configuration animationConfiguration
+---@param configuration filterableConfiguration
 ---@param actor tes3reference
 ---@return boolean
 function this.isMet(configuration, actor)
-    local classes = configuration.conditions and configuration.conditions.class
-    if not classes then
+    local health = configuration.conditions and configuration.conditions.health
+    if not health then
         return true
     end
 
-    if actor.baseObject.objectType ~= tes3.objectType.npc then
+    local mobile = actor.mobile --[[@as tes3mobileActor]]
+    if not mobile then
         return false
     end
 
-    return this.values.contains(classes, actor.baseObject.class.id)
+    return this.values.withinRange(health, mobile.health.normalized)
 end
 
 return this

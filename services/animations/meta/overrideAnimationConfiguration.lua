@@ -1,7 +1,7 @@
 ---@meta
 ---@class overrideAnimationConfiguration
 ---@field public dialogueIds string[]
----@field public conditions? animationConditions
+---@field public conditions? conditions
 ---@field public weight? number
 ---@field public animation animationDefinition
 ---@field public prop? propDefinition
@@ -12,5 +12,6 @@
 ---@alias overrideAnimationConfigurationFile overrideAnimationConfiguration[]
 
 --- Either configuration kind, for the services that treat them uniformly
---- (the filtering rules, animationFilterer, and the weighted pick).
+--- (animationFilterer and the weighted pick). The rules themselves take the
+--- wider filterableConfiguration, which voice configurations also satisfy.
 ---@alias animationConfiguration baseAnimationConfiguration|overrideAnimationConfiguration
