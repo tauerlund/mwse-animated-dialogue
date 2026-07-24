@@ -211,13 +211,13 @@ return {
     "How strongly the fill light lights the actor.",
     [keys.fillLightColor] = "Colour",
     [keys.fillLightColorDescription] =
-    "The colour of the fill light. A warm off-white reads as firelight; pure white reads as neutral.",
+    "The colour of the fill light.",
     [keys.fillLightRadius] = "Radius",
     [keys.fillLightRadiusDescription] =
-    "How far the fill light reaches, in game units. Larger values light the actor more evenly.",
+    "How far the fill light reaches, in game units.",
     [keys.fillLightDistance] = "Distance",
     [keys.fillLightDistanceDescription] =
-    "How far in front of the actor the light sits, in game units, measured towards the camera. Negative values place it behind them.",
+    "How far in front of the actor the light sits, in game units. Negative values place it behind the actor.",
     [keys.fillLightHeight] = "Height",
     [keys.fillLightHeightDescription] =
     "How far above the actor's head the light sits, in game units.",
