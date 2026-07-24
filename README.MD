@@ -16,6 +16,7 @@ An MWSE Lua mod that adds cinematic animations to dialogue with NPCs and creatur
 - Presets are tweakable both live in-game and in the MCM.
 - Optional depth of field effect that blurs the background.
 - Optional letterbox bars for a cinematic look.
+- Optional fill light on the actor you're talking to, so they stay visible in dark places. It can skip itself automatically when you or the actor is already carrying a light.
 
 #### Actor animation
 
@@ -48,7 +49,7 @@ An MWSE Lua mod that adds cinematic animations to dialogue with NPCs and creatur
 #### Configuration
 
 - Every feature above can be toggled independently in the MCM.
-- Debug mode with an in-game tool for previewing animations, triggering specific gestures, tuning camera presets, and adjusting prop positions live.
+- Debug mode with an in-game tool for previewing animations, triggering specific gestures, tuning camera presets, adjusting prop positions, and dialling in the fill light live.
 
 ## :wrench: For Modders
 
