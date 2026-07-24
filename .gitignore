@@ -120,3 +120,4 @@ fabric.properties
 no-commit/*
 
 CLAUDE.md
+.claude/docs/
