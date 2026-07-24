@@ -86,6 +86,7 @@ function this.initializeMod(_)
 		services.propTransformSection,
 		services.cameraPresetSection,
 		services.fillLightSection,
+		services.voiceLineSection,
 		services.debugWindow,
 		services.debugController,
 	}

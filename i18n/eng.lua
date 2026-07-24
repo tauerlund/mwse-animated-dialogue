@@ -329,6 +329,12 @@ return {
     [keys.debugPlacementSection] = "Placement",
     [keys.debugSaveSettings] = "Save Settings",
     [keys.debugSettingsSaved] = "Saved fill light settings.",
+    [keys.debugTabVoice] = "Voice",
+    [keys.debugVoiceLines] = "Voice Lines",
+    [keys.debugVoiceLineHint] = "Play a sound directly, skipping the chance roll, the interval and every gate.",
+    [keys.debugVoiceLinesDisabledHint] = "Voice lines are disabled in the MCM.",
+    [keys.debugNoVoiceLinesHint] =
+    "No voice configurations are loaded. Add one under MWSE\\config\\animated-dialogue\\voices.",
     [keys.validationFailed] = "Animated Dialogue: one or more configurations failed to load. Check mwse.log for details.",
     [keys.initializationFailed] = "Animated Dialogue failed to initialize and is disabled. Check mwse.log for details.",
     [keys.ok] = "OK",

@@ -67,6 +67,12 @@ function this.initialize(services)
                 services.fillLightSection,
             },
         },
+        {
+            title = this.translations.get(this.translationKey.debugTabVoice),
+            sections = {
+                services.voiceLineSection,
+            },
+        },
     }
 
     return true, nil

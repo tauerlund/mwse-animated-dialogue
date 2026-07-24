@@ -115,6 +115,7 @@ local this = {
     propTransformSection = require("tauer.animated-dialogue.services.debugging.sections.propTransformSection"),
     cameraPresetSection = require("tauer.animated-dialogue.services.debugging.sections.cameraPresetSection"),
     fillLightSection = require("tauer.animated-dialogue.services.debugging.sections.fillLightSection"),
+    voiceLineSection = require("tauer.animated-dialogue.services.debugging.sections.voiceLineSection"),
     debugWindow = require("tauer.animated-dialogue.services.debugging.debugWindow"),
     debugController = require("tauer.animated-dialogue.services.debugging.debugController"),
 
