@@ -179,7 +179,7 @@ function this.initialize(template, services)
             table = services.settings
         }),
         min = 1,
-        max = 20,
+        max = 30,
         step = 1,
         jump = 5,
         decimalPlaces = 0,
