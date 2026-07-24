@@ -25,6 +25,10 @@ this.cameraWrapper = nil
 this.skyWrapper = nil
 
 ---@private
+---@type niNode|nil
+this.shadowWrapper = nil
+
+---@private
 ---@type number
 this.animationTime = 0
 
@@ -170,14 +174,33 @@ function this.onEnterFrame(e)
 
     this.cameraWrapper:update()
     this.skyWrapper:update()
+    this.updateShadowWrapper()
 end
 
 ---@private
 function this.setupWrappers()
     local camera       = tes3.worldController.worldCamera.cameraRoot
     local sky          = tes3.worldController.weatherController.sceneSkyRoot
+    local shadow       = tes3.worldController.shadowCamera.cameraRoot
+
     this.cameraWrapper = this.getOrCreateWrapper(camera, "cameraAnimator")
     this.skyWrapper    = this.getOrCreateWrapper(sky, "skyAnimator")
+    this.shadowWrapper = nil
+
+    if shadow then
+        this.shadowWrapper = this.getOrCreateWrapper(shadow, "shadowAnimator")
+    end
+end
+
+---@private
+function this.updateShadowWrapper()
+    if not this.shadowWrapper then
+        return
+    end
+
+    this.shadowWrapper.translation = this.cameraWrapper.translation:copy()
+    this.shadowWrapper.rotation = this.cameraWrapper.rotation:copy()
+    this.shadowWrapper:update()
 end
 
 ---@private
@@ -192,6 +215,12 @@ function this.resetWrappers()
 
     this.skyWrapper.translation = tes3vector3.new(0, 0, 0)
     this.skyWrapper:update()
+
+    if this.shadowWrapper then
+        this.shadowWrapper.translation = tes3vector3.new(0, 0, 0)
+        this.shadowWrapper.rotation:toIdentity()
+        this.shadowWrapper:update()
+    end
 end
 
 ---@private
