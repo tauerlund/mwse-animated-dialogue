@@ -3,8 +3,8 @@
 ---@field public sounds string[] Paths below Data Files\Sound. Interchangeable variants; one is picked per line.
 ---@field public conditions? conditions
 ---@field public weight? number
----@field public delay? number Seconds to wait before playing. Raised to voiceLineMinimumDelay.
----@field public pitch? number Replaces the random jitter for this entry.
+---@field public delay? number Seconds to wait before playing. Never shorter than the voiceLineMinimumDelay setting.
+---@field public pitch? number Pitch shift multiplier, where 1.0 is unaltered. Unset, the sound plays as authored.
 ---@field public source? string The JSON filename this was loaded from (set at load time, not authored).
 ---@field public keywordPatterns? string[] Compiled from conditions.keywords at load time, not authored.
 

@@ -127,7 +127,7 @@ function this.buildKeywordPatterns(configuration)
     local patterns = {}
 
     for _, keyword in ipairs(keywords) do
-        table.insert(patterns, this.buildKeywordPattern(keyword:lower()))
+        table.insert(patterns, this.buildPattern(keyword:lower()))
     end
 
     return patterns
@@ -136,7 +136,7 @@ end
 ---@private
 ---@param keyword string
 ---@return string
-function this.buildKeywordPattern(keyword)
+function this.buildPattern(keyword)
     local escaped = (keyword:gsub("([%^%$%(%)%%%.%[%]%*%+%-%?])", "%%%1"))
     local prefix = keyword:match("^%w") and "%f[%w]" or ""
     local suffix = keyword:match("%w$") and "%f[%W]" or ""

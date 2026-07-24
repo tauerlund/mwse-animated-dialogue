@@ -10,17 +10,15 @@ this.conditionsValidator = nil
 this.values = nil
 
 ---@private
-this.spokenDialogueTypes = {
-    greeting = true,
-    topic = true,
-    service = true,
-}
-
----@private
-this.punctuationShapes = {
-    question = true,
-    exclamation = true,
-    statement = true,
+this.allowedNames = {
+    dialogueTypes = {
+        names = { greeting = true, topic = true, service = true },
+        expected = "'greeting', 'topic' or 'service'",
+    },
+    punctuation = {
+        names = { question = true, exclamation = true, statement = true },
+        expected = "'question', 'exclamation' or 'statement'",
+    },
 }
 
 ---@public
@@ -44,9 +42,9 @@ function this.validate(configuration)
         return true
     end
 
-    local applicable, applicableReason = this.validateInapplicable(conditions)
-    if not applicable then
-        return false, applicableReason
+    local supported, supportedReason = this.validateSupportedConditions(conditions)
+    if not supported then
+        return false, supportedReason
     end
 
     return this.validateLineConditions(conditions)
@@ -55,7 +53,7 @@ end
 ---@private
 ---@param conditions conditions
 ---@return boolean, string|nil
-function this.validateInapplicable(conditions)
+function this.validateSupportedConditions(conditions)
     if conditions.beast ~= nil then
         return false, "conditions.beast has no effect on voice lines"
     end
@@ -79,45 +77,37 @@ function this.validateLineConditions(conditions)
         return false, "conditions.dialogueIds must be a non-empty array of strings"
     end
 
-    local typesValid, typesReason = this.validateNames({
-        names = conditions.dialogueTypes,
-        allowed = this.spokenDialogueTypes,
-        field = "dialogueTypes",
-        expected = "'greeting', 'topic' or 'service'",
-    })
-
+    local typesValid, typesReason = this.validateNames(conditions, "dialogueTypes")
     if not typesValid then
         return false, typesReason
     end
 
-    return this.validateNames({
-        names = conditions.punctuation,
-        allowed = this.punctuationShapes,
-        field = "punctuation",
-        expected = "'question', 'exclamation' or 'statement'",
-    })
+    return this.validateNames(conditions, "punctuation")
 end
 
 ---@private
----@param params voiceConditionsValidationRule.validateNames.param
+---@param conditions conditions
+---@param field string
 ---@return boolean, string|nil
-function this.validateNames(params)
-    local names = params.names
-    if names == nil then
+function this.validateNames(conditions, field)
+    local authored = conditions[field]
+    if authored == nil then
         return true
     end
 
-    if not this.values.isNonEmptyStringArray(names) then
-        return false, string.format("conditions.%s must be a non-empty array of strings", params.field)
+    if not this.values.isNonEmptyStringArray(authored) then
+        return false, string.format("conditions.%s must be a non-empty array of strings", field)
     end
 
-    for _, name in ipairs(names) do
-        if not params.allowed[name:lower()] then
+    local allowed = this.allowedNames[field]
+
+    for _, name in ipairs(authored) do
+        if not allowed.names[name:lower()] then
             return false, string.format(
                 "conditions.%s contains '%s', which must be %s",
-                params.field,
+                field,
                 name,
-                params.expected)
+                allowed.expected)
         end
     end
 

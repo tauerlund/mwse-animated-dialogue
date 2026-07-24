@@ -25,10 +25,10 @@ function this.isMet(configuration, _, line)
         return false
     end
 
-    local shape = this.resolveShape(line.text)
+    local linePunctuation = this.resolveLinePunctuation(line.text)
 
     for _, name in ipairs(punctuation) do
-        if name:lower() == shape then
+        if name:lower() == linePunctuation then
             return true
         end
     end
@@ -39,7 +39,7 @@ end
 ---@private
 ---@param text string
 ---@return string
-function this.resolveShape(text)
+function this.resolveLinePunctuation(text)
     local trimmed = (text:gsub("[%s\"'%)%]}]+$", ""))
     local last = trimmed:sub(-1)
 

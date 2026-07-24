@@ -11,7 +11,7 @@ this.values = nil
 
 ---@private
 ---@type conditionFilteringRule[]
-this.rules = nil
+this.lineRules = nil
 
 ---@private
 ---@type voiceConfiguration[]
@@ -23,7 +23,7 @@ this.configurations = nil
 function this.initialize(services)
     this.conditionFilterer = services.conditionFilterer
     this.values = services.values
-    this.rules = services.ruleLoader.loadRules("services\\voice\\filtering-rules")
+    this.lineRules = services.ruleLoader.loadRules("services\\voice\\filtering-rules")
     this.configurations = services.voiceLoader.getConfigurations()
 
     return true, nil
@@ -41,20 +41,20 @@ end
 ---@param line dialogueLine
 ---@return voiceConfiguration|nil
 function this.resolve(actor, line)
-    local filtered = this.conditionFilterer.filter(this.configurations, actor, line)
+    local candidates = this.conditionFilterer.filter(this.configurations, actor, line)
 
-    filtered = this.conditionFilterer.applyRules({
-        configurations = filtered,
+    local matching = this.conditionFilterer.applyRules({
+        configurations = candidates,
         actor = actor,
-        rules = this.rules,
+        rules = this.lineRules,
         line = line,
     })
 
-    if #filtered == 0 then
+    if #matching == 0 then
         return nil
     end
 
-    return this.values.weightedChoice(filtered, this.resolveWeight)
+    return this.values.weightedChoice(matching, this.resolveWeight)
 end
 
 ---@private

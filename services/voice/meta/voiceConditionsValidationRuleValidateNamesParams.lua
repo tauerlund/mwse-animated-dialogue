@@ -1,6 +1,0 @@
----@meta
----@class voiceConditionsValidationRule.validateNames.param
----@field public names any The authored value, which may be absent or malformed.
----@field public allowed table<string, boolean> Accepted names, lowercased.
----@field public field string The condition key, for the error message.
----@field public expected string How the accepted names read in the error message.
