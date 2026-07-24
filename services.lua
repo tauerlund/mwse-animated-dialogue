@@ -24,6 +24,13 @@ local this = {
     animationLoader = require("tauer.animated-dialogue.services.animations.animationLoader"),
     animationResolver = require("tauer.animated-dialogue.services.animations.animationResolver"),
 
+    soundPlayer = require("tauer.animated-dialogue.services.sound.soundPlayer"),
+
+    voiceValidator = require("tauer.animated-dialogue.services.voice.voiceValidator"),
+    voiceLoader = require("tauer.animated-dialogue.services.voice.voiceLoader"),
+    voiceResolver = require("tauer.animated-dialogue.services.voice.voiceResolver"),
+    voiceController = require("tauer.animated-dialogue.services.voice.voiceController"),
+
     dialogueController = require("tauer.animated-dialogue.services.dialogue.dialogueController"),
     dialogueCircuitBreaker = require("tauer.animated-dialogue.services.dialogue.dialogueCircuitBreaker"),
 

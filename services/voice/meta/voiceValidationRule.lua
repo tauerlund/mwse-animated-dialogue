@@ -1,0 +1,3 @@
+---@meta
+---@class voiceValidationRule : rule
+---@field public validate fun(configuration: voiceConfiguration):boolean, string|nil

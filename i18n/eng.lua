@@ -85,6 +85,18 @@ return {
     [keys.actorHeadBobRandomness] = "Head Bob: Randomness",
     [keys.actorHeadBobRandomnessDescription] =
     "How much random wander is blended into the motion.",
+    [keys.voiceLinesEnabled] = "Enable Voice Lines",
+    [keys.voiceLinesEnabledDescription] =
+    "Lets actors without a voiced line make a short generic sound while they talk.",
+    [keys.voiceLineChance] = "Voice Line Chance",
+    [keys.voiceLineChanceDescription] =
+    "The chance of a generic sound being made on any given line of dialogue.",
+    [keys.voiceLineInterval] = "Voice Line Interval",
+    [keys.voiceLineIntervalDescription] =
+    "The shortest time between two generic sounds, in seconds.",
+    [keys.voiceLineMinimumDelay] = "Voice Line Delay",
+    [keys.voiceLineMinimumDelayDescription] =
+    "How long to wait after a line of dialogue before making a generic sound, in seconds. This is also the window in which a voiced line from another mod is detected, so raise it if generic sounds are heard over voiced dialogue.",
     [keys.propsEnabled] = "Enable Props",
     [keys.propsEnabledDescription] =
     "Enables actors holding props during dialogue.",
@@ -157,6 +169,7 @@ return {
     [keys.bodyCategory] = "Body",
     [keys.headCategory] = "Head",
     [keys.headBobCategory] = "Head Bob",
+    [keys.voiceCategory] = "Voice",
     [keys.propsCategory] = "Props",
     [keys.distance] = "Distance",
     [keys.distanceDescription] =

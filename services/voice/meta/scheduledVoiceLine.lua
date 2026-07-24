@@ -1,0 +1,5 @@
+---@meta
+---@class scheduledVoiceLine
+---@field public configuration voiceConfiguration
+---@field public sound string
+---@field public remainingDelay number Seconds left before the sound plays.
