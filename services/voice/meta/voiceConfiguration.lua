@@ -6,6 +6,7 @@
 ---@field public delay? number Seconds to wait before playing. Raised to voiceLineMinimumDelay.
 ---@field public pitch? number Replaces the random jitter for this entry.
 ---@field public source? string The JSON filename this was loaded from (set at load time, not authored).
+---@field public keywordPatterns? string[] Compiled from conditions.keywords at load time, not authored.
 
 --- A voice configuration file is an array of these entries, so a single JSON
 --- file can define a whole per-race set.

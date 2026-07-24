@@ -26,12 +26,14 @@ end
 ---@public
 ---@param configurations filterableConfiguration[]
 ---@param actor tes3reference
+---@param line? dialogueLine
 ---@return filterableConfiguration[]
-function this.filter(configurations, actor)
+function this.filter(configurations, actor, line)
     return this.applyRules({
         configurations = configurations,
         actor = actor,
         rules = this.rules,
+        line = line,
     })
 end
 
@@ -46,7 +48,7 @@ function this.applyRules(params)
 
     for i = 1, #configurations do
         local configuration = configurations[i]
-        if this.valid(configuration, params.actor, params.rules) then
+        if this.valid(configuration, params) then
             filtered[#filtered + 1] = configuration
         end
     end
@@ -56,16 +58,17 @@ end
 
 ---@private
 ---@param configuration filterableConfiguration
----@param actor tes3reference
----@param rules conditionFilteringRule[]
+---@param params conditionFilterer.applyRules.param
 ---@return boolean
-function this.valid(configuration, actor, rules)
+function this.valid(configuration, params)
+    local rules = params.rules
+
     for i = 1, #rules do
         local rule = rules[i]
-        if not rule.isMet(configuration, actor) then
+        if not rule.isMet(configuration, params.actor, params.line) then
             this.logger:debug("Configuration '%s' not valid for '%s' because '%s' was violated",
                 this.resolveId(configuration),
-                actor.baseObject.id,
+                params.actor.baseObject.id,
                 rule.name)
 
             return false

@@ -18,3 +18,7 @@
 ---@field public fatigue? conditionRange A fraction of the actor's base fatigue, 0..1 — not raw points.
 ---@field public torchCompatible? boolean
 ---@field public shieldCompatible? boolean
+---@field public keywords? string[] Voice-only. Describes the line, not the actor, so it is filtered by services/voice/filtering-rules.
+---@field public dialogueIds? string[] Voice-only. Describes the line, not the actor, so it is filtered by services/voice/filtering-rules.
+---@field public dialogueTypes? ("greeting"|"topic"|"service")[] Voice-only. Describes the line, not the actor, so it is filtered by services/voice/filtering-rules.
+---@field public punctuation? ("question"|"exclamation"|"statement")[] Voice-only. Describes the line, not the actor, so it is filtered by services/voice/filtering-rules.

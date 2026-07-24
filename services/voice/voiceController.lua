@@ -128,12 +128,13 @@ function this.onDialogueInfo(e)
         return
     end
 
-    this.scheduleLine()
+    this.scheduleLine({ info = e.info, text = e.text or "" })
 end
 
 ---@private
-function this.scheduleLine()
-    local configuration = this.voiceResolver.resolve(this.actor)
+---@param line dialogueLine
+function this.scheduleLine(line)
+    local configuration = this.voiceResolver.resolve(this.actor, line)
     if not configuration then
         return
     end
