@@ -68,7 +68,8 @@ local this = {
     weatherStormController = require("tauer.animated-dialogue.services.weather.weatherStormController"),
     weatherSkyController = require("tauer.animated-dialogue.services.weather.weatherSkyController"),
 
-    lightController = require("tauer.animated-dialogue.services.lights.lightController"),
+    lightFlickerController = require("tauer.animated-dialogue.services.lights.lightFlickerController"),
+    lightFillController = require("tauer.animated-dialogue.services.lights.lightFillController"),
 
     mcmInitializer = require("tauer.animated-dialogue.services.mcm.mcmInitializer"),
     mcmSettings = require("tauer.animated-dialogue.services.mcm.mcmSettings"),
@@ -101,6 +102,7 @@ local this = {
         "tauer.animated-dialogue.services.debugging.sections.triggerOverrideSection"),
     propTransformSection = require("tauer.animated-dialogue.services.debugging.sections.propTransformSection"),
     cameraPresetSection = require("tauer.animated-dialogue.services.debugging.sections.cameraPresetSection"),
+    fillLightSection = require("tauer.animated-dialogue.services.debugging.sections.fillLightSection"),
     debugWindow = require("tauer.animated-dialogue.services.debugging.debugWindow"),
     debugController = require("tauer.animated-dialogue.services.debugging.debugController"),
 
@@ -113,6 +115,8 @@ local this = {
         hidePlayerModes = require("tauer.animated-dialogue.services.mcm.pages.constants.hidePlayerModes"),
         cameraAnchors = require("tauer.animated-dialogue.services.camera.presets.constants.cameraAnchors"),
         cameraPresetRanges = require("tauer.animated-dialogue.services.camera.presets.constants.cameraPresetRanges"),
+        fillLightRanges = require("tauer.animated-dialogue.services.lights.constants.fillLightRanges"),
+        fillLightModes = require("tauer.animated-dialogue.services.lights.constants.fillLightModes"),
     }
 }
 

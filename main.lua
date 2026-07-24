@@ -66,7 +66,8 @@ function this.initializeMod(_)
 		services.weatherStormController,
 		services.weatherSkyController,
 		services.particleController,
-		services.lightController,
+		services.lightFlickerController,
+		services.lightFillController,
 		services.propSpawner,
 		services.debugSliderSection,
 		services.debugDropdown,
@@ -78,6 +79,7 @@ function this.initializeMod(_)
 		services.triggerOverrideSection,
 		services.propTransformSection,
 		services.cameraPresetSection,
+		services.fillLightSection,
 		services.debugWindow,
 		services.debugController,
 	}

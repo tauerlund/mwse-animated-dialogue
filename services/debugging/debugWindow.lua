@@ -61,6 +61,12 @@ function this.initialize(services)
                 services.cameraPresetSection,
             },
         },
+        {
+            title = this.translations.get(this.translationKey.debugTabLighting),
+            sections = {
+                services.fillLightSection,
+            },
+        },
     }
 
     return true, nil

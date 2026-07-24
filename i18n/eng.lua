@@ -199,9 +199,31 @@ return {
     [keys.hideHudEnabled] = "Hide HUD",
     [keys.hideHudEnabledDescription] =
     "Hides the heads-up display while dialogue is open.",
+    [keys.fillLightCategory] = "Fill Light",
+    [keys.fillLightMode] = "Fill Light",
+    [keys.fillLightModeDescription] =
+    "Adds a light on the actor you are talking to, so they stay visible in dark places.\n\nAlways: the fill light is always added.\n\nAdaptive: the fill light is skipped when you or the actor already carries a light.\n\nNever: no fill light.",
+    [keys.fillLightModeAlways] = "Always",
+    [keys.fillLightModeAdaptive] = "Adaptive",
+    [keys.fillLightModeNever] = "Never",
+    [keys.fillLightBrightness] = "Brightness",
+    [keys.fillLightBrightnessDescription] =
+    "How strongly the fill light lights the actor.",
+    [keys.fillLightColor] = "Colour",
+    [keys.fillLightColorDescription] =
+    "The colour of the fill light. A warm off-white reads as firelight; pure white reads as neutral.",
+    [keys.fillLightRadius] = "Radius",
+    [keys.fillLightRadiusDescription] =
+    "How far the fill light reaches, in game units. Larger values light the actor more evenly.",
+    [keys.fillLightDistance] = "Distance",
+    [keys.fillLightDistanceDescription] =
+    "How far in front of the actor the light sits, in game units, measured towards the camera. Negative values place it behind them.",
+    [keys.fillLightHeight] = "Height",
+    [keys.fillLightHeightDescription] =
+    "How far above the actor's head the light sits, in game units.",
     [keys.lightingParticlesCategory] = "Lighting & Particles",
-    [keys.lightEnabled] = "Enable Light Animation",
-    [keys.lightEnabledDescription] =
+    [keys.flickerEnabled] = "Enable Light Animation",
+    [keys.flickerEnabledDescription] =
     "Keeps flickering and pulsing lights animating during dialogue.",
     [keys.particlesEnabled] = "Enable Particle Effects",
     [keys.particlesEnabledDescription] =
@@ -278,11 +300,22 @@ return {
     [keys.debugTabCamera] = "Camera",
     [keys.debugCameraPreset] = "Camera Preset",
     [keys.debugCameraDisabledHint] = "Camera animation is disabled in the MCM.",
-    [keys.debugCameraNoPresetHint] = "The selected camera preset could not be found, so the camera is not animating. Pick an existing preset in the MCM.",
+    [keys.debugCameraNoPresetHint] =
+    "The selected camera preset could not be found, so the camera is not animating. Pick an existing preset in the MCM.",
     [keys.debugReplay] = "Replay",
     [keys.debugSavePreset] = "Save Preset to %{id}.json",
     [keys.debugSavePresetConfirm] = "Overwrite %{id}.json with the current values?",
     [keys.debugPresetSaved] = "Saved preset to %{id}.json.",
+    [keys.debugTabLighting] = "Lighting",
+    [keys.debugFillLight] = "Fill Light",
+    [keys.debugFillLightDisabledHint] = "The fill light is set to Never. Cycle the mode above to tune it.",
+    [keys.debugFillLightSuppressedHint] =
+    "Adaptive mode skipped the fill light for this dialogue, because you or the actor is carrying a light. Switch to Always to tune it here.",
+    [keys.debugFillLightSection] = "Light",
+    [keys.debugColorSection] = "Colour",
+    [keys.debugPlacementSection] = "Placement",
+    [keys.debugSaveSettings] = "Save Settings",
+    [keys.debugSettingsSaved] = "Saved fill light settings.",
     [keys.validationFailed] = "Animated Dialogue: one or more configurations failed to load. Check mwse.log for details.",
     [keys.initializationFailed] = "Animated Dialogue failed to initialize and is disabled. Check mwse.log for details.",
     [keys.ok] = "OK",

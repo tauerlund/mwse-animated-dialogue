@@ -1,4 +1,4 @@
----@class lightController : initializedService
+---@class lightFlickerController : initializedService
 local this = {}
 
 local MIN_BRIGHTNESS = 0.25
@@ -92,7 +92,7 @@ end
 ---@private
 ---@param e dialogueStartedEventData
 function this.onDialogueStarted(e)
-    if not this.settings.lightEnabled then
+    if not this.settings.flickerEnabled then
         return
     end
 

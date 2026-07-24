@@ -6,6 +6,7 @@ local this = {
 	settingsUpdated = "tauer.animatedDialogue.settingsUpdated",
 	cameraPresetUpdated = "tauer.animatedDialogue.cameraPresetUpdated",
 	cameraAnimationReplayed = "tauer.animatedDialogue.cameraAnimationReplayed",
+	fillLightUpdated = "tauer.animatedDialogue.fillLightUpdated",
 	propSpawned = "tauer.animatedDialogue.propSpawned",
 	propDespawned = "tauer.animatedDialogue.propDespawned",
 	animationStarted = "tauer.animatedDialogue.animationStarted",

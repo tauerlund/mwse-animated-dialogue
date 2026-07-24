@@ -64,15 +64,17 @@ function this.initialize(template, services)
         }),
     })
 
+    this.createFillLightCategory(page, services)
+
     local lightingParticlesCategory = page:createCategory({
         label = translations.get(keys.lightingParticlesCategory)
     })
 
     lightingParticlesCategory:createOnOffButton({
-        label = translations.get(keys.lightEnabled),
-        description = translations.get(keys.lightEnabledDescription),
+        label = translations.get(keys.flickerEnabled),
+        description = translations.get(keys.flickerEnabledDescription),
         variable = mwse.mcm.createTableVariable({
-            id = "lightEnabled",
+            id = "flickerEnabled",
             table = services.settings
         }),
     })
@@ -113,6 +115,96 @@ function this.initialize(template, services)
         max = 8192,
         step = 128,
         jump = 512,
+    })
+end
+
+---@private
+---@param page mwseMCMSideBarPage
+---@param services serviceCollection
+function this.createFillLightCategory(page, services)
+    local translations = services.translations
+    local keys = services.constants.translationKey
+    local ranges = services.constants.fillLightRanges
+    local fillLightModes = services.constants.fillLightModes
+
+    local category = page:createCategory({
+        label = translations.get(keys.fillLightCategory)
+    })
+
+    category:createCycleButton({
+        label = translations.get(keys.fillLightMode),
+        description = translations.get(keys.fillLightModeDescription),
+        options = {
+            { text = translations.get(keys.fillLightModeAlways),   value = fillLightModes.always },
+            { text = translations.get(keys.fillLightModeAdaptive), value = fillLightModes.adaptive },
+            { text = translations.get(keys.fillLightModeNever),    value = fillLightModes.never },
+        },
+        variable = mwse.mcm.createTableVariable({
+            id = "fillLightMode",
+            table = services.settings
+        }),
+    })
+
+    category:createPercentageSlider({
+        label = translations.get(keys.fillLightBrightness),
+        description = translations.get(keys.fillLightBrightnessDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "fillLightBrightness",
+            table = services.settings
+        }),
+        min = ranges.fillLightBrightness.min,
+        max = ranges.fillLightBrightness.max,
+        step = 0.01,
+        jump = 0.1,
+        decimalPlaces = 0,
+    })
+
+    category:createColorPickerButton({
+        label = translations.get(keys.fillLightColor),
+        description = translations.get(keys.fillLightColorDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "fillLightColor",
+            table = services.settings
+        }),
+    })
+
+    category:createSlider({
+        label = translations.get(keys.fillLightRadius),
+        description = translations.get(keys.fillLightRadiusDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "fillLightRadius",
+            table = services.settings
+        }),
+        min = ranges.fillLightRadius.min,
+        max = ranges.fillLightRadius.max,
+        step = 16,
+        jump = 64,
+    })
+
+    category:createSlider({
+        label = translations.get(keys.fillLightDistance),
+        description = translations.get(keys.fillLightDistanceDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "fillLightDistance",
+            table = services.settings
+        }),
+        min = ranges.fillLightDistance.min,
+        max = ranges.fillLightDistance.max,
+        step = 1,
+        jump = 10,
+    })
+
+    category:createSlider({
+        label = translations.get(keys.fillLightHeight),
+        description = translations.get(keys.fillLightHeightDescription),
+        variable = mwse.mcm.createTableVariable({
+            id = "fillLightHeight",
+            table = services.settings
+        }),
+        min = ranges.fillLightHeight.min,
+        max = ranges.fillLightHeight.max,
+        step = 1,
+        jump = 10,
     })
 end
 

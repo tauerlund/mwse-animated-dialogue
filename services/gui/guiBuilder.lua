@@ -76,6 +76,32 @@ function this.createSlider(parameters)
 	return this.create(element)
 end
 
+---@class createColorPickerParameters : createParameters
+---@field initialColor mwseColorTable
+---@field height number
+---@field mainWidth number
+---@field hueWidth number
+---@field previewWidth number
+---@field previewHeight number
+
+---@public
+---@param parameters createColorPickerParameters
+---@return guiBuilder
+function this.createColorPicker(parameters)
+	local element = parameters.parent:createColorPicker({
+		id = parameters.id,
+		initialColor = parameters.initialColor,
+		height = parameters.height,
+		mainWidth = parameters.mainWidth,
+		hueWidth = parameters.hueWidth,
+		previewWidth = parameters.previewWidth,
+		previewHeight = parameters.previewHeight,
+		showDataRow = true,
+		showOriginal = true,
+	})
+	return this.create(element)
+end
+
 ---@public
 ---@param parameters createParameters
 ---@return guiBuilder
